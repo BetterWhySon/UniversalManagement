@@ -1,0 +1,68 @@
+.wrapper {
+  input[type='datetime-local']::-webkit-calendar-picker-indicator {
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .custom-select {
+    width: 80px;
+    height: 24px;
+    position: relative;
+    transform: translateY(-2px);
+
+    select {
+      appearance: none;
+      /* safari */
+      -webkit-appearance: none;
+      /* other styles for aesthetics */
+      width: 100%;
+      font-size: 14px;
+      // padding: 4px 8px 2px 8px;
+      padding-inline: 8px;
+      padding-top: 1px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .select-arrow {
+      position: absolute;
+      top: 42%;
+      right: 8px;
+    }
+  }
+
+  .custom-select.dark-bg {
+    select {
+      border: 1px solid #fefefe;
+      color: #fefefe;
+      background-color: transparent;
+    }
+
+    .select-arrow {
+      path {
+        fill: #fefefe;
+      }
+    }
+  }
+
+  .custom-select.light-bg {
+    select {
+      background-color: #636363;
+      color: #e2e2e2;
+    }
+
+    .select-arrow {
+      path {
+        fill: #e2e2e2;
+      }
+    }
+  }
+}
+.nowrap {
+  white-space: nowrap;
+}
+
+.details-text {
+  margin-right: 10px; /* 오른쪽 마진 추가 */
+}
+

@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import './styles/font';
+@import './styles/tooltip';
+@import './styles/scrollbar';
+@import 'swiper/scss';
+@import 'swiper/scss/free-mode';
+@import 'swiper/scss/pagination';
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font-family: 'HanwhaGothic', sans-serif;
+}
+
+
+select,
+input[type="date"] {
+    background-color: #363E4B !important;
+    /* hw-dark-3에 해당하는 색상 코드 */
+    color: #FFFFFF !important;
+    border: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+select,
+input[type="date"] {
+    background-color: #363E4B !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+input[type="date"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tippy-box {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 2px !important;
+    font-size: 14px !important;
+    padding: 4px 8px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.tippy-arrow {
+    display: none !important; /* 화살표 제거 */
+}

@@ -1,0 +1,12 @@
+{
+    "homeCard": {
+      "voltage": "전압",
+      "electric": "전류",
+      "temperature": "온도",
+      "humidity": "습도",
+      "SOC": "SOC",
+      "accumulated": "누적 방전용량"
+    } 
+    
+  }
+  

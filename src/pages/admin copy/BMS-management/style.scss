@@ -1,0 +1,59 @@
+.user-management__wrapper {
+    .add-user__modal, .edit-user__modal {
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 32px;
+          }
+          
+          .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+          
+          .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #E2E2E2;
+            -webkit-transition: .3s;
+            transition: .3s;
+          }
+          
+          .slider:before {
+            position: absolute;
+            content: "";
+            height: 28px;
+            width: 28px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #FEFEFE;
+            -webkit-transition: .3s;
+            transition: .3s;
+            filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.5))
+          }
+          
+          input:checked + .slider {
+            background-color: #00CA48;
+          }
+          
+          input:checked + .slider:before {
+            -webkit-transform: translateX(22px);
+            -ms-transform: translateX(22px);
+            transform: translateX(22px);
+          }
+          
+          .slider.round {
+            border-radius: 34px;
+          }
+          
+          .slider.round:before {
+            border-radius: 50%;
+          }
+    }
+}

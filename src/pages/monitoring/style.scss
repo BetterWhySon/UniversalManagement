@@ -1,0 +1,83 @@
+.monitoring-content {
+    background-color: #2c3e50;
+    color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 22px; // 기본 폰트 크기 더 증가
+  }
+  
+  .detail-table {
+    background-color: #34495e;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  .detail-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .detail-table th, .detail-table td {
+    padding: 20px 15px; // 패딩 더 증가
+    text-align: center;
+    border-bottom: 1px solid #46637f;
+  }
+  
+  .detail-table th {
+    background-color: #2c3e50;
+    font-weight: bold;
+    font-size: 24px; // 컬럼 헤더 폰트 크기 더 증가
+    text-transform: uppercase;
+  }
+  
+  .detail-table tr {
+    height: 80px; // 로우 높이 더 증가
+  }
+  
+  .detail-table tr:nth-child(even) {
+    background-color: #2c3e50;
+  }
+  
+  // 상태에 따른 색상
+  .status-bad { color: #e74c3c; }
+  .status-normal { color: #2ecc71; }
+  .status-good { color: #3498db; }
+  .status-warning { color: #f39c12; }
+  
+  // 반응형 디자인을 위한 미디어 쿼리
+  @media (max-width: 1600px) {
+    .monitoring-content {
+      font-size: 20px;
+    }
+    .detail-table th {
+      font-size: 22px;
+    }
+  }
+  
+  @media (max-width: 1400px) {
+    .monitoring-content {
+      font-size: 18px;
+    }
+    .detail-table th {
+      font-size: 20px;
+    }
+  }
+  
+  @media (max-width: 1200px) {
+    .monitoring-content {
+      font-size: 16px;
+    }
+    .detail-table th {
+      font-size: 18px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .monitoring-content {
+      font-size: 14px;
+    }
+    .detail-table th {
+      font-size: 16px;
+    }
+  }

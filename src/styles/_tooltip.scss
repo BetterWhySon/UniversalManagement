@@ -1,0 +1,82 @@
+.hw-tooltip {
+
+  // @apply relative;
+  &:hover {
+    .hw-tooltip-text {
+      @apply flex;
+    }
+  }
+
+  .hw-tooltip-text {
+    @apply hidden z-50 flex flex-col absolute transition-all duration-300;
+
+    &::before {
+      content: '';
+      @apply absolute bottom-[-30px] w-full h-10 bg-transparent;
+    }
+  }
+
+  // .hw-tooltip-text {
+  //   @apply hidden z-50 flex flex-col absolute transition-all duration-300;
+  //   min-width: 100px;
+  //   /* 최소 너비 설정 */
+  //   max-width: 300px;
+  //   /* 최대 너비 설정 */
+  //   @apply overflow-hidden;
+  //   /* 내용이 넘칠 경우 숨김 처리 */
+
+  //   &::before {
+  //     content: '';
+  //     @apply absolute bottom-[-30px] w-full h-10 bg-transparent;
+  //   }
+
+  //   /* 내용에 따라 자동으로 줄바꿈 */
+  //   white-space: normal;
+  //   word-wrap: break-word;
+
+  //   /* 내용이 넘치는 경우 처리 방식 */
+  //   overflow: hidden;
+  //   text-overflow: ellipsis;
+  // }
+
+  .hw-tooltip-bottom {
+    // top: calc(100% - 30px);
+    top: 20px;
+  }
+
+  .hw-tooltip-center {
+    // transform: translateY(-50%);
+    bottom: 50px
+  }
+
+  .hw-tooltip-bottom-card {
+    bottom: 85px
+  }
+
+  .hw-tooltip-y-center {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .hw-tooltip-top {
+    bottom: calc(100% - 8px);
+  }
+
+  .hw-tooltip-left {
+    left: 0;
+  }
+
+  .hw-tooltip-right {
+    right: 0;
+  }
+}
+
+.hw-map-badge {
+  @apply absolute w-[61px] flex items-center justify-center text-xs font-light h-6 px-4 rounded-lg leading-none;
+
+  &::after {
+    content: attr(data-value);
+    left: calc(100% - 12px);
+    @apply text-hw-gray-8 absolute rounded-full flex items-center text-xl px-[6px] leading-none font-light justify-center -top-3 h-6 min-w-6 bg-hw-white-1;
+  }
+}

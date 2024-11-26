@@ -1,0 +1,11 @@
+{
+    "homeChart": {
+      "installed": "ESS 설치 용량",
+      "cumulativeDischarge": "누적 방전용량",
+      "dischargeAmount": "현재 방전량",
+      "dailyDischarge": "일일 방전용량",
+      "cumulativeDischargeTime": "누적 방전시간",
+      "dailyDischargeTime": "일일 방전시간"
+    }
+  }
+  
