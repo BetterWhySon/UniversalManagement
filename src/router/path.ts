@@ -1,12 +1,15 @@
 export const PATH = {
   DASHBOARD: {
     _: '/',   
+    BATTERY_STATUS: '/battery-status',
     BATTERY_ALARM: 'battery-alarm',
-    POLICY_COMPLIANCE: 'policy-compliance',
-    SERVICE_REQUIREMENT: 'service-requirement',
-    CHARGING_SUMMARY: 'charging-summary',
-    BATTERY_USAGE_CHART: 'battery-usage-chart',
-    STATISTICAL_DATA: 'statistical-data',
+    POLICY_COMPLIANCE: '/dashboard/policy-compliance',
+    UNUSED_BATTERY: '/dashboard/unused-battery',
+    CHARGING_STATUS: '/dashboard/charging-status',
+    // SERVICE_REQUIREMENT: 'service-requirement',
+    // CHARGING_SUMMARY: 'charging-summary',
+    // BATTERY_USAGE_CHART: 'battery-usage-chart',
+    // STATISTICAL_DATA: 'statistical-data',
     MANAGEMENT_STATUS: 'management-status',    
   },
   LOGIN: {

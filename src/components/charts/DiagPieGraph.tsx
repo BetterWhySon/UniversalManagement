@@ -13,7 +13,7 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
 
             const options = {
                 animation: false,
-                backgroundColor: '#2B313B',
+                backgroundColor: '#1e293b',
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params: any) {

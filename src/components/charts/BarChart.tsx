@@ -23,9 +23,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
       const maxTime = Math.max(...data.map(item => item.time || 0));
       const formattedTime = formatTime(maxTime);
       const digitCount = formattedTime.length;
-      return `${10 + digitCount * 2}%`; // 기본 10% + 자릿수에 따라 증가
+      return `${5 + digitCount}%`;
     }
-    return '10%'; // 기본 마진
+    return '5%';
   }, [data, isTimeData]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
       }
 
       const options = {
-        backgroundColor: '#2B313B',
+        backgroundColor: '#1e293b',
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -50,8 +50,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
         },
         grid: {
           top: '5%',
-          left: '8%',
-          right: rightMargin, // 동적으로 계산된 오른쪽 마진 사용
+          left: '5%',
+          right: rightMargin,
           bottom: '5%',
           containLabel: true
         },
@@ -104,7 +104,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 '{c}',
               color: '#fff',
               fontSize: 14,
-              distance: 5
+              distance: 2
             }
           }
         ]

@@ -22,6 +22,8 @@ type TableDataProps<T> = {
     pageNumber?: number;
     className?: string; // 새로 추가된 className 속성
     style?: React.CSSProperties;
+    onCellContextMenu?: (e: React.MouseEvent, columnIndex: number) => void;
+    selectedRows?: string[];
 };
 
 function formatMultiLineString(str: any) {
@@ -43,6 +45,9 @@ export default function TableData<T extends { id: number }>({
     onSelectPage,
     pageNumber = 0,
     className, // 새로 추가된 className prop
+    style,
+    onCellContextMenu,
+    selectedRows = [],
 }: TableDataProps<T>) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [pageNumberA, setPageNumberA] = useState<number>(pageNumber);
@@ -88,11 +93,11 @@ export default function TableData<T extends { id: number }>({
                                             ? {
                                                 width: item.width,
                                                 paddingInline: item.paddingInline,
-                                                textAlign: item.align,
+                                                textAlign: item.align as 'left' | 'center' | 'right'
                                             }
-                                            : { paddingInline: item.paddingInline, textAlign: item.align }
+                                            : { paddingInline: item.paddingInline, textAlign: item.align as 'left' | 'center' | 'right' }
                                     }>
-                                    {trans(item.name)}
+                                    {item.title || trans(item.name)}
                                 </td>
                             ))}
                         </tr>
@@ -125,14 +130,20 @@ export default function TableData<T extends { id: number }>({
                                                 onSelectRow && 'cursor-pointer hover:bg-hw-gray-9',
                                                 'transition-colors odd:bg-[#363E4B]',
                                             )}>
-                                            {columns.map((item: TableColumn<T>) => (
+                                            {columns.map((item: TableColumn<T>, columnIndex: number) => (
                                                 <td
                                                     key={item.dataIndex}
                                                     style={{
-                                                        textAlign: item.align,
+                                                        textAlign: item.align as 'left' | 'center' | 'right',
                                                         paddingInline: item.paddingInline,
                                                     }}
-                                                    className={cn('max-xs:!px-[18px]', !item.noPaddingBlock && 'py-[14px]', 'leading-[125%]')}>
+                                                    onContextMenu={(e) => columnIndex === 0 && selectedRows.length > 0 && onCellContextMenu?.(e, columnIndex)}
+                                                    className={cn(
+                                                        'max-xs:!px-[18px]',
+                                                        !item.noPaddingBlock && 'py-[14px]',
+                                                        'leading-[125%]',
+                                                        columnIndex === 0 && selectedRows.length > 0 && 'cursor-context-menu'
+                                                    )}>
                                                     {item.dataIndex === 'modelType' ? (
                                                         row.modelType === '공랭식' ? trans('airCooling') :
                                                             row.modelType === '액침식' ? trans('immersionCooling') :

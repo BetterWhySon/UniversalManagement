@@ -24,14 +24,11 @@ export default function MainLayout() {
   const shouldShowSidebar = () => {
     return ![
       '/',
-      `/${PATH.DASHBOARD.BATTERY_ALARM}`,
-      `/${PATH.DASHBOARD.POLICY_COMPLIANCE}`,
-      `/${PATH.DASHBOARD.SERVICE_REQUIREMENT}`,
-      `/${PATH.DASHBOARD.CHARGING_SUMMARY}`,
-      `/${PATH.DASHBOARD.BATTERY_USAGE_CHART}`,
-      `/${PATH.DASHBOARD.STATISTICAL_DATA}`,
-      `/${PATH.DASHBOARD.MANAGEMENT_STATUS}`,
-      '/3d-modeling'
+      PATH.DASHBOARD.BATTERY_STATUS,    
+      PATH.DASHBOARD.MANAGEMENT_STATUS,
+      PATH.DASHBOARD.POLICY_COMPLIANCE,
+      PATH.DASHBOARD.UNUSED_BATTERY,
+      PATH.DASHBOARD.CHARGING_STATUS,
     ].includes(location.pathname);
   };
 

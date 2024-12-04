@@ -11,7 +11,6 @@ import { PATH } from '@/router/path';
 
 import BWIcon from '@/assets/images/bw_icon.png';
 
-
 type Props = {
   isOpenSidebar: boolean;
   toggleSidebar: () => void;
@@ -20,8 +19,6 @@ type Props = {
 export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
   const { t: trans } = useTranslation('translation');
   const [time, setTime] = useState(dayjs().format(DATE_FORMAT.YYYY_MM_DD_HH_MM_SS_A));
-  const { username, storeUsername, storeIsAdminUser, storeIsLevel1, storeIsLevel2 } = useLoginStore();
-  const { connect, disconnect, setNavigateCB } = useAccessInfoStore();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,7 +31,7 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
   }
 
   const handleSettingsClick = () => {
-    navigate('/admin/e-vehicle-registration');  // 실제 관리 페이지 경로로 수정해주세요
+    navigate('/admin/e-vehicle-registration');
   };
 
   const handleLogoutClick = () => {
@@ -42,8 +39,8 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
     navigate('/login');
   };
 
-  const handleStatusItemClick = () => {
-    navigate(PATH.DASHBOARD.MANAGEMENT_STATUS);
+  const handleStatusItemClick = (status: string) => {
+    navigate(PATH.DASHBOARD.BATTERY_STATUS, { state: { status } });
   };
 
   const handleLogoClick = () => {
@@ -55,7 +52,7 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
   };
 
   return (
-    <header className={cn('z-50 h-14 flex items-center justify-between px-6 bg-hw-dark-2 w-full fixed top-0 left-0')}>
+    <header className={cn('z-50 h-14 flex items-center justify-between px-6 bg-slate-800 w-full fixed top-0 left-0')}>
       <div 
         className="flex items-center gap-3 cursor-pointer" 
         onClick={handleLogoClick}
@@ -66,21 +63,36 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
         <div className="bg-white p-1 rounded">
           <img src={BWIcon} alt="BW Icon" className="h-10 w-auto" />
         </div>
-        <span className="text-white text-2xl font-bold">강남 푸르지오 EV 관리현황</span>
+        <span className="text-white text-2xl font-bold">실시간 종합관제</span>
       </div>
       <div className="flex items-center gap-8 ml-auto">
-        <StatusItem label="총 관리대수" value="28" unit="대" onClick={handleStatusItemClick} />
-        <StatusItem label="단지 이동" value="2" unit="대" textColor="text-green-500" onClick={handleStatusItemClick} />
-        <StatusItem label="충전중" value="6" unit="대" textColor="text-green-500" onClick={handleStatusItemClick} />
-        <StatusItem label="주차중" value="12" unit="대" onClick={handleStatusItemClick} />
-        <StatusItem label="외부 이동" value="8" unit="대" onClick={handleStatusItemClick} />
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={handleMonitoringClick}
-            className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
-          >
-            모니터링
-          </button>
+        <StatusItem 
+          label="사용대기" 
+          value="28" 
+          unit="대" 
+          onClick={() => handleStatusItemClick('사용대기')} 
+        />
+        <StatusItem 
+          label="방전중" 
+          value="2" 
+          unit="대" 
+          textColor="text-green-500" 
+          onClick={() => handleStatusItemClick('방전중')} 
+        />
+        <StatusItem 
+          label="충전중" 
+          value="6" 
+          unit="대" 
+          textColor="text-green-500" 
+          onClick={() => handleStatusItemClick('충전중')} 
+        />
+        <StatusItem 
+          label="오프라인" 
+          value="12" 
+          unit="대" 
+          onClick={() => handleStatusItemClick('오프라인')} 
+        />
+        <div className="flex items-center gap-2">         
           <button 
             onClick={handleSettingsClick}
             className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
@@ -104,7 +116,7 @@ type StatusItemProps = {
   value: string;
   unit: string;
   textColor?: string;
-  onClick?: () => void; // onClick 속성 추가
+  onClick?: () => void;
 };
 
 function StatusItem({ label, value, unit, textColor = 'text-white', onClick }: StatusItemProps) {
