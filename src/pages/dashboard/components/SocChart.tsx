@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import BarChart from '@/components/charts/BarChart';
 import VehicleDetailPopup from '@/components/popup/VehicleDetailPopup';
@@ -8,6 +8,7 @@ const SocChart: React.FC = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<any | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [isWorst, setIsWorst] = useState(true);
 
   const tooltipText = 'SOC(State of Charge)는 배터리의 현재 충전 상태를 나타내는 지표입니다. 권장 범위를 벗어난 SOC는 배터리 수명에 영향을 줄 수 있습니다.';
 
@@ -22,7 +23,13 @@ const SocChart: React.FC = () => {
     { id: '67사1606', time: 55 },
     { id: '66어1468', time: 48 },
     { id: '16사9947', time: 40.8 },
-  ].reverse());
+  ]);
+
+  const sortedData = useMemo(() => {
+    return isWorst 
+      ? [...data].sort((a, b) => a.time - b.time)  // worst: 오름차순
+      : [...data].sort((a, b) => b.time - a.time); // best: 내림차순
+  }, [data, isWorst]);
 
   const handleBarClick = (id: string) => {
     const vehicleDetail = {
@@ -49,11 +56,16 @@ const SocChart: React.FC = () => {
         >
           SOC
         </h3>
-        <span className="bg-blue-800 text-white px-2 py-0.5 text-sm rounded">worst</span>
+        <button 
+          className="bg-blue-800 text-white px-2 py-0.5 text-sm rounded hover:bg-blue-700"
+          onClick={() => setIsWorst(!isWorst)}
+        >
+          {isWorst ? 'worst' : 'best'}
+        </button>
       </div>
       <div className="flex-grow">
         <BarChart 
-          data={data} 
+          data={sortedData} 
           isTimeData={true}
           onBarClick={handleBarClick}
         />

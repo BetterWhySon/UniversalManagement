@@ -40,7 +40,7 @@ const UnusedVehicleList: React.FC = () => {
     <div className="h-full bg-slate-800 rounded-lg border border-white">
       <div className="flex items-center gap-2 p-3 border-b border-gray-600">
         <h3 
-          className="text-white text-lg cursor-pointer hover:text-blue-400"
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
           onClick={() => navigate('/dashboard/unused-battery')}
         >
           최근 미운행 전기차 LIST

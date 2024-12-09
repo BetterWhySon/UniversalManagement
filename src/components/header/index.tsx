@@ -31,7 +31,7 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
   }
 
   const handleSettingsClick = () => {
-    navigate('/admin/e-vehicle-registration');
+    navigate(PATH.SETTING.get('STANDARD_INFO', 'SERVICE_STATUS'));
   };
 
   const handleLogoutClick = () => {
@@ -49,6 +49,10 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
 
   const handleMonitoringClick = () => {
     navigate(PATH.MONITORING.get());
+  };
+
+  const handleOperationStatusClick = () => {
+    navigate('/realtime/operation-status');
   };
 
   return (
@@ -93,6 +97,12 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
           onClick={() => handleStatusItemClick('오프라인')} 
         />
         <div className="flex items-center gap-2">         
+          <button 
+            onClick={handleOperationStatusClick}
+            className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
+          >
+            실시간 운영현황
+          </button>
           <button 
             onClick={handleSettingsClick}
             className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"

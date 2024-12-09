@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DiagRingChart from '@/components/charts/DiagRingGraph';
 import LineChart from '@/components/charts/LineChart';
+import OperationModal from './subComponents/OperationModal';
+import GroupDischargeStatus from './GroupDischargeStatus';
 
 const OperationSummary: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [showGroupView, setShowGroupView] = useState(false);
+
+  if (showGroupView) {
+    return <GroupDischargeStatus onSwitchView={() => setShowGroupView(false)} />;
+  }
+
   const totalVehicles = {
     value: 200,
     label: '관리대수'
@@ -21,8 +30,16 @@ const OperationSummary: React.FC = () => {
   return (
     <div className="bg-slate-800 p-4 rounded-lg border border-white h-full">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white text-lg">운영 현황 요약</h3>
-        <button className="bg-blue-700 text-white px-4 py-1 rounded">
+        <h3 
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          onClick={() => setIsModalOpen(true)}
+        >
+          운영 현황
+        </h3>
+        <button 
+          className="bg-blue-700 text-white px-4 py-1 rounded"
+          onClick={() => setShowGroupView(true)}
+        >
           그룹별
         </button>
       </div>
@@ -64,6 +81,11 @@ const OperationSummary: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <OperationModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

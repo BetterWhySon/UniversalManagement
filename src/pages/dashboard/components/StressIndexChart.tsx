@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import BarChart from '@/components/charts/BarChart';
 import VehicleDetailPopup from '@/components/popup/VehicleDetailPopup';
@@ -8,6 +8,7 @@ const StressIndexChart: React.FC = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<any | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [isWorst, setIsWorst] = useState(true);
 
   const tooltipText = '스트레스 지수는 배터리의 상태와 사용 패턴을 분석하여 산출된 값으로, 배터리의 수명과 안전성을 예측하는 지표입니다.';
 
@@ -22,7 +23,13 @@ const StressIndexChart: React.FC = () => {
     { id: '67사1606', time: 55 },
     { id: '66어1468', time: 48 },
     { id: '16사9947', time: 40.8 },
-  ].reverse());
+  ]);
+
+  const sortedData = useMemo(() => {
+    return isWorst 
+      ? [...data].sort((a, b) => a.time - b.time)
+      : [...data].sort((a, b) => b.time - a.time);
+  }, [data, isWorst]);
 
   const handleBarClick = (id: string) => {
     const vehicleDetail = {
@@ -49,11 +56,16 @@ const StressIndexChart: React.FC = () => {
         >
           스트레스 지수
         </h3>
-        <span className="bg-blue-800 text-white px-2 py-0.5 text-sm rounded">worst</span>
+        <button 
+          className="bg-blue-800 text-white px-2 py-0.5 text-sm rounded hover:bg-blue-700"
+          onClick={() => setIsWorst(!isWorst)}
+        >
+          {isWorst ? 'worst' : 'best'}
+        </button>
       </div>
       <div className="flex-grow">
         <BarChart 
-          data={data} 
+          data={sortedData}
           isTimeData={true}
           onBarClick={handleBarClick}
         />

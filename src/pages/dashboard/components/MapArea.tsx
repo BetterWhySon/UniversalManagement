@@ -55,10 +55,11 @@ const MapArea = () => {
           id="map" 
           className="w-full h-full rounded-b-lg"
           style={{
-            // 지도 컨테이너에 직접 스타일 적용
-            borderBottomLeftRadius: '0.5rem',    // 8px
-            borderBottomRightRadius: '0.5rem',   // 8px
-            overflow: 'hidden'                   // 지도 내용이 라운드 영역을 벗어나지 않도록
+            borderBottomLeftRadius: '0.5rem',
+            borderBottomRightRadius: '0.5rem',
+            overflow: 'hidden',
+            position: 'relative',
+            zIndex: 1
           }}
         />
       </div>

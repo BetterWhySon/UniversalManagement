@@ -29,6 +29,8 @@ export default function MainLayout() {
       PATH.DASHBOARD.POLICY_COMPLIANCE,
       PATH.DASHBOARD.UNUSED_BATTERY,
       PATH.DASHBOARD.CHARGING_STATUS,
+      PATH.DASHBOARD.OPERATION_STATUS,
+      '/realtime/operation-status',
     ].includes(location.pathname);
   };
 
