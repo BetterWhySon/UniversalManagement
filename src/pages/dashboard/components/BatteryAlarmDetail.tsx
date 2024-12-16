@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import BatteryInfoModal from './subComponents/BatteryInfoModal';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '@/router/path';
 
 interface Column {
   name: string;
@@ -9,6 +11,7 @@ interface Column {
 }
 
 const BatteryAlarmDetail: React.FC = () => {
+  const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState<{ key: string; order: 'asc' | 'desc' }>();
   const [showBatteryInfo, setShowBatteryInfo] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<string>('');
@@ -78,16 +81,22 @@ const BatteryAlarmDetail: React.FC = () => {
     setSortConfig(undefined);
   };
 
+  const handleTitleClick = () => {
+    navigate(PATH.DASHBOARD.BATTERY_ALARM_DETAIL);
+  };
+
   return (
     <div className="bg-slate-800 p-2 rounded-lg border border-white h-full flex flex-col relative">
-      <h3 
-        className="text-white text-lg mb-4 text-left cursor-pointer hover:text-blue-400"
-        onClick={handleReset}
-      >
-        배터리 알람 세부
-      </h3>
+      <div className="flex items-center gap-2 py-1 px-3 mb-1">
+        <h3 
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          onClick={handleTitleClick}
+        >
+          배터리 알람 세부
+        </h3>
+      </div>
       <div className="flex-grow overflow-auto">
-        <table className="w-full text-[15px] font-light">
+        <table className="w-full text-[14px] font-light">
           <thead>
             <tr className="bg-gray-700">
               {columns.map((column) => (

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '@/router/path';
 
 interface ChargingStatus {
     deviceId: string;
@@ -13,6 +15,12 @@ interface ChargingStatus {
 }
 
 const ChargingDetail: React.FC = () => {
+    const navigate = useNavigate();
+
+    const handleTitleClick = () => {
+        navigate(PATH.DASHBOARD.CHARGING_DETAIL);
+    };
+
     const chargingData: ChargingStatus[] = [
         {
             deviceId: '배터리1호',
@@ -77,7 +85,7 @@ const ChargingDetail: React.FC = () => {
             temperature: '26 °C',
             voltage: '4.31V',
             current: '-',
-            chargingTime: '7시간 58분',
+            chargingTime: '7시�� 58분',
             remainingTime: '48분'
         }
     ];
@@ -98,41 +106,45 @@ const ChargingDetail: React.FC = () => {
     };
 
     return (
-        <div className="h-full bg-slate-800 rounded-lg border border-white">
-            <div className="flex items-center gap-2 p-3 border-b border-gray-600">
-                <h3 className="text-white text-lg">충전 현황 세부</h3>
+        <div className="bg-slate-800 p-2 rounded-lg border border-white h-full flex flex-col relative">
+            <div className="flex items-center gap-2 py-1 px-3 mb-1">
+                <h3 
+                    className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+                    onClick={handleTitleClick}
+                >
+                    충전 현황 세부
+                </h3>
             </div>
-
-            <div className="p-3 overflow-y-auto" style={{ height: 'calc(100% - 45px)' }}>
-                <table className="w-full text-white text-sm">
+            <div className="flex-grow overflow-auto">
+                <table className="w-full text-[14px] font-light">
                     <thead>
-                        <tr className="border-b border-gray-600">
-                            <th className="pb-2 text-left font-normal text-gray-400">기기명</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">충전전행</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">상태정보</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">SOC</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">온도</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">전압</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">충전전류</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">충전진행시간</th>
-                            <th className="pb-2 text-left font-normal text-gray-400">충전 완료후 경과시간</th>
+                        <tr className="bg-gray-700">
+                            <th className="py-2 px-1.5 text-center text-white">기기명</th>
+                            <th className="py-2 px-1.5 text-center text-white">충전진행</th>
+                            <th className="py-2 px-1.5 text-center text-white">상태정보</th>
+                            <th className="py-2 px-1.5 text-center text-white">SOC</th>
+                            <th className="py-2 px-1.5 text-center text-white">온도</th>
+                            <th className="py-2 px-1.5 text-center text-white">전압</th>
+                            <th className="py-2 px-1.5 text-center text-white">충전전류</th>
+                            <th className="py-2 px-1.5 text-center text-white">충전진행시간</th>
+                            <th className="py-2 px-1.5 text-center text-white">충전 완료후 경과시간</th>
                         </tr>
                     </thead>
                     <tbody>
                         {chargingData.map((item, index) => (
                             <tr
                                 key={index}
-                                className={`border-b border-gray-700 last:border-b-0 hover:bg-slate-700 cursor-pointer ${getStatusColor(item.status)}`}
+                                className="border-b border-gray-700 hover:bg-gray-600 text-white"
                             >
-                                <td className="py-2">{item.deviceId}</td>
-                                <td className="py-2">{item.status}</td>
-                                <td className={`py-2 ${getConditionColor(item.condition)}`}>{item.condition}</td>
-                                <td className="py-2">{item.soc}</td>
-                                <td className="py-2">{item.temperature}</td>
-                                <td className="py-2">{item.voltage}</td>
-                                <td className="py-2">{item.current}</td>
-                                <td className="py-2">{item.chargingTime}</td>
-                                <td className="py-2">{item.remainingTime}</td>
+                                <td className="py-2 px-1.5 text-center">{item.deviceId}</td>
+                                <td className="py-2 px-1.5 text-center">{item.status}</td>
+                                <td className={`py-2 px-1.5 text-center ${getConditionColor(item.condition)}`}>{item.condition}</td>
+                                <td className="py-2 px-1.5 text-center">{item.soc}</td>
+                                <td className="py-2 px-1.5 text-center">{item.temperature}</td>
+                                <td className="py-2 px-1.5 text-center">{item.voltage}</td>
+                                <td className="py-2 px-1.5 text-center">{item.current}</td>
+                                <td className="py-2 px-1.5 text-center">{item.chargingTime}</td>
+                                <td className="py-2 px-1.5 text-center">{item.remainingTime}</td>
                             </tr>
                         ))}
                     </tbody>

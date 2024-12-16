@@ -10,17 +10,13 @@ import BatteryStatusPage from '@/pages/dashboard/pages/BatteryStatusPage';
 import PolicyCompliancePage from '@/pages/dashboard/pages/PolicyCompliancePage';
 import UnusedBatteryPage from '@/pages/dashboard/pages/UnusedBatteryPage';
 import ChargingStatusPage from '@/pages/dashboard/pages/ChargingStatusPage';
-import EVehicleRegistrationPage from '@/pages/admin/admin_customer/e_vehicle_registration/page';
-import ServiceStatusPage from '@/pages/setting/service-status/page';
-import BatteryRegistrationPage from '@/pages/setting/battery-registration/page';
-import RealtimeMonitoringPage from '@/pages/setting/realtime-monitoring/page';
+import ServiceStatusPage from '@/pages/setting/standard-info/ServiceStatusPage';
 import OperationStatusPage from '@/pages/realtime/OperationStatusPage';
-import IndividualLookupPage from '@/pages/setting/individual-lookup/page';
-import CategoryLookupPage from '@/pages/setting/category-lookup/page';
-import DeviceLookupPage from '@/pages/setting/device-lookup/page';
-import DailyOperationPage from '@/pages/setting/daily-operation/page';
-import UsageHistoryPage from '@/pages/setting/usage-history/page';
-import AlarmHistoryPage from '@/pages/setting/alarm-history/page';
+import IndividualLookupPage from '@/pages/setting/battery/IndividualLookupPage';
+import BatteryAlarmDetailPage from '@/pages/dashboard/pages/BatteryAlarmDetailPage';
+import ChargingDetailPage from '@/pages/dashboard/pages/ChargingDetailPage';
+import ByManagementItemPage from '@/pages/setting/battery/ByManagementItemPage';
+import ByManagementDevicePage from '@/pages/setting/battery/ByManagementDevicePage';
 
 const router = createBrowserRouter([
     {
@@ -32,19 +28,37 @@ const router = createBrowserRouter([
             { path: '/system/:systemId/rack/:rackId', Component: SystemPage },
             { path: '/system/:systemId/rack/:rackId/cell', Component: SystemPage },
             { path: PATH.DASHBOARD.BATTERY_STATUS, Component: BatteryStatusPage },
+            // { path: PATH.DASHBOARD.BATTERY_ALARM, Component: BatteryAlarmPage },
+            { path: PATH.DASHBOARD.BATTERY_ALARM_DETAIL, Component: BatteryAlarmDetailPage },
             { path: PATH.DASHBOARD.POLICY_COMPLIANCE, Component: PolicyCompliancePage },
             { path: PATH.DASHBOARD.UNUSED_BATTERY, Component: UnusedBatteryPage },
             { path: PATH.DASHBOARD.CHARGING_STATUS, Component: ChargingStatusPage },
+            { path: PATH.DASHBOARD.CHARGING_DETAIL, Component: ChargingDetailPage },
             { path: PATH.SETTING.get('STANDARD_INFO', 'SERVICE_STATUS'), Component: ServiceStatusPage },
             // { path: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_REGISTRATION'), Component: BatteryRegistrationPage },
             // { path: PATH.SETTING.get('MONITORING', 'REALTIME'), Component: RealtimeMonitoringPage },
             // { path: PATH.SETTING.get('MONITORING', 'OPERATION'), Component: OperationStatusPage },
-            // { path: PATH.SETTING.get('BATTERY', 'INDIVIDUAL'), Component: IndividualLookupPage },
+            { 
+                path: PATH.SETTING.get('BATTERY', 'INDIVIDUAL'), 
+                Component: IndividualLookupPage 
+            },
+            { 
+                path: PATH.SETTING.get('BATTERY', 'BY_MANAGEMENT_ITEM'), 
+                Component: ByManagementItemPage 
+            },
+            { 
+                path: PATH.SETTING.get('BATTERY', 'BY_MANAGEMENT_DEVICE'), 
+                Component: ByManagementDevicePage 
+            },
             // { path: PATH.SETTING.get('BATTERY', 'BY_CATEGORY'), Component: CategoryLookupPage },
             // { path: PATH.SETTING.get('BATTERY', 'BY_DEVICE'), Component: DeviceLookupPage },
             // { path: PATH.SETTING.get('STATISTICS', 'DAILY_OPERATION'), Component: DailyOperationPage },
             // { path: PATH.SETTING.get('STATISTICS', 'USAGE_HISTORY'), Component: UsageHistoryPage },
             // { path: PATH.SETTING.get('STATISTICS', 'ALARM_HISTORY'), Component: AlarmHistoryPage },
+            // { 
+            //     path: '/dashboard/battery-alarm-detail', 
+            //     Component: BatteryAlarmDetailPage 
+            // },
         ],
     },
     {

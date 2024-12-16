@@ -1,3 +1,17 @@
+type SettingCategory = {
+  _: string;
+  [key: string]: string;
+};
+
+type Settings = {
+  _: string;
+  STANDARD_INFO: SettingCategory;
+  BATTERY: SettingCategory;
+  MONITORING: SettingCategory;
+  STATISTICS: SettingCategory;
+  get(category: 'STANDARD_INFO' | 'BATTERY' | 'MONITORING' | 'STATISTICS', key?: string): string;
+};
+
 export const PATH = {
   DASHBOARD: {
     _: '/',   
@@ -7,7 +21,9 @@ export const PATH = {
     UNUSED_BATTERY: '/dashboard/unused-battery',
     CHARGING_STATUS: '/dashboard/charging-status',
     OPERATION_STATUS: '/dashboard/operation-status',
+    BATTERY_ALARM_DETAIL: '/dashboard/battery-alarm-detail',
     MANAGEMENT_STATUS: 'management-status',    
+    CHARGING_DETAIL: '/dashboard/charging-detail',    
   },
   // 설정
   SETTING: {
@@ -17,16 +33,16 @@ export const PATH = {
       SERVICE_STATUS: 'service-status',          // 관제서비스 신청현황
       BATTERY_REGISTRATION: 'battery-registration', // 배터리 등록현황
     },
+    BATTERY: {
+      _: 'battery',
+      INDIVIDUAL: 'individual',    // 개별기기 조회
+      BY_MANAGEMENT_ITEM: 'management-item',     // 관리항목별 조회
+      BY_MANAGEMENT_DEVICE: 'management-device',         // 관리기기별 조회
+    },
     MONITORING: {
       _: 'monitoring',
       REALTIME: 'realtime-monitoring',  // 실시간 종합관제
       OPERATION: 'operation-status',      // 실시간 운영현황
-    },
-    BATTERY: {
-      _: 'battery',
-      INDIVIDUAL: 'individual-lookup',    // 개별기기 조회
-      BY_CATEGORY: 'category-lookup',     // 관리항목별 조회
-      BY_DEVICE: 'device-lookup',         // 관리기기별 조회
     },
     STATISTICS: {
       _: 'statistics',
@@ -35,12 +51,12 @@ export const PATH = {
       ALARM_HISTORY: 'alarm-history',           // 알람이력 조회
     },
 
-    get(category: 'STANDARD_INFO' | 'MONITORING' | 'BATTERY' | 'STATISTICS', key?: string) {
+    get(this: Settings, category: 'STANDARD_INFO' | 'BATTERY' | 'MONITORING' | 'STATISTICS', key?: string) {
       if (!category) return `/${this._}`;
       if (!key) return `/${this._}/${this[category]._}`;
       return `/${this._}/${this[category]._}/${this[category][key]}`;
     },
-  },
+  } as Settings,
   // 기준정보 등록
   STANDARD_INFO: {
     _: 'standard-info',
@@ -65,9 +81,9 @@ export const PATH = {
   BATTERY: {
     _: 'battery',
     INDIVIDUAL: 'individual',
-    BY_CATEGORY: 'by-category',
-    BY_DEVICE: 'by-device',
-    get(key?: 'INDIVIDUAL' | 'BY_CATEGORY' | 'BY_DEVICE') {
+    BY_MANAGEMENT_ITEM: 'management-item',
+    BY_MANAGEMENT_DEVICE: 'management-device',
+    get(key?: 'INDIVIDUAL' | 'BY_MANAGEMENT_ITEM' | 'BY_MANAGEMENT_DEVICE') {
       if (!key) return `/${this._}`;
       return `/${this._}/${this[key]}`;
     },

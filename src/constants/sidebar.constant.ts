@@ -32,15 +32,15 @@ export const SIDEBAR_MENU = [
     subMenu: [
       {
         title: '개별기기 조회',
-        href: PATH.BATTERY.get('INDIVIDUAL')
+        href: PATH.SETTING.get('BATTERY', 'INDIVIDUAL')
       },
       {
         title: '관리항목별 조회',
-        href: PATH.BATTERY.get('BY_CATEGORY')
+        href: PATH.SETTING.get('BATTERY', 'BY_MANAGEMENT_ITEM')
       },
       {
         title: '관리기기별 조회',
-        href: PATH.BATTERY.get('BY_DEVICE')
+        href: PATH.SETTING.get('BATTERY', 'BY_MANAGEMENT_DEVICE')
       }
     ]
   },

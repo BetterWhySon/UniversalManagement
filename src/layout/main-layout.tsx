@@ -30,6 +30,9 @@ export default function MainLayout() {
       PATH.DASHBOARD.UNUSED_BATTERY,
       PATH.DASHBOARD.CHARGING_STATUS,
       PATH.DASHBOARD.OPERATION_STATUS,
+      PATH.DASHBOARD.BATTERY_ALARM,
+      PATH.DASHBOARD.BATTERY_ALARM_DETAIL,
+      PATH.DASHBOARD.CHARGING_DETAIL,
       '/realtime/operation-status',
     ].includes(location.pathname);
   };

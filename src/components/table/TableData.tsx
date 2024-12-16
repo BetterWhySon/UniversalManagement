@@ -24,6 +24,7 @@ type TableDataProps<T> = {
     style?: React.CSSProperties;
     onCellContextMenu?: (e: React.MouseEvent, columnIndex: number) => void;
     selectedRows?: string[];
+    onClick?: (row: T) => void;
 };
 
 function formatMultiLineString(str: any) {
@@ -48,6 +49,7 @@ export default function TableData<T extends { id: number }>({
     style,
     onCellContextMenu,
     selectedRows = [],
+    onClick,
 }: TableDataProps<T>) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [pageNumberA, setPageNumberA] = useState<number>(pageNumber);
@@ -122,12 +124,15 @@ export default function TableData<T extends { id: number }>({
                                     const isRowSelected = isSelected(row.id);
                                     return (
                                         <tr
-                                            onClick={() => onClickRow(index)}
                                             key={row.id}
+                                            onClick={() => {
+                                                onClickRow(index);
+                                                onClick?.(row);
+                                            }}
                                             className={cn(
                                                 isRowSelected &&
                                                 'border-2 bg-gradient-to-t from-[rgba(0,0,0,0.30)] 0% to-[rgba(0,0,0,0.30)] 100% bg-[#363E4B] border-[#7082A0]',
-                                                onSelectRow && 'cursor-pointer hover:bg-hw-gray-9',
+                                                onClick && 'cursor-pointer hover:bg-hw-gray-9',
                                                 'transition-colors odd:bg-[#363E4B]',
                                             )}>
                                             {columns.map((item: TableColumn<T>, columnIndex: number) => (

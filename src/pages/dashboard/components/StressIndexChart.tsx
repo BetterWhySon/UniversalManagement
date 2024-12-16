@@ -68,6 +68,7 @@ const StressIndexChart: React.FC = () => {
           data={sortedData}
           isTimeData={true}
           onBarClick={handleBarClick}
+          tMargin={5}
         />
       </div>
       {selectedVehicle && (

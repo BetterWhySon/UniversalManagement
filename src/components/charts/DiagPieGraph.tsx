@@ -11,9 +11,11 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
                 chartInstance.current.dispose();
             }
 
+            chartInstance.current = echarts.init(chartRef.current, 'dark');
+
             const options = {
                 animation: false,
-                backgroundColor: '#1e293b',
+                backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params: any) {
@@ -60,7 +62,6 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
                 ]
             };
 
-            chartInstance.current = echarts.init(chartRef.current, 'dark');
             chartInstance.current.setOption(options);
         }
 

@@ -37,8 +37,8 @@ const UnusedVehicleList: React.FC = () => {
   ];
 
   return (
-    <div className="h-full bg-slate-800 rounded-lg border border-white">
-      <div className="flex items-center gap-2 p-3 border-b border-gray-600">
+    <div className="bg-slate-800 p-2 rounded-lg border border-white h-full flex flex-col relative">
+      <div className="flex items-center gap-2 py-1 px-3 mb-1">
         <h3 
           className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
           onClick={() => navigate('/dashboard/unused-battery')}
@@ -46,29 +46,28 @@ const UnusedVehicleList: React.FC = () => {
           최근 미운행 전기차 LIST
         </h3>
       </div>
-      
-      <div className="p-3 overflow-y-auto" style={{ height: 'calc(100% - 45px)' }}>
-        <table className="w-full text-white text-sm">
+      <div className="flex-grow overflow-auto">
+        <table className="w-full text-[14px] font-light">
           <thead>
-            <tr className="border-b border-gray-600">
-              <th className="pb-2 text-left font-normal text-gray-400">운영사</th>
-              <th className="pb-2 text-left font-normal text-gray-400">그룹명</th>
-              <th className="pb-2 text-left font-normal text-gray-400">기기명</th>
-              <th className="pb-2 text-left font-normal text-gray-400">최근사용</th>
-              <th className="pb-2 text-left font-normal text-gray-400">경과</th>
+            <tr className="bg-gray-700">
+              <th className="py-2 px-1.5 text-center text-white">운영사</th>
+              <th className="py-2 px-1.5 text-center text-white">그룹명</th>
+              <th className="py-2 px-1.5 text-center text-white">기기명</th>
+              <th className="py-2 px-1.5 text-center text-white">최근사용</th>
+              <th className="py-2 px-1.5 text-center text-white">경과</th>
             </tr>
           </thead>
           <tbody>
             {unusedVehicles.map((vehicle, index) => (
               <tr 
                 key={index} 
-                className="border-b border-gray-700 last:border-b-0 hover:bg-slate-700 cursor-pointer"
+                className="border-b border-gray-700 hover:bg-gray-600 text-white"
               >
-                <td className="py-2">{vehicle.operator}</td>
-                <td className="py-2">{vehicle.groupName}</td>
-                <td className="py-2">{vehicle.vehicleId}</td>
-                <td className="py-2">{vehicle.lastUsed}</td>
-                <td className="py-2">{vehicle.duration}</td>
+                <td className="py-2 px-1.5 text-center">{vehicle.operator}</td>
+                <td className="py-2 px-1.5 text-center">{vehicle.groupName}</td>
+                <td className="py-2 px-1.5 text-center">{vehicle.vehicleId}</td>
+                <td className="py-2 px-1.5 text-center">{vehicle.lastUsed}</td>
+                <td className="py-2 px-1.5 text-center">{vehicle.duration}</td>
               </tr>
             ))}
           </tbody>
