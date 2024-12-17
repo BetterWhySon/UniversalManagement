@@ -5,6 +5,7 @@ import TimeSeriesChart from './components/TimeSeriesChart';
 import RatioChart from './components/RatioChart';
 
 type ChartType = '비교차트' | '시계열차트' | '비율차트';
+type ConditionType = '사업장' | '그룹' | '기기';
 
 const ByManagementItemPage = () => {
   const { t: trans } = useTranslation('translation');
@@ -13,9 +14,10 @@ const ByManagementItemPage = () => {
   const [selectedItem, setSelectedItem] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [chartType, setChartType] = useState<ChartType>('비교차트');
+  const [selectedCondition, setSelectedCondition] = useState<ConditionType>('사업장');
 
   const mockData = [
-    { id: 'VABJ023', before: 78, after: 100, beforeDiff: -2, afterDiff: 5, level: 'L5', average: 80, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ023', user: '이두식', birthDate: '68.12.25', gender: '남성', contact: '010-8644-2468' } },
+    { id: 'VABJ023', before: 78, after: 100, beforeDiff: -2, afterDiff: 5, level: 'L5', average: 80, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ023', user: '이두식', birthDate: '68.12.25', gender: '���성', contact: '010-8644-2468' } },
     { id: 'VABJ026', before: 57, after: 77, beforeDiff: 3, afterDiff: -8, level: 'L8', average: 70, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ026', user: '김민수', birthDate: '75.03.15', gender: '남성', contact: '010-2345-6789' } },
     { id: 'VABJ021', before: 65, after: 75, beforeDiff: 2, afterDiff: 5, level: 'L10', average: 75, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ021', user: '박지성', birthDate: '82.06.20', gender: '남성', contact: '010-3456-7890' } },
     { id: 'VABJ153', before: 88, after: 91, beforeDiff: 2, afterDiff: 5, level: 'L6', average: 85, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ153', user: '이영희', birthDate: '79.09.10', gender: '여성', contact: '010-4567-8901' } },
@@ -32,7 +34,7 @@ const ByManagementItemPage = () => {
     { id: 'VABJ256', before: 68, after: 82, beforeDiff: 2, afterDiff: 5, level: 'L15', average: 75, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ256', user: '최동욱', birthDate: '72.09.15', gender: '남성', contact: '010-5678-9012' } },
     { id: 'VABJ178', before: 73, after: 79, beforeDiff: 2, afterDiff: 5, level: 'L12', average: 76, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ178', user: '정유미', birthDate: '86.11.30', gender: '여성', contact: '010-6789-0123' } },
     { id: 'VABJ254', before: 85, after: 91, beforeDiff: 2, afterDiff: 5, level: 'L7', average: 88, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ254', user: '강동원', birthDate: '73.04.25', gender: '남성', contact: '010-7890-1234' } },
-    { id: 'VABJ153', before: 79, after: 83, beforeDiff: 2, afterDiff: 5, level: 'L18', average: 81, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ153', user: '손예진', birthDate: '82.08.10', gender: '여성', contact: '010-8901-2345' } },
+    { id: 'VABJ154', before: 79, after: 83, beforeDiff: 2, afterDiff: 5, level: 'L18', average: 81, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ154', user: '손예진', birthDate: '82.08.10', gender: '여성', contact: '010-8901-2345' } },
     { id: 'VABJ212', before: 66, after: 72, beforeDiff: 2, afterDiff: 5, level: 'L22', average: 69, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ212', user: '현빈', birthDate: '75.12.05', gender: '남성', contact: '010-9012-3456' } },
     { id: 'VABJ147', before: 82, after: 87, beforeDiff: 2, afterDiff: 5, level: 'L14', average: 85, info: { company: 'FF캠핑카', group: 'Bayrun640', deviceId: 'VABJ147', user: '김태리', birthDate: '87.06.18', gender: '여성', contact: '010-0123-4567' } }
   ];
@@ -77,34 +79,19 @@ const ByManagementItemPage = () => {
               </h3>
               <div className='border border-hw-gray-4 rounded-lg p-4 pt-5'>
                 <div className='flex flex-wrap gap-4 h-10 items-center'>
-                  <div className='flex gap-2 items-center'>
-                    <input
-                      type="radio"
-                      name="condition"
-                      value="사업장"
-                      checked={true}
-                      className="form-radio text-hw-orange-1 bg-hw-dark-3 border-hw-gray-4"
-                    />
-                    <span className="text-hw-white-1">사업장</span>
-                  </div>
-                  <div className='flex gap-2 items-center'>
-                    <input
-                      type="radio"
-                      name="condition"
-                      value="그룹"
-                      className="form-radio text-hw-orange-1 bg-hw-dark-3 border-hw-gray-4"
-                    />
-                    <span className="text-hw-white-1">그룹</span>
-                  </div>
-                  <div className='flex gap-2 items-center'>
-                    <input
-                      type="radio"
-                      name="condition"
-                      value="기기"
-                      className="form-radio text-hw-orange-1 bg-hw-dark-3 border-hw-gray-4"
-                    />
-                    <span className="text-hw-white-1">기기</span>
-                  </div>
+                  {(['사업장', '그룹', '기기'] as ConditionType[]).map((condition) => (
+                    <div key={condition} className='flex gap-2 items-center'>
+                      <input
+                        type="radio"
+                        name="condition"
+                        value={condition}
+                        checked={selectedCondition === condition}
+                        onChange={(e) => setSelectedCondition(e.target.value as ConditionType)}
+                        className="form-radio text-hw-orange-1 bg-hw-dark-3 border-hw-gray-4"
+                      />
+                      <span className="text-hw-white-1">{condition}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

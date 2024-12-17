@@ -40,46 +40,46 @@ interface AlarmCardProps {
           <tbody>
             {/* 기본 정보 */}
             <tr>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">동/호수</th>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">차량번호</th>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">차주</th>
-              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50">연락처</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">동/호수</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">차량번호</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">차주</th>
+              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50 text-gray-400">연락처</th>
             </tr>
             <tr className="border-b border-white/50">
-              <td className="p-2 text-center border-r border-gray-600/50">{dongHo}</td>
-              <td className="p-2 text-center border-r border-gray-600/50">{carNumber}</td>
-              <td className="p-2 text-center border-r border-gray-600/50">{owner}</td>
-              <td className="p-2 text-center">{contact}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{dongHo}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{carNumber}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{owner}</td>
+              <td className="p-2 text-center text-white">{contact}</td>
             </tr>
   
             {/* 알람 정보 */}
             <tr>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">알람 LEVEL</th>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">이상알람 내용</th>
-              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50" colSpan={2}>발생시시</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">알람 LEVEL</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">이상알람 내용</th>
+              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50 text-gray-400" colSpan={2}>발생시시</th>
             </tr>
             <tr className="border-b border-white/50">
-              <td className="p-2 text-center border-r border-gray-600/50">
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">
                 <span className={alarmLevel === '경고' ? 'text-yellow-500' : 'text-red-500'}>
                   {alarmLevel}
                 </span>
               </td>
-              <td className="p-2 text-center border-r border-gray-600/50">{alarmContent}</td>
-              <td className="p-2 text-center" colSpan={2}>{alarmTime}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{alarmContent}</td>
+              <td className="p-2 text-center text-white" colSpan={2}>{alarmTime}</td>
             </tr>
   
             {/* 측정 Data */}
             <tr>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">측정 Data</th>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">정상 범위</th>
-              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50">경과시간</th>
-              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50">알람 진행</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">측정 Data</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">정상 범위</th>
+              <th className="bg-gray-700 p-2 text-center border-r border-b border-gray-600/50 text-gray-400">경과시간</th>
+              <th className="bg-gray-700 p-2 text-center border-b border-gray-600/50 text-gray-400">알람 진행</th>
             </tr>
             <tr className={memo ? 'border-b border-white/50' : ''}>
-              <td className="p-2 text-center border-r border-gray-600/50">{measureData.value}</td>
-              <td className="p-2 text-center border-r border-gray-600/50">{measureData.range}</td>
-              <td className="p-2 text-center border-r border-gray-600/50">{measureData.duration}</td>
-              <td className="p-2 text-center">
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{measureData.value}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{measureData.range}</td>
+              <td className="p-2 text-center border-r border-gray-600/50 text-white">{measureData.duration}</td>
+              <td className="p-2 text-center text-white">
                 <span className="text-yellow-500">{measureData.status}</span>
               </td>
             </tr>
@@ -91,7 +91,7 @@ interface AlarmCardProps {
   
             {/* MEMO 입력 영역 */}
             <tr>
-              <th className="p-1 pt-3 text-left" colSpan={4}>Memo</th>
+              <th className="p-1 pt-3 text-left text-gray-400" colSpan={4}>Memo</th>
             </tr>
             <tr>
               <td className="pt-0 px-2 pb-3" colSpan={4}>

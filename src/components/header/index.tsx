@@ -98,18 +98,6 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
         />
         <div className="flex items-center gap-2">         
           <button 
-            onClick={handleOperationStatusClick}
-            className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
-          >
-            실시간 운영현황
-          </button>
-          <button 
-            onClick={handleSettingsClick}
-            className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
-          >
-            설정
-          </button>
-          <button 
             onClick={handleLogoutClick}
             className="px-3 py-1 text-base font-medium text-white hover:bg-hw-dark-1 rounded transition-colors"
           >

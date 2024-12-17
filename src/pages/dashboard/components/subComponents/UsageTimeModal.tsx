@@ -21,7 +21,7 @@ const UsageTimeModal: React.FC<UsageTimeModalProps> = ({ isOpen, onClose }) => {
     >
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">
-          <h2 className="text-white text-lg">사용시간 현황</h2>
+          <h2 className="text-white text-lg">사업장/그룹별 방전시간</h2>
         </div>
 
         <div className="text-white overflow-auto">

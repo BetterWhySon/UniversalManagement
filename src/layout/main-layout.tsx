@@ -38,25 +38,12 @@ export default function MainLayout() {
   };
 
   return (
-    <div className='min-h-screen overflow-x-auto bg-hw-dark-1 text-hw-white-1 relative'>
-      {!location.pathname.includes('/3d-modeling') ? (
-        <>
-          <Header isOpenSidebar={openSidebar} toggleSidebar={() => setOpenSidebar((prev) => !prev)} />
-          <div className='pt-14'>
-            {shouldShowSidebar() && <Sidebar isOpenSidebar={openSidebar} />}
-            <div
-              className={cn(
-                'w-[calc(100%-15.3125rem)] transition-all origin-right ml-auto',
-                !shouldShowSidebar() && 'w-full',
-                'max-lg:w-full',
-              )}>
-              <Outlet />
-            </div>
-          </div>
-        </>
-      ) : (
+    <div className="min-h-screen bg-hw-dark-1">
+      <Header />
+      <Sidebar />
+      <main className="w-full min-h-[calc(100vh-56px)] mt-14">
         <Outlet />
-      )}
+      </main>
     </div>
   );
 }

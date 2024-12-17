@@ -81,15 +81,12 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
     >
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">
-          <h2 
-            className="text-white text-lg border-b border-white inline-block cursor-pointer hover:text-blue-300"
-            onClick={() => setIsUsageTimeOpen(true)}
-          >
+          <h2 className="text-white text-lg inline-block">
             목표시간 설정
           </h2>
         </div>
 
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-2">
             <select className="bg-hw-dark-3 text-white border border-gray-600 rounded px-3 py-1.5">
               <option value="">사업장</option>
@@ -101,10 +98,16 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
               <option>영업2</option>
               <option>영업3팀</option>
             </select>
+            <button className="px-4 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
+              조회
+            </button>
           </div>
-          <button className="px-4 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
-            조회
-          </button>
+          <span 
+            className="text-white underline cursor-pointer hover:text-blue-300"
+            onClick={() => setIsUsageTimeOpen(true)}
+          >
+            사업장/그룹별 방전시간 확인하기
+          </span>
         </div>
 
         <div className="text-white overflow-auto" onContextMenu={handleContextMenu}>
