@@ -4,6 +4,7 @@ import UsageTimeModal from './UsageTimeModal';
 interface TimeSettingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  type?: 'time' | 'discharge';
 }
 
 interface ContextMenu {
@@ -12,15 +13,18 @@ interface ContextMenu {
   show: boolean;
 }
 
-const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) => {
+const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, type = 'time' }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [contextMenu, setContextMenu] = useState<ContextMenu>({
     x: 0,
     y: 0,
     show: false
   });
-  const [targetTime, setTargetTime] = useState<string>('');
+  const [targetTime, setTargetTime] = useState<number>(100);
+  const [rowTimes, setRowTimes] = useState<number[]>(new Array(8).fill(100));
   const [isUsageTimeOpen, setIsUsageTimeOpen] = useState(false);
+
+  const isDischargeType = type === 'discharge';
 
   if (!isOpen) return null;
 
@@ -65,9 +69,10 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
 
   const handleTimeSubmit = () => {
     if (targetTime) {
-      // TODO: 목표시간 적용 로직
+      setRowTimes(prev => prev.map((time, index) => 
+        selectedRows.includes(index) ? targetTime : time
+      ));
       handleCloseContextMenu();
-      setTargetTime('');
     }
   };
 
@@ -82,7 +87,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">
           <h2 className="text-white text-lg inline-block">
-            목표시간 설정
+            {isDischargeType ? '적정 방전량 등록' : '목표시간 설정'}
           </h2>
         </div>
 
@@ -106,7 +111,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
             className="text-white underline cursor-pointer hover:text-blue-300"
             onClick={() => setIsUsageTimeOpen(true)}
           >
-            사업장/그룹별 방전시간 확인하기
+            사업장/그룹별 {isDischargeType ? '평균방전량' : '방전시간'} 확인하기
           </span>
         </div>
 
@@ -126,9 +131,17 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
                 <th className="py-2 text-center border border-gray-600 px-4">그룹명</th>
                 <th className="py-2 text-center border border-gray-600 px-4">기기명</th>
                 <th className="py-2 text-center border border-gray-600 px-4">기준</th>
-                <th className="py-2 text-center border border-gray-600 px-4">체 평균시간</th>
-                <th className="py-2 text-center border border-gray-600 px-4">최근 평균시간</th>
-                <th className="py-2 text-center border border-gray-600 px-4">목표시간</th>
+                <th className="py-2 text-center border border-gray-600 px-4">
+                  {isDischargeType ? '평균방전량' : '평균방전시간'}<br/>
+                  (전체)
+                </th>
+                <th className="py-2 text-center border border-gray-600 px-4">
+                  {isDischargeType ? '평균방전량' : '평균방전시간'}<br/>
+                  (최근1주일)
+                </th>
+                <th className="py-2 text-center border border-gray-600 px-4">
+                  {isDischargeType ? '적정 방전량' : '목표시간'}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -148,7 +161,19 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
                   <td className="border border-gray-600 px-4 text-center">주간</td>
                   <td className="border border-gray-600 px-4 text-center">{88 + index}</td>
                   <td className="border border-gray-600 px-4 text-center">{89 + index}</td>
-                  <td className="border border-gray-600 px-4 text-center">100</td>
+                  <td className="border border-gray-600 px-4 text-center">
+                    <input
+                      type="number"
+                      value={rowTimes[index]}
+                      onChange={(e) => {
+                        const newTimes = [...rowTimes];
+                        newTimes[index] = Number(e.target.value);
+                        setRowTimes(newTimes);
+                      }}
+                      className="bg-slate-700 text-white border border-gray-600 rounded px-2 py-1 w-[80px] text-right"
+                      min="0"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -178,14 +203,12 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
             <div className="flex items-center gap-2">
               <span className="text-white whitespace-nowrap">일괄 등록</span>
               <input
-                type="text"
+                type="number"
                 value={targetTime}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  setTargetTime(value);
-                }}
+                onChange={(e) => setTargetTime(Number(e.target.value))}
                 className="bg-white text-gray-800 border border-gray-300 rounded px-2 py-1 w-[60px] placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
                 placeholder="시간"
+                min="0"
               />
               <span className="text-white">시간</span>
               <button
@@ -202,6 +225,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose }) 
         <UsageTimeModal 
           isOpen={isUsageTimeOpen}
           onClose={() => setIsUsageTimeOpen(false)}
+          type={type}
         />
       </div>
     </div>

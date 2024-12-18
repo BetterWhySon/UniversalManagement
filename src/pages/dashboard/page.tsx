@@ -1,5 +1,5 @@
 import './style.scss';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useWebSocketStore from '@/api/socketStore';
 import MapArea from './components/MapArea';
@@ -7,15 +7,17 @@ import BatteryAbnormalAlarm from './components/BatteryAbnormalAlarm';
 import EVPolicyComplianceRate from './components/EVPolicyComplianceRate';
 import BatteryAlarmDetail from './components/BatteryAlarmDetail';
 import OperationSummary from './components/OperationSummary';
-import StressIndexChart from './components/StressIndexChart';
-import SocChart from './components/SocChart';
-import ElectricityEfficiencyChart from './components/ElectricityEfficiencyChart';
+import MetricChart from './components/MetricChart';
 import UnusedVehicleList from './components/UnusedVehicleList';
 import ChargingSummary from './components/ChargingSummary';
 import ChargingDetail from './components/ChargingDetail';
 
 export default function DashboardPage() {
     const navigate = useNavigate();
+    const [selectedMetrics, setSelectedMetrics] = useState<string[]>(() => {
+        const saved = localStorage.getItem('selectedMetrics');
+        return saved ? JSON.parse(saved) : [];
+    });
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -26,6 +28,12 @@ export default function DashboardPage() {
             return;
         }
     }, []);
+
+    const handleMetricsSelect = (items: string[]) => {
+        console.log('Selected items:', items);
+        setSelectedMetrics([...items]);
+        localStorage.setItem('selectedMetrics', JSON.stringify(items));
+    };
 
     return (
         <div className='dashboard-content bg-hw-dark-1 p-2 h-[calc(100vh-65px)]'>
@@ -59,9 +67,30 @@ export default function DashboardPage() {
                                 <OperationSummary />
                             </div>
                             <div className='w-[53.6%] flex space-x-1'>
-                                <div className='w-1/3'><StressIndexChart /></div>
-                                <div className='w-1/3'><SocChart /></div>
-                                <div className='w-1/3'><ElectricityEfficiencyChart /></div>
+                                <div className='w-1/3'>
+                                    <MetricChart 
+                                        type="stress" 
+                                        selectedTitle={selectedMetrics[0]} 
+                                        onMetricsSelect={handleMetricsSelect}
+                                        selectedMetrics={selectedMetrics}
+                                    />
+                                </div>
+                                <div className='w-1/3'>
+                                    <MetricChart 
+                                        type="soc" 
+                                        selectedTitle={selectedMetrics[1]} 
+                                        onMetricsSelect={handleMetricsSelect}
+                                        selectedMetrics={selectedMetrics}
+                                    />
+                                </div>
+                                <div className='w-1/3'>
+                                    <MetricChart 
+                                        type="efficiency" 
+                                        selectedTitle={selectedMetrics[2]} 
+                                        onMetricsSelect={handleMetricsSelect}
+                                        selectedMetrics={selectedMetrics}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,19 +1,24 @@
 import { useRef, useEffect } from 'react';
 import * as echarts from 'echarts';
 
-const DiagRingChart = (props: any) => {
+const DiagRingChart = ({ value, color = '#5470c6', label, unit = '%' }: { 
+  value: number; 
+  color?: string;
+  label: string;
+  unit?: string;
+}) => {
     var chart: echarts.EChartsType | null | undefined = null;
     const chartRef = useRef<HTMLDivElement>(null);
 
     const gaugeData = [
         {
-            value: props.value,
+            value: value,
             detail: {
                 valueAnimation: true,
-                offsetCenter: ['0%', '0%'],  // 중앙 정렬을 위해 수정
+                offsetCenter: ['0%', '0%'],
                 fontSize: 24,
                 color: '#fff',
-                formatter: '{value}%'
+                formatter: () => `${label}${unit}`
             }
         }
     ];
@@ -24,7 +29,6 @@ const DiagRingChart = (props: any) => {
                 radius: '100%',
                 startAngle: 90,
                 endAngle: -270,
-                color: ['#5470c6'],
                 pointer: {
                     show: false
                 },
@@ -35,7 +39,7 @@ const DiagRingChart = (props: any) => {
                     clip: false,
                     itemStyle: {
                         borderWidth: 0,
-                        color: '#5470c6'
+                        color: color
                     }
                 },
                 axisLine: {
@@ -64,7 +68,7 @@ const DiagRingChart = (props: any) => {
                     borderColor: 'transparent',
                     borderRadius: 20,
                     borderWidth: 0,
-                    formatter: '{value}%'
+                    formatter: () => `${label}${unit}`
                 }
             }
         ]
@@ -91,7 +95,7 @@ const DiagRingChart = (props: any) => {
                 }
             };
         }
-    }, [props.value]);
+    }, [value, color, label, unit, options]);
 
     return (
         <div ref={chartRef} className='w-full h-full'/>

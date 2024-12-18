@@ -3,9 +3,12 @@ import React from 'react';
 interface UsageTimeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  type?: 'time' | 'discharge';
 }
 
-const UsageTimeModal: React.FC<UsageTimeModalProps> = ({ isOpen, onClose }) => {
+const UsageTimeModal: React.FC<UsageTimeModalProps> = ({ isOpen, onClose, type = 'time' }) => {
+  const isDischargeType = type === 'discharge';
+
   if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -21,7 +24,9 @@ const UsageTimeModal: React.FC<UsageTimeModalProps> = ({ isOpen, onClose }) => {
     >
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">
-          <h2 className="text-white text-lg">사업장/그룹별 방전시간</h2>
+          <h2 className="text-white text-lg">
+            사업장/그룹별 {isDischargeType ? '평균 방전량 현황' : '평균 방전시간'}
+          </h2>
         </div>
 
         <div className="text-white overflow-auto">
@@ -31,8 +36,12 @@ const UsageTimeModal: React.FC<UsageTimeModalProps> = ({ isOpen, onClose }) => {
                 <th className="py-2 text-center border border-gray-600 px-4 w-[150px] h-[42px]">사업장</th>
                 <th className="py-2 text-center border border-gray-600 px-4 w-[150px] h-[42px]">그룹명</th>
                 <th className="py-2 text-center border border-gray-600 px-4 w-[130px] h-[42px]">기준</th>
-                <th className="py-2 text-center border border-gray-600 px-4 w-[130px] h-[42px]">전체 평균시간</th>
-                <th className="py-2 text-center border border-gray-600 px-4 w-[130px] h-[42px]">직전 평균시간</th>
+                <th className="py-2 text-center border border-gray-600 px-4 w-[130px] h-[42px]">
+                  {isDischargeType ? '평균 방전량' : '평균 방전시간'}<br/>(전체)
+                </th>
+                <th className="py-2 text-center border border-gray-600 px-4 w-[130px] h-[42px]">
+                  {isDischargeType ? '평균 방전량' : '평균 방전시간'}<br/>(최근1주일)
+                </th>
               </tr>
             </thead>
             <tbody>

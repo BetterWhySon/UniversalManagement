@@ -85,7 +85,7 @@ const ChargingDetail: React.FC = () => {
             temperature: '26 °C',
             voltage: '4.31V',
             current: '-',
-            chargingTime: '7시�� 58분',
+            chargingTime: '7시간 58분',
             remainingTime: '48분'
         }
     ];

@@ -4,6 +4,8 @@ import TimeSettingModal from './TimeSettingModal';
 interface OperationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedOption: number;
+  onOptionChange: (option: number) => void;
 }
 
 interface ContextMenu {
@@ -13,8 +15,7 @@ interface ContextMenu {
   rowIndex: number;
 }
 
-const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
-  const [selectedOption, setSelectedOption] = useState<number>(0);
+const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, selectedOption, onOptionChange }) => {
   const [contextMenu, setContextMenu] = useState<ContextMenu>({
     x: 0,
     y: 0,
@@ -26,6 +27,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
     2: '주간'
   });
   const [isTimeSettingOpen, setIsTimeSettingOpen] = useState(false);
+  const [isDischargeSettingOpen, setIsDischargeSettingOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -59,7 +61,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleApply = () => {
-    // TODO: 선택된 옵션 적용 로직
+    onOptionChange(selectedOption);
     onClose();
   };
 
@@ -93,7 +95,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
                     type="radio" 
                     name="operation" 
                     checked={selectedOption === 0}
-                    onChange={() => setSelectedOption(0)}
+                    onChange={() => onOptionChange(0)}
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
@@ -107,7 +109,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
                     type="radio" 
                     name="operation" 
                     checked={selectedOption === 1}
-                    onChange={() => setSelectedOption(1)}
+                    onChange={() => onOptionChange(1)}
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
@@ -133,7 +135,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
                     type="radio" 
                     name="operation" 
                     checked={selectedOption === 2}
-                    onChange={() => setSelectedOption(2)}
+                    onChange={() => onOptionChange(2)}
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
@@ -149,7 +151,9 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
                     </button>
                   </div>
                 </td>
-                <td className="border border-gray-600 px-4 text-blue-400">적정 사용량 등록</td>
+                <td className="border border-gray-600 px-4 text-blue-400 cursor-pointer hover:text-blue-300" onClick={() => setIsDischargeSettingOpen(true)}>
+                  적정 사용량 등록
+                </td>
               </tr>
             </tbody>
           </table>
@@ -197,6 +201,13 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose }) => {
         <TimeSettingModal 
           isOpen={isTimeSettingOpen}
           onClose={() => setIsTimeSettingOpen(false)}
+          type="time"
+        />
+        
+        <TimeSettingModal 
+          isOpen={isDischargeSettingOpen}
+          onClose={() => setIsDischargeSettingOpen(false)}
+          type="discharge"
         />
       </div>
     </div>

@@ -70,7 +70,7 @@ const ServiceStatusPage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-screen">
+    <div className="flex flex-col h-[calc(100vh-64px)]">
       <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
         <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
@@ -92,7 +92,7 @@ const ServiceStatusPage: React.FC = () => {
                     onChange={(e) => setSelectedCompany(e.target.value)}
                   >
                     <option value="">{trans('사업장')}</option>
-                    <option value="신일운수">신일운수</option>
+                    <option value="신일운��">신일운수</option>
                   </select>
                   <select 
                     className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
@@ -116,7 +116,7 @@ const ServiceStatusPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-grow overflow-auto px-[18px] lg:px-[55px]">
+      <div className="flex-1 overflow-auto px-[18px] lg:px-[55px]">
         <div className='w-full hidden xs:block'>
           <TableData<ServiceStatus>
             data={data}

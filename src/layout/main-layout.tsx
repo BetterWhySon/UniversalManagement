@@ -38,10 +38,13 @@ export default function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-hw-dark-1">
+    <div className="min-h-screen bg-hw-dark-1 overflow-hidden">
       <Header />
       <Sidebar />
-      <main className="w-full min-h-[calc(100vh-56px)] mt-14">
+      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 w-4 h-8 flex items-center justify-center text-white opacity-70">
+        <span className="text-xl">&gt;</span>
+      </div>
+      <main className="w-full h-[calc(100vh-64px)] mt-16 overflow-auto pl-4">
         <Outlet />
       </main>
     </div>

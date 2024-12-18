@@ -1,6 +1,7 @@
 import React from 'react';
 import * as echarts from 'echarts';
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface GroupDischargeStatusProps {
   onSwitchView: () => void;
@@ -8,6 +9,7 @@ interface GroupDischargeStatusProps {
 
 const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchView }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -110,7 +112,10 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
   return (
     <div className="h-full bg-slate-800 p-4 rounded-lg border border-white">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block">
+        <h3 
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          onClick={() => navigate('/realtime/operation-status')}
+        >
           그룹별 실시간 방전량
         </h3>
         <button 

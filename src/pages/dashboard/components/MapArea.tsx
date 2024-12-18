@@ -16,23 +16,12 @@ const MapArea = () => {
       touchZoom: isDetailMap,  // 터치 줌 제어
     }).setView([35.9000, 127.7498], 7);
 
-    // 1. CartoDB Positron (매우 밝은 회색조, 가장 깔끔한 스타일)
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    //   attribution: '',
-    //   maxZoom: 19
-    // }).addTo(baseMap);
-
-    // 2. CartoDB Light No Labels (라벨 없는 매우 심플한 스타일)
+    // Jawg Maps Light 스타일 사용
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
       attribution: '',
-      maxZoom: 19
+      maxZoom: 19,
+      opacity: 0.7  // 투명도 조절
     }).addTo(baseMap);
-
-    // 3. OpenStreetMap Mapnik (기본 스타일이지만 안정적)
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   attribution: '',
-    //   maxZoom: 19
-    // }).addTo(baseMap);
 
     return () => {
       baseMap.remove();

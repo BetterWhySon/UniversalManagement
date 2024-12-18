@@ -4,9 +4,20 @@ import * as echarts from 'echarts';
 interface LineChartProps {
   labels: string[];
   data: number[];
+  yAxisFormatter?: (value: number) => string;
+  height?: number;
+  showGrid?: boolean;
+  yAxisMin?: number;
+  yAxisMax?: number;
 }
 
-const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
+const LineChart: React.FC<LineChartProps> = ({ 
+  labels, 
+  data, 
+  yAxisFormatter = (value) => `${value}`,
+  yAxisMin,
+  yAxisMax
+}) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,9 +47,8 @@ const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
       },
       yAxis: {
         type: 'value',
-        min: 160,
-        max: 190,
-        interval: 10,
+        min: yAxisMin,
+        max: yAxisMax,
         axisLine: {
           show: false
         },
@@ -48,7 +58,8 @@ const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
           }
         },
         axisLabel: {
-          color: '#9CA3AF'
+          color: '#9CA3AF',
+          formatter: yAxisFormatter
         }
       },
       series: [
@@ -97,7 +108,7 @@ const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
       chart.dispose();
       window.removeEventListener('resize', handleResize);
     };
-  }, [labels, data]);
+  }, [labels, data, yAxisFormatter, yAxisMin, yAxisMax]);
 
   return <div ref={chartRef} style={{ width: '100%', height: '100%' }} />;
 };

@@ -11,12 +11,7 @@ import { PATH } from '@/router/path';
 
 import BWIcon from '@/assets/images/bw_icon.png';
 
-type Props = {
-  isOpenSidebar: boolean;
-  toggleSidebar: () => void;
-};
-
-export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
+export default function Header() {
   const { t: trans } = useTranslation('translation');
   const [time, setTime] = useState(dayjs().format(DATE_FORMAT.YYYY_MM_DD_HH_MM_SS_A));
   const location = useLocation();
@@ -56,7 +51,7 @@ export default function Header({ isOpenSidebar, toggleSidebar }: Props) {
   };
 
   return (
-    <header className={cn('z-50 h-14 flex items-center justify-between px-6 bg-slate-800 w-full fixed top-0 left-0')}>
+    <header className={cn('z-50 h-16 flex items-center justify-between px-6 bg-slate-800 w-full fixed top-0 left-0')}>
       <div 
         className="flex items-center gap-3 cursor-pointer" 
         onClick={handleLogoClick}
