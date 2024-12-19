@@ -161,7 +161,7 @@ const FilterPopup: React.FC<FilterPopupProps> = ({ isOpen, onClose, maxChecked =
                 <CheckboxItem name="셀 평 저항" />
                 <CheckboxItem name="셀 최소 저항" />
                 <CheckboxItem name="용량손실률 - 노화" />
-                <CheckboxItem name="용량손실률 - ���압편차" />
+                <CheckboxItem name="용량손실률 - 잔량편차" />
                 <CheckboxItem name="용량손실률 - 용량편차" />
                 <CheckboxItem name="용량손실률 - 저항" />
                 <CheckboxItem name="셀 밸런스" />

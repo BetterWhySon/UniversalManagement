@@ -100,9 +100,9 @@ const IndividualLookupPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)]">
-      <div className="px-[18px] lg:px-[55px] pt-2 pb-1">
-        <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-2'>
+    <div className="flex flex-col h-[calc(100vh-70px)]">
+      <div className="px-[18px] lg:px-[55px] pt-3 pb-1">
+        <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full '>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
             개별기기 조회
           </h1>
@@ -110,9 +110,9 @@ const IndividualLookupPage: React.FC = () => {
 
         <div className='w-full bg-hw-dark-1 p-3 rounded-lg text-hw-white-1'>
           <div className='flex flex-row items-start gap-8'>
-            <div className='flex flex-wrap gap-2 h-10 items-center'>
+            <div className='flex flex-wrap gap-2 h-8 items-center'>
               <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
+                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
                 value={selectedCompany}
                 onChange={(e) => setSelectedCompany(e.target.value)}
               >
@@ -120,7 +120,7 @@ const IndividualLookupPage: React.FC = () => {
                 <option value="신일운수">신일운수</option>
               </select>
               <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
+                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
               >
@@ -129,7 +129,7 @@ const IndividualLookupPage: React.FC = () => {
                 <option value="영업2팀">영업2팀</option>
               </select>
               <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
+                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
                 value={selectedDevice}
                 onChange={(e) => setSelectedDevice(e.target.value)}
               >
@@ -139,7 +139,7 @@ const IndividualLookupPage: React.FC = () => {
               </select>
             </div>
 
-            <button className='py-[6px] pl-4 pr-6 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center h-10'>
+            <button className='py-1 px-4 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center h-8'>
               <span className='text-hw-white-1 font-light text-base leading-[125%] whitespace-nowrap'>
                 {trans('조회')}
               </span>
@@ -257,7 +257,7 @@ const IndividualLookupPage: React.FC = () => {
       </div>
 
       <div className="sticky top-0 z-10 bg-hw-dark-1">
-        <div className="flex justify-between border-b border-gray-600 px-[18px] lg:px-[55px] mt-4">
+        <div className="flex justify-between border-b border-gray-600 px-[18px] lg:px-[55px] mt-2">
           <div className="flex">
             {tabs.map((tab) => (
               <button
@@ -277,7 +277,7 @@ const IndividualLookupPage: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="p-[18px] lg:p-[20px] pt-4">
+        <div className="p-[18px] lg:p-[20px] pt-2">
           {selectedTab === '사용관리' && <UsageManagement />}
           {selectedTab === '수명관리' && <LifeManagement />}
           {selectedTab === '배터리정보' && <BatteryInfo />}
