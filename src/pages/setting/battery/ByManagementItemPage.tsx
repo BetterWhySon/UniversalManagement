@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComparisonChart from './components/ComparisonChart';
 import TimeSeriesChart from './components/TimeSeriesChart';
@@ -70,13 +70,18 @@ const ByManagementItemPage = () => {
   const [selectedCondition, setSelectedCondition] = useState<ConditionType>('사업장');
   const [selectedCompanyGroup, setSelectedCompanyGroup] = useState<string>('');
   const [selectedFilterItems, setSelectedFilterItems] = useState<string[]>([]);
+  const [selectedFilterItemsForRatioChart, setSelectedFilterItemsForRatioChart] = useState<string[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
   const [isCompanyGroupPopupOpen, setIsCompanyGroupPopupOpen] = useState(false);
   const [selections, setSelections] = useState<Selection[]>([]);
 
   const handleFilterApply = (items: string[]) => {
-    setSelectedFilterItems(items);
+    if (chartType === '비율차트') {
+      setSelectedFilterItemsForRatioChart(items);
+    } else {
+      setSelectedFilterItems(items);
+    }
     setIsFilterPopupOpen(false);
   };
 
@@ -88,6 +93,10 @@ const ByManagementItemPage = () => {
     
     setSelections(filteredSelections);
     setIsCompanyGroupPopupOpen(false);
+  };
+
+  const handleChartTypeChange = (type: ChartType) => {
+    setChartType(type);
   };
 
   return (
@@ -115,7 +124,7 @@ const ByManagementItemPage = () => {
                           name="chartType"
                           value={type}
                           checked={chartType === type}
-                          onChange={(e) => setChartType(e.target.value as ChartType)}
+                          onChange={(e) => handleChartTypeChange(e.target.value as ChartType)}
                           className="form-radio text-hw-orange-1 bg-hw-dark-3 border-hw-gray-4"
                         />
                         <span className="text-hw-white-1">{type}</span>
@@ -199,11 +208,11 @@ const ByManagementItemPage = () => {
                       }).join(', ')}
                     </span>
                   )}
-                  {selectedFilterItems.length > 0 && (
+                  {(chartType === '비율차트' ? selectedFilterItemsForRatioChart : selectedFilterItems).length > 0 && (
                     <>
                       <span className="text-gray-400">/</span>
                       <span className="text-green-400 whitespace-normal leading-tight">
-                        {selectedFilterItems.join(', ')}
+                        {(chartType === '비율차트' ? selectedFilterItemsForRatioChart : selectedFilterItems).join(', ')}
                       </span>
                     </>
                   )}
@@ -217,7 +226,7 @@ const ByManagementItemPage = () => {
                       </span>
                     </>
                   )}
-                  {!selections.length && !selectedFilterItems.length && !selectedPeriod && (
+                  {!selections.length && !(chartType === '비율차트' ? selectedFilterItemsForRatioChart : selectedFilterItems).length && !selectedPeriod && (
                     <span className="text-gray-400 leading-tight">선택된 조건이 없습니다</span>
                   )}
                 </div>
@@ -240,7 +249,7 @@ const ByManagementItemPage = () => {
         maxChecked={3}
         exactCount={true}
         onApply={handleFilterApply}
-        selectedItems={selectedFilterItems}
+        selectedItems={chartType === '비율차트' ? selectedFilterItemsForRatioChart : selectedFilterItems}
         mode={chartType === '비율차트' ? 'chart' : 'default'}
       />
 
