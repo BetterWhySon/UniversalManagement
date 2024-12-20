@@ -241,6 +241,7 @@ const ByManagementItemPage = () => {
         exactCount={true}
         onApply={handleFilterApply}
         selectedItems={selectedFilterItems}
+        mode={chartType === '비율차트' ? 'chart' : 'default'}
       />
 
       <CompanyGroupPopup 
