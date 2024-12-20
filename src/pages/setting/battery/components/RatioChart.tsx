@@ -2,11 +2,8 @@ import React from 'react';
 import DiagPieChart from '@/components/charts/DiagPieGraph';
 
 interface RatioChartProps {
-  data: Array<{
-    id: string;
-    ratio: number;
-    category: string;
-  }>;
+  data: any[];
+  pageType: 'item' | 'device';
 }
 
 const RatioChart: React.FC<RatioChartProps> = () => {

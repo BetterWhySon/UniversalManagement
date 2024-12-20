@@ -4,16 +4,8 @@ import BarChart from '@/components/charts/BarChart';
 import { debounce } from 'lodash';
 
 interface ComparisonChartProps {
-  data: Array<{
-    id: string;
-    before: number;
-    after: number;
-    beforeDiff: number;
-    afterDiff: number;
-    level: string;
-    average: number;
-    info: TooltipData;
-  }>;
+  data: any[];
+  pageType: 'item' | 'device';
 }
 
 interface TooltipData {
@@ -85,7 +77,7 @@ const ChartItem = React.memo(({ item }: { item: ComparisonChartProps['data'][0] 
   );
 });
 
-const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
+const ComparisonChart: React.FC<ComparisonChartProps> = ({ data, pageType }) => {
   const [tooltip, setTooltip] = useState<{ show: boolean; x: number; y: number; data: TooltipData | null }>({ 
     show: false, x: 0, y: 0, data: null 
   });
@@ -116,37 +108,71 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
     );
   };
 
+  // device 타입일 때 사용할 차트 타이틀 배열
+  const deviceChartTitles = [
+    '사용관리 지수',
+    '스트레스 지수',
+    '운용시간',
+    '사용 시간',
+    '충전 시간',
+    '미사용 시간',
+    '충전시간당 사용시간',
+    '사용 횟수',
+    '사용량',
+    '고속 사용량',
+    '고속 사용 횟수',
+    '사용시 평균 파워',
+    '전시 평균 파워',
+    '완속 충전 횟수'
+  ];
+
   return (
     <div className="will-change-transform">
-      <h2 className="text-white text-xl mb-4">사용관리 지수</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        {data.map((item) => (
-          <div key={item.id} 
-            className="bg-hw-dark-2 p-4 rounded-lg relative will-change-transform"
-            onMouseEnter={(e) => {
-              setTooltip({
-                show: true,
-                x: e.clientX,
-                y: e.clientY,
-                data: item.info
-              });
-            }}
-            onMouseMove={(e) => {
-              updateTooltipPosition(e.clientX, e.clientY);
-            }}
-            onMouseLeave={() => setTooltip({ show: false, x: 0, y: 0, data: null })}
-          >
-            <div className="text-yellow-300 text-lg font-bold mb-2 text-center">
-              {item.id}
+      <h2 className="text-white text-xl mb-4">{pageType === 'device' ? '사용관리' : '사용관리 지수'}</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
+        {pageType === 'device' ? (
+          // device 타입일 때의 레이아웃
+          deviceChartTitles.map((title, index) => (
+            <div key={index} className="bg-hw-dark-2 p-4 rounded-lg relative will-change-transform">
+              <div className="text-white text-lg mb-2 text-center">
+                {title}
+              </div>
+              <div className="text-white mb-2 text-center">
+                {renderComparisonText(data[index].beforeDiff, data[index].afterDiff)}
+              </div>
+              <ChartItem item={data[index]} />
             </div>
-            
-            <div className="text-white mb-2 text-center">
-              {renderComparisonText(item.beforeDiff, item.afterDiff)}
+          ))
+        ) : (
+          // item 타입일 때의 레이아웃
+          data.map((item) => (
+            <div key={item.id} 
+              className="bg-hw-dark-2 p-4 rounded-lg relative will-change-transform"
+              onMouseEnter={(e) => {
+                setTooltip({
+                  show: true,
+                  x: e.clientX,
+                  y: e.clientY,
+                  data: item.info
+                });
+              }}
+              onMouseMove={(e) => {
+                updateTooltipPosition(e.clientX, e.clientY);
+              }}
+              onMouseLeave={() => setTooltip({ show: false, x: 0, y: 0, data: null })}
+            >
+              <div className="text-yellow-300 text-lg font-bold mb-2 text-center">
+                {item.id}
+              </div>
+              
+              <div className="text-white mb-2 text-center">
+                {renderComparisonText(item.beforeDiff, item.afterDiff)}
+              </div>
+              
+              <ChartItem item={item} />
             </div>
-            
-            <ChartItem item={item} />
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {tooltip.show && tooltip.data && (
@@ -156,4 +182,4 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
   );
 };
 
-export default ComparisonChart; 
+export default ComparisonChart;

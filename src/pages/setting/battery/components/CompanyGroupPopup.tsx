@@ -21,9 +21,10 @@ interface CompanyGroupPopupProps {
   companies: Company[];
   onSelect: (selections: Selection[], selectedGroups: {[company: string]: string[]}) => void;
   conditionType: '사업장' | '그룹' | '기기';
+  title?: string;
 }
 
-const CompanyGroupPopup: React.FC<CompanyGroupPopupProps> = ({ isOpen, onClose, companies, onSelect, conditionType }) => {
+const CompanyGroupPopup: React.FC<CompanyGroupPopupProps> = ({ isOpen, onClose, companies, onSelect, conditionType, title = '사업장/그룹 선택' }) => {
   const [searchText, setSearchText] = useState('');
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<{[company: string]: string[]}>({});
@@ -142,7 +143,7 @@ const CompanyGroupPopup: React.FC<CompanyGroupPopupProps> = ({ isOpen, onClose, 
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-white text-lg">사업장/그룹 선택</h2>
+          <h2 className="text-white text-lg">{title}</h2>
           <div className="flex items-center">
             <input 
               type="text" 

@@ -2,11 +2,8 @@ import React from 'react';
 import BarChart from '@/components/charts/BarChart';
 
 interface TimeSeriesChartProps {
-  data: Array<{
-    id: string;
-    values: number[];
-    dates: string[];
-  }>;
+  data: any[];
+  pageType: 'item' | 'device';
 }
 
 const TimeSeriesChart: React.FC<TimeSeriesChartProps> = () => {
