@@ -1,13 +1,14 @@
 import { TEXT_ALIGN } from '@/enums/table';
 
-export interface TableColumn<T> {
+export type TableColumn<T> = {
   name: string;
   dataIndex: string;
+  align?: TEXT_ALIGN;
   paddingInline?: string;
-  align?: string;
+  noPaddingBlock?: boolean;
   width?: string;
   fixedWidth?: string;
-  noPaddingBlock?: boolean;
-  render?: (row: T, dataIndex: string) => React.ReactNode;
+  fixed?: 'left' | 'right';
   title?: React.ReactNode;
-}
+  render?: (row: T, dataIndex: string) => React.ReactNode;
+};

@@ -49,15 +49,15 @@ export const SIDEBAR_MENU = [
     subMenu: [
       {
         title: '일자별 배터리 운영현황',
-        href: PATH.STATISTICS.get('DAILY_OPERATION')
+        href: PATH.SETTING.get('STATISTICS', 'DAILY_OPERATION')
       },
       {
         title: '사용이력 조회',
-        href: PATH.STATISTICS.get('USAGE_HISTORY')
+        href: PATH.SETTING.get('STATISTICS', 'USAGE_HISTORY')
       },
       {
         title: '알람이력 조회',
-        href: PATH.STATISTICS.get('ALARM_HISTORY')
+        href: PATH.SETTING.get('STATISTICS', 'ALARM_HISTORY')
       }
     ]
   }

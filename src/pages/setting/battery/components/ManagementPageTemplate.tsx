@@ -9,10 +9,12 @@ import DeviceSelectPopup from './DeviceSelectPopup';
 
 type ChartType = '비교차트' | '시계열차트' | '비율차트';
 type ConditionType = '사업장' | '그룹' | '기기';
+type PageType = 'item' | 'device';
 
 interface Selection {
   company: string;
   groups: string[];
+  device?: string;
 }
 
 interface ManagementPageTemplateProps {
@@ -20,7 +22,7 @@ interface ManagementPageTemplateProps {
   defaultChartType?: ChartType;
   companies: any[];
   mockData: any[];
-  pageType: 'item' | 'device';
+  pageType: PageType;
 }
 
 const ManagementPageTemplate: React.FC<ManagementPageTemplateProps> = ({
@@ -32,7 +34,7 @@ const ManagementPageTemplate: React.FC<ManagementPageTemplateProps> = ({
 }) => {
   const { t: trans } = useTranslation('translation');
   const [chartType, setChartType] = useState<ChartType>(defaultChartType);
-  const [selectedCondition, setSelectedCondition] = useState<ConditionType>('사��장');
+  const [selectedCondition, setSelectedCondition] = useState<ConditionType>('사업장');
   const [selectedCompanyGroup, setSelectedCompanyGroup] = useState<string>('');
   const [selectedFilterItems, setSelectedFilterItems] = useState<string[]>([]);
   const [selectedFilterItemsForRatioChart, setSelectedFilterItemsForRatioChart] = useState<string[]>([]);
@@ -66,8 +68,14 @@ const ManagementPageTemplate: React.FC<ManagementPageTemplateProps> = ({
     setChartType(type);
   };
 
-  const handleDeviceSelect = (devices: string[]) => {
-    setSelectedDevices(devices);
+  const handleDeviceSelect = (devices: any[]) => {
+    setSelectedDevices(devices.map(d => d.device));
+    const selectedDeviceInfo = devices.map(device => ({
+      company: device.company,
+      groups: [device.group],
+      device: device.device
+    }));
+    setSelections(selectedDeviceInfo);
     setIsDeviceSelectPopupOpen(false);
   };
 
@@ -174,10 +182,13 @@ const ManagementPageTemplate: React.FC<ManagementPageTemplateProps> = ({
                 <div className="flex flex-wrap gap-1 min-h-full items-center text-sm">
                   {selections.length > 0 && (
                     <span className="text-blue-400 font-medium whitespace-normal leading-tight">
-                      {selections.map(sel => {
-                        const groupText = sel.groups.length > 0 ? `(${sel.groups.join(', ')})` : '';
-                        return `${sel.company}${groupText}`;
-                      }).join(', ')}
+                      {pageType === 'device' ? 
+                        selections.map(sel => `${sel.company}(${sel.groups.join(', ')}) - ${sel.device}`).join(', ') :
+                        selections.map(sel => {
+                          const groupText = sel.groups.length > 0 ? `(${sel.groups.join(', ')})` : '';
+                          return `${sel.company}${groupText}`;
+                        }).join(', ')
+                      }
                     </span>
                   )}
                   {(chartType === '비율차트' ? selectedFilterItemsForRatioChart : selectedFilterItems).length > 0 && (
@@ -225,14 +236,28 @@ const ManagementPageTemplate: React.FC<ManagementPageTemplateProps> = ({
         mode={chartType === '비율차트' ? 'chart' : 'default'}
       />
 
-      <CompanyGroupPopup 
-        isOpen={isCompanyGroupPopupOpen}
-        onClose={() => setIsCompanyGroupPopupOpen(false)}
-        companies={companies}
-        onSelect={handleCompanyGroupSelect}
-        conditionType={selectedCondition}
-        title={pageType === 'device' ? '기기 선택' : '사업장/그룹 선택'}
-      />
+      {pageType === 'device' ? (
+        <DeviceSelectPopup 
+          isOpen={isDeviceSelectPopupOpen}
+          onClose={() => setIsDeviceSelectPopupOpen(false)}
+          onSelect={(selections, selectedDevices) => {
+            setSelections(selections);
+            setSelectedDevices(Object.values(selectedDevices).flat());
+            setIsDeviceSelectPopupOpen(false);
+          }}
+          conditionType={selectedCondition}
+          title="기기 선택"
+        />
+      ) : (
+        <CompanyGroupPopup 
+          isOpen={isCompanyGroupPopupOpen}
+          onClose={() => setIsCompanyGroupPopupOpen(false)}
+          companies={companies}
+          onSelect={handleCompanyGroupSelect}
+          conditionType={selectedCondition}
+          title='기기 선택'
+        />
+      )}
     </div>
   );
 };

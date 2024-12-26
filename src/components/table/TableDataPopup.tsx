@@ -91,9 +91,12 @@ export default function TableDataPopup<T extends { id: number }>({
                       ? {
                           width: item.width,
                           paddingInline: item.paddingInline,
-                          textAlign: item.align,
+                          textAlign: item.align as 'left' | 'center' | 'right'
                         }
-                      : { paddingInline: item.paddingInline, textAlign: item.align }
+                      : { 
+                          paddingInline: item.paddingInline, 
+                          textAlign: item.align as 'left' | 'center' | 'right' 
+                        }
                   }>
                   {trans(item.name)}
                 </td>

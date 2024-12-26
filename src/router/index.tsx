@@ -17,6 +17,9 @@ import BatteryAlarmDetailPage from '@/pages/dashboard/pages/BatteryAlarmDetailPa
 import ChargingDetailPage from '@/pages/dashboard/pages/ChargingDetailPage';
 import ByManagementItemPage from '@/pages/setting/battery/ByManagementItemPage';
 import ByManagementDevicePage from '@/pages/setting/battery/ByManagementDevicePage';
+import DailyOperationPage from '@/pages/setting/statistics/DailyOperationPage';
+import UsageHistoryPage from '@/pages/setting/statistics/UsageHistoryPage';
+import AlarmHistoryPage from '@/pages/setting/statistics/AlarmHistoryPage';
 
 const router = createBrowserRouter([
     {
@@ -52,9 +55,18 @@ const router = createBrowserRouter([
             },
             // { path: PATH.SETTING.get('BATTERY', 'BY_CATEGORY'), Component: CategoryLookupPage },
             // { path: PATH.SETTING.get('BATTERY', 'BY_DEVICE'), Component: DeviceLookupPage },
-            // { path: PATH.SETTING.get('STATISTICS', 'DAILY_OPERATION'), Component: DailyOperationPage },
-            // { path: PATH.SETTING.get('STATISTICS', 'USAGE_HISTORY'), Component: UsageHistoryPage },
-            // { path: PATH.SETTING.get('STATISTICS', 'ALARM_HISTORY'), Component: AlarmHistoryPage },
+            { 
+                path: PATH.SETTING.get('STATISTICS', 'DAILY_OPERATION'), 
+                Component: DailyOperationPage 
+            },
+            { 
+                path: PATH.SETTING.get('STATISTICS', 'USAGE_HISTORY'), 
+                Component: UsageHistoryPage 
+            },
+            { 
+                path: PATH.SETTING.get('STATISTICS', 'ALARM_HISTORY'), 
+                Component: AlarmHistoryPage 
+            },
             // { 
             //     path: '/dashboard/battery-alarm-detail', 
             //     Component: BatteryAlarmDetailPage 
