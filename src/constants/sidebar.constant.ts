@@ -2,15 +2,27 @@ import { PATH } from '@/router/path';
 
 export const SIDEBAR_MENU = [
   {
-    name: '기준정보 등록',
+    name: '기준정보 관리',
     subMenu: [
       {
-        title: '관제서비스 신청현황',
-        href: PATH.SETTING.get('STANDARD_INFO', 'SERVICE_STATUS')
+        title: '사업장 등록',
+        href: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_REGISTRATION')
       },
       {
-        title: '배터리 등록현황',
-        href: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_REGISTRATION')
+        title: '그룹 등록',
+        href: PATH.SETTING.get('STANDARD_INFO', 'GROUP_REGISTRATION')
+      },
+      {
+        title: '사업장 그룹 맵핑',
+        href: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_MAPPING')
+      },
+      {
+        title: '사업장 그룹 지정',
+        href: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_ASSIGN')
+      },
+      {
+        title: '배터리 등록 현황',
+        href: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_STATUS')
       }
     ]
   },

@@ -30,8 +30,11 @@ export const PATH = {
     _: 'setting',
     STANDARD_INFO: {
       _: 'standard-info',
-      SERVICE_STATUS: 'service-status',          // 관제서비스 신청현황
-      BATTERY_REGISTRATION: 'battery-registration', // 배터리 등록현황
+      COMPANY_REGISTRATION: 'company-registration',        // 사업장 등록
+      GROUP_REGISTRATION: 'group-registration',      // 그룹 등록
+      COMPANY_GROUP_MAPPING: 'company-group-mapping', // 사업장 그룹 맵핑
+      COMPANY_GROUP_ASSIGN: 'company-group-assign',  // 사업장 그룹 지정
+      BATTERY_STATUS: 'battery-status',             // 배터리 등록 현황
     },
     BATTERY: {
       _: 'battery',
@@ -60,9 +63,12 @@ export const PATH = {
   // 기준정보 등록
   STANDARD_INFO: {
     _: 'standard-info',
-    SERVICE_STATUS: 'service-status',
+    COMPANY_REGISTRATION: 'company-registration',
+    GROUP_REGISTRATION: 'group-registration',
+    COMPANY_GROUP_MAPPING: 'company-group-mapping',
+    COMPANY_GROUP_ASSIGN: 'company-group-assign',
     BATTERY_STATUS: 'battery-status',
-    get(key?: 'SERVICE_STATUS' | 'BATTERY_STATUS') {
+    get(key?: 'COMPANY_REGISTRATION' | 'GROUP_REGISTRATION' | 'COMPANY_GROUP_MAPPING' | 'COMPANY_GROUP_ASSIGN' | 'BATTERY_STATUS') {
       if (!key) return `/${this._}`;
       return `/${this._}/${this[key]}`;
     },
@@ -101,8 +107,11 @@ export const PATH = {
   },
   LOGIN: {
     _: 'login',
-    get() {
-      return `/${this._}`;
+    FIND_ID: 'find-id',
+    FIND_PASSWORD: 'find-password',
+    get(key?: 'FIND_ID' | 'FIND_PASSWORD') {
+      if (!key) return `/${this._}`;
+      return `/${this._}/${this[key]}`;
     },
   },
   ADMIN_BW: {

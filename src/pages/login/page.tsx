@@ -83,7 +83,7 @@ export default function LoginPage() {
               className={cn(
                 'text-[16px] leading-6 sm:text-2xl sm:leading-none  font-bold font-Hanwha  transition-all',
               )}>
-              배터와이 공동관제 시스템
+              범용 배터리 관리 시스템
             </h1>
           </div>
         </div>
@@ -120,6 +120,26 @@ export default function LoginPage() {
             )}>
             {trans('submit')}
           </button>
+          <div className="flex justify-end gap-4 mt-4 text-sm text-gray-400">
+            <button 
+              className="hover:text-hw-orange-1 transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(PATH.LOGIN.get('FIND_ID'));
+              }}
+            >
+              아이디찾기
+            </button>
+            <button 
+              className="hover:text-hw-orange-1 transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(PATH.LOGIN.get('FIND_PASSWORD'));
+              }}
+            >
+              비밀번호찾기
+            </button>
+          </div>
         </form>
       </div>
     </main>
