@@ -34,6 +34,7 @@ export const PATH = {
       GROUP_REGISTRATION: 'group-registration',      // 그룹 등록
       COMPANY_GROUP_MAPPING: 'company-group-mapping', // 사업장 그룹 맵핑
       COMPANY_GROUP_ASSIGN: 'company-group-assign',  // 사업장 그룹 지정
+      BATTERY_REGISTRATION: 'battery-registration',  // 배터리 등록 (변경)
       BATTERY_STATUS: 'battery-status',             // 배터리 등록 현황
     },
     BATTERY: {

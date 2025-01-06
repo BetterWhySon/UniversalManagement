@@ -45,7 +45,7 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
   const handlePostcode = () => {
     new window.daum.Postcode({
       oncomplete: (data: any) => {
-        // 팝업에서 검색결과 항목을 클��했을때 실행할 코드를 작성하는 부분입니다.
+        // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
         let addr = ''; // 주소 변수
         let extraAddr = ''; // 참고항목 변수
 

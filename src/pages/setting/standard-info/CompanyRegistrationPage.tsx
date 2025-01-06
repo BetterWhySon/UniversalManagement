@@ -32,13 +32,13 @@ const CompanyRegistrationPage: React.FC = () => {
     { id: 4, code: 'Site4', company: '유니캠프', postcode: '48058', address: '부산시 해운대구 센텀중앙로 456', detailAddress: '센텀프라자 8층', description: '캠핑장 운영' },
     { id: 5, code: 'Site5', company: '스타모빌', postcode: '41585', address: '대구시 동구 동대구로 567', detailAddress: '동대구빌딩 2층', description: '모빌하우스 제작' },
     { id: 6, code: 'Site6', company: '케이원캠핑', postcode: '61947', address: '광주시 서구 상무중앙로 678', detailAddress: '상무플라자 4층', description: '캠핑카 렌탈' },
-    { id: 7, code: 'Site7', company: '��린아웃도어', postcode: '34126', address: '대전시 유성구 대학로 789', detailAddress: '유성빌딩 6층', description: '아웃도어 용품 제조' },
+    { id: 7, code: 'Site7', company: '마린아웃도어', postcode: '34126', address: '대전시 유성구 대학로 789', detailAddress: '유성빌딩 6층', description: '아웃도어 용품 제조' },
     { id: 8, code: 'Site8', company: '블루오션', postcode: '44677', address: '울산시 남구 삼산로 890', detailAddress: '삼산타워 9층', description: '해양레저 장비' },
     { id: 9, code: 'Site9', company: '마운틴캠프', postcode: '24347', address: '강원도 춘천시 춘천로 901', detailAddress: '춘천빌딩 1층', description: '등산용품 제조' },
     { id: 10, code: 'Site10', company: '레저월드', postcode: '10364', address: '경기도 고양시 일산동구 중앙로 112', detailAddress: '일산타워 7층', description: '레저용품 도매' },
     { id: 11, code: 'Site11', company: '네이처라이프', postcode: '28525', address: '충북 청주시 상당구 상당로 223', detailAddress: '상당빌딩 3층', description: '자연친화적 캠핑용품' },
     { id: 12, code: 'Site12', company: '캠핑파크', postcode: '54932', address: '전북 전주시 완산구 전주로 334', detailAddress: '완산프라자 5층', description: '캠핑장 체인점' },
-    { id: 13, code: 'Site13', company: '아웃도어플러스', postcode: '51524', address: '경남 창원시 성산구 창원대로 445', detailAddress: '성산빌딩 4층', description: '아웃���어 용품' },
+    { id: 13, code: 'Site13', company: '아웃도어플러스', postcode: '51524', address: '경남 창원시 성산구 창원대로 445', detailAddress: '성산빌딩 4층', description: '아웃도어 용품' },
     { id: 14, code: 'Site14', company: '캠핑메이트', postcode: '63122', address: '제주시 노형동 노연로 556', detailAddress: '노형프라자 2층', description: '캠핑용품 유통' },
     { id: 15, code: 'Site15', company: '레저테크', postcode: '05502', address: '서울시 송파구 올림픽로 667', detailAddress: '송파타워 10층', description: '레저장비 기술개발' },
     { id: 16, code: 'Site16', company: '캠핑존', postcode: '16476', address: '경기도 수원시 팔달구 팔달로 778', detailAddress: '팔달빌딩 6층', description: '캠핑용품 전문점' },
@@ -218,11 +218,6 @@ const CompanyRegistrationPage: React.FC = () => {
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
               </div>
-              <button className='h-8 px-4 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center'>
-                <span className='text-hw-white-1 font-light text-sm leading-[125%] whitespace-nowrap'>
-                  {trans('조회')}
-                </span>
-              </button>
             </div>
 
             <div>

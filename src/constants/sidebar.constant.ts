@@ -17,8 +17,8 @@ export const SIDEBAR_MENU = [
         href: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_MAPPING')
       },
       {
-        title: '사업장 그룹 지정',
-        href: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_ASSIGN')
+        title: '배터리 등록',
+        href: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_REGISTRATION')
       },
       {
         title: '배터리 등록 현황',

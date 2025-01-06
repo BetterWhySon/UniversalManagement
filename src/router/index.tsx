@@ -24,8 +24,8 @@ import FindIdPage from '@/pages/login/FindIdPage';
 import FindPasswordPage from '@/pages/login/FindPasswordPage';
 import GroupRegistrationPage from '@/pages/setting/standard-info/GroupRegistrationPage';
 import CompanyGroupMappingPage from '@/pages/setting/standard-info/CompanyGroupMappingPage';
-import CompanyGroupAssignPage from '@/pages/setting/standard-info/CompanyGroupAssignPage';
 import BatteryRegistrationStatusPage from '@/pages/setting/standard-info/BatteryRegistrationStatusPage';
+import BatteryRegistrationPage from '@/pages/setting/standard-info/BatteryRegistrationPage';
 
 const router = createBrowserRouter([
     {
@@ -51,16 +51,15 @@ const router = createBrowserRouter([
             { 
                 path: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_MAPPING'), 
                 Component: CompanyGroupMappingPage 
-            },
-            { 
-                path: PATH.SETTING.get('STANDARD_INFO', 'COMPANY_GROUP_ASSIGN'), 
-                Component: CompanyGroupAssignPage 
-            },
+            },            
             { 
                 path: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_STATUS'), 
                 Component: BatteryRegistrationStatusPage 
             },
-            // { path: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_REGISTRATION'), Component: BatteryRegistrationPage },
+            { 
+                path: PATH.SETTING.get('STANDARD_INFO', 'BATTERY_REGISTRATION'), 
+                Component: BatteryRegistrationPage 
+            },
             // { path: PATH.SETTING.get('MONITORING', 'REALTIME'), Component: RealtimeMonitoringPage },
             // { path: PATH.SETTING.get('MONITORING', 'OPERATION'), Component: OperationStatusPage },
             { 

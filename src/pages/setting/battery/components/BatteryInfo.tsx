@@ -220,7 +220,7 @@ const BatteryInfo: React.FC = () => {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-gray-400">팩 0% 기준 전��� 편차</div>
+            <div className="text-gray-400">팩 0% 기준 전압 편차</div>
             <div className="border-t border-gray-600 mt-2 pt-2">
               <div className="text-white text-xl">0.8%</div>
             </div>

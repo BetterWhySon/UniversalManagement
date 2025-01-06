@@ -38,27 +38,27 @@ const GroupRegistrationPage: React.FC = () => {
     { id: 12, code: 'Group12', group: '전북권역', postcode: '54932', address: '전북 전주시 완산구 전주로 334', detailAddress: '완산프라자 5층', description: '전북 지역 그룹' },
     { id: 13, code: 'Group13', group: '경남권역', postcode: '51524', address: '경남 창원시 성산구 창원대로 445', detailAddress: '성산빌딩 4층', description: '경남 지역 그룹' },
     { id: 14, code: 'Group14', group: '제주권역', postcode: '63122', address: '제주시 노형동 노연로 556', detailAddress: '노형프라자 2층', description: '제주 지역 그룹' },
-    { id: 15, code: 'Group15', group: '서울강남권역', postcode: '05502', address: '서울시 송파구 올림픽로 667', detailAddress: '송���타워 10층', description: '서울 강남 지역 그룹' },
+    { id: 15, code: 'Group15', group: '서울강남권역', postcode: '05502', address: '서울시 송파구 올림픽로 667', detailAddress: '송타워 10층', description: '서울 강남 지역 그룹' },
     { id: 16, code: 'Group16', group: '경기남부권역', postcode: '16476', address: '경기도 수원시 팔달구 팔달로 778', detailAddress: '팔달빌딩 6층', description: '경기 남부 지역 그룹' },
     { id: 17, code: 'Group17', group: '인천서부권역', postcode: '21353', address: '인천시 부평구 부평대로 889', detailAddress: '부평타워 8층', description: '인천 서부 지역 그룹' },
     { id: 18, code: 'Group18', group: '부산해운대권역', postcode: '48267', address: '부산시 수영구 수영로 990', detailAddress: '수영빌딩 3층', description: '부산 해운대 지역 그룹' },
     { id: 19, code: 'Group19', group: '대구수성권역', postcode: '42173', address: '대구시 수성구 수성로 101', detailAddress: '수성타워 5층', description: '대구 수성 지역 그룹' },
     { id: 20, code: 'Group20', group: '광주북구권역', postcode: '61184', address: '광주시 북구 첨단과기로 212', detailAddress: '첨단빌딩 7층', description: '광주 북구 지역 그룹' },
     { id: 21, code: 'Group21', group: '대전중구권역', postcode: '34939', address: '대전시 중구 대종로 323', detailAddress: '대종타워 4층', description: '대전 중구 지역 그룹' },
-    { id: 22, code: 'Group22', group: '울산��구권역', postcode: '44676', address: '울산시 중구 번영로 434', detailAddress: '번영빌딩 2층', description: '울산 중구 지역 그룹' },
+    { id: 22, code: 'Group22', group: '울산중구권역', postcode: '44676', address: '울산시 중구 번영로 434', detailAddress: '번영빌딩 2층', description: '울산 중구 지역 그룹' },
     { id: 23, code: 'Group23', group: '강원원주권역', postcode: '26384', address: '강원도 원주시 원주로 545', detailAddress: '원주프라자 6층', description: '강원 원주 지역 그룹' },
     { id: 24, code: 'Group24', group: '충남권역', postcode: '31157', address: '충남 천안시 동남구 천안대로 656', detailAddress: '천안타워 9층', description: '충남 지역 그룹' },
     { id: 25, code: 'Group25', group: '전남권역', postcode: '59638', address: '전남 여수시 여수로 767', detailAddress: '여수빌딩 3층', description: '전남 지역 그룹' },
     { id: 26, code: 'Group26', group: '경북권역', postcode: '37673', address: '경북 포항시 남구 포항로 878', detailAddress: '포항타워 5층', description: '경북 지역 그룹' },
     { id: 27, code: 'Group27', group: '경남김해권역', postcode: '50926', address: '경남 김해시 김해대로 989', detailAddress: '김해프라자 7층', description: '경남 김해 지역 그룹' },
-    { id: 28, code: 'Group28', group: '제주서귀포권역', postcode: '63123', address: '제주시 삼도일동 삼도로 135', detailAddress: '삼도빌딩 4층', description: '제주 서귀포 지��� 그룹' },
+    { id: 28, code: 'Group28', group: '제주서귀포권역', postcode: '63123', address: '제주시 삼도일동 삼도로 135', detailAddress: '삼도빌딩 4층', description: '제주 서귀포 지역 그룹' },
     { id: 29, code: 'Group29', group: '서울마포권역', postcode: '04108', address: '서울시 마포구 마포대로 246', detailAddress: '마포타워 8층', description: '서울 마포 지역 그룹' },
     { id: 30, code: 'Group30', group: '경기용인권역', postcode: '16827', address: '경기도 용인시 수지구 포은대로 357', detailAddress: '수지빌딩 2층', description: '경기 용인 지역 그룹' },
     { id: 31, code: 'Group31', group: '인천계양권역', postcode: '22734', address: '인천시 서구 서곶로 468', detailAddress: '서구프라자 6층', description: '인천 계양 지역 그룹' },
     { id: 32, code: 'Group32', group: '부산사상권역', postcode: '46973', address: '부산시 사상구 사상로 579', detailAddress: '사상타워 3층', description: '부산 사상 지역 그룹' },
     { id: 33, code: 'Group33', group: '대구달서권역', postcode: '42718', address: '대구시 달서구 달서대로 680', detailAddress: '달서빌딩 5층', description: '대구 달서 지역 그룹' },
     { id: 34, code: 'Group34', group: '광주서구권역', postcode: '61947', address: '광주시 서구 상무중앙로 791', detailAddress: '상무타워 7층', description: '광주 서구 지역 그룹' },
-    { id: 35, code: 'Group35', group: '대전유성권역', postcode: '34126', address: '대���시 유성구 대학로 892', detailAddress: '유성타워 4층', description: '대전 유성 지역 그룹' },
+    { id: 35, code: 'Group35', group: '대전유성��역', postcode: '34126', address: '대전시 유성구 대학로 892', detailAddress: '유성타워 4층', description: '대전 유성 지역 그룹' },
     { id: 36, code: 'Group36', group: '울산남구권역', postcode: '44677', address: '울산시 남구 삼산로 993', detailAddress: '삼산빌딩 6층', description: '울산 남구 지역 그룹' }
   ];
 
@@ -214,11 +214,6 @@ const GroupRegistrationPage: React.FC = () => {
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
               </div>
-              <button className='h-8 px-4 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center'>
-                <span className='text-hw-white-1 font-light text-sm leading-[125%] whitespace-nowrap'>
-                  {trans('조회')}
-                </span>
-              </button>
             </div>
 
             <div>
