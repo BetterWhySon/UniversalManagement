@@ -448,64 +448,78 @@ const MapArea = () => {
   // 기본 화면으로 돌아가는 함수
   const handleResetView = () => {
     if (!mapRef.current) return;
-    
+
+    mapRef.current.setView([35.9000, 127.7498], DEFAULT_ZOOM_LEVEL);
     setIsDetailMap(false);
 
-    mapRef.current.setView([35.9000, 127.7498], DEFAULT_ZOOM_LEVEL, {
-      animate: true,
-      duration: 1
-    });
-    
-    disableMapControls(mapRef.current);
-
-    // 기존 마커 제거
+    // 기존 마커 모두 제거
     mapRef.current.eachLayer((layer) => {
       if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
         layer.remove();
       }
     });
 
-    // 지점 마커 다시 표시
-    const markerIcon = L.divIcon({
-      className: 'custom-marker',
-      html: `
-        <div style="
-          width: 24px; 
-          height: 24px; 
-          background-color: #F59E0B; 
-          border-radius: 50% 50% 50% 0;
-          transform: rotate(-45deg);
-          position: relative;
-          box-shadow: 0 0 0 2px white;
-        ">
-          <div style="
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-          "></div>
-        </div>
-      `,
-      iconSize: [24, 24],
-      iconAnchor: [12, 24]
-    });
-
-    locationData.forEach(location => {
-      const markerInstance = L.marker([location.lat, location.lng], { icon: markerIcon })
-        .bindTooltip(`${location.name} (${location.active}/${location.total})`, {
-          permanent: true,
+    if (isRealtime) {  // 실시간 모드일 경우
+      // 실시간 마커 표시
+      realtimeMarkers.forEach(marker => {
+        L.circleMarker([marker.lat, marker.lng], {
+          radius: 4,
+          fillColor: '#3B82F6',
+          color: '#fff',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        })
+        .bindTooltip(marker.name, {
+          permanent: false,
           direction: 'top',
-          offset: [0, -20],
-          className: 'custom-tooltip'
+          offset: [0, -5]
         })
         .addTo(mapRef.current!);
+      });
+    } else {  // 사이트별 모드일 경우
+      // 지점 마커 표시
+      const markerIcon = L.divIcon({
+        className: 'custom-marker',
+        html: `
+          <div style="
+            width: 24px; 
+            height: 24px; 
+            background-color: #F59E0B; 
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            position: relative;
+            box-shadow: 0 0 0 2px white;
+          ">
+            <div style="
+              width: 8px;
+              height: 8px;
+              background: white;
+              border-radius: 50%;
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+            "></div>
+          </div>
+        `,
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      });
 
-      markerInstance.on('click', () => handleMarkerClick(location));
-    });
+      locationData.forEach(location => {
+        const markerInstance = L.marker([location.lat, location.lng], { icon: markerIcon })
+          .bindTooltip(`${location.name} (${location.active}/${location.total})`, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -20],
+            className: 'custom-tooltip'
+          })
+          .addTo(mapRef.current!);
+
+        markerInstance.on('click', () => handleMarkerClick(location));
+      });
+    }
   };
 
   // 실시간/Site별 버튼 클릭 이벤트 핸들러 수정

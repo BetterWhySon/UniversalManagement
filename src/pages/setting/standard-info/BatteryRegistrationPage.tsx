@@ -124,20 +124,24 @@ const BatteryRegistrationPage: React.FC = () => {
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '50px',
       render: (row: BatteryData) => (
-        <input
-          type="checkbox"
-          checked={selectedRows.includes(row.id)}
-          onChange={() => handleSelectRow(row.id)}
-          className="w-4 h-4 accent-blue-500 cursor-pointer"
-        />
+        <div className="px-3">
+          <input
+            type="checkbox"
+            checked={selectedRows.includes(row.id)}
+            onChange={() => handleSelectRow(row.id)}
+            className="w-4 h-4 accent-blue-500 cursor-pointer"
+          />
+        </div>
       ),
       title: (
-        <input
-          type="checkbox"
-          checked={selectedRows.length === getFilteredData.length && getFilteredData.length > 0}
-          onChange={(e) => handleSelectAll(e.target.checked)}
-          className="w-4 h-4 accent-blue-500 cursor-pointer"
-        />
+        <div className="px-3">
+          <input
+            type="checkbox"
+            checked={selectedRows.length === getFilteredData.length && getFilteredData.length > 0}
+            onChange={(e) => handleSelectAll(e.target.checked)}
+            className="w-4 h-4 accent-blue-500 cursor-pointer"
+          />
+        </div>
       )
     },
     {
@@ -243,7 +247,7 @@ const BatteryRegistrationPage: React.FC = () => {
             title="수정"
           >
             <svg 
-              className="w-4 h-4 text-white" 
+              className="w-5 h-5 text-white" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 20 20"
@@ -262,7 +266,7 @@ const BatteryRegistrationPage: React.FC = () => {
             title="해제"
           >
             <svg 
-              className="w-4 h-4 text-white" 
+              className="w-5 h-5 text-white" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 20 20"
@@ -290,7 +294,7 @@ const BatteryRegistrationPage: React.FC = () => {
     setIsCompanySelectOpen(false);
   };
 
-  const handleGroupSelect = (groupName: string) => {
+  const handleGroupSelect = (selectedGroups: number[]) => {
     // 선택된 그룹 처리 로직
     setIsGroupSelectOpen(false);
   };

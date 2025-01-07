@@ -4,7 +4,7 @@ import TableData from '@/components/table/TableData';
 
 interface GroupSelectPopupProps {
   onClose: () => void;
-  onConfirm: (selectedGroup: string) => void;
+  onConfirm: (selectedGroups: number[]) => void;
 }
 
 interface GroupItem {
@@ -120,7 +120,7 @@ const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm 
               onClick={() => {
                 const selectedGroup = groups.find(g => g.code === selectedGroupCode);
                 if (selectedGroup) {
-                  onConfirm(selectedGroup.name);
+                  onConfirm([selectedGroup.id]);
                 }
               }}
               className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-500/80 transition-colors"
