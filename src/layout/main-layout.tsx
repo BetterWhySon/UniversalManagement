@@ -1,5 +1,7 @@
 import Sidebar from '@/components/sidebar';
+import AdminSidebar from '@/components/sidebar/admin-sidebar';
 import Header from '@/components/header';
+import AdminHeader from '@/components/header/admin-header';
 import { cn } from '@/helpers/class-name.helper';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -9,6 +11,7 @@ export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [openSidebar, setOpenSidebar] = useState(false);
+  const isAdminPath = location.pathname.startsWith('/admin');
 
   useLayoutEffect(() => {
     document.documentElement.scrollTo(0, 0);
@@ -16,10 +19,10 @@ export default function MainLayout() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (localStorage.getItem("is_admin") !== "true") {
-      navigate('/');
+    if (isAdminPath && localStorage.getItem("is_admin_admin") !== "true") {
+      navigate('/admin/login');
     }
-  }, []);
+  }, [location.pathname]);
 
   const shouldShowSidebar = () => {
     return ![
@@ -39,8 +42,8 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen bg-hw-dark-1 overflow-hidden">
-      <Header />
-      <Sidebar />
+      {isAdminPath ? <AdminHeader /> : <Header />}
+      {isAdminPath ? <AdminSidebar /> : <Sidebar />}
       <div className="fixed left-0 top-1/2 transform -translate-y-1/2 w-4 h-8 flex items-center justify-center text-white opacity-70">
         <span className="text-xl">&gt;</span>
       </div>

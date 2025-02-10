@@ -12,6 +12,37 @@ type Settings = {
   get(category: 'STANDARD_INFO' | 'BATTERY' | 'MONITORING' | 'STATISTICS', key?: string): string;
 };
 
+type BWPath = {
+  _: string;
+  DASHBOARD: { _: string; OVERVIEW: string; BATTERY_STATUS: string; OPERATION_STATUS: string };
+  LOGIN: { _: string };
+  MANAGEMENT: { _: string; COMPANY: string; GROUP: string; BATTERY: string };
+  get(path?: string): string;
+};
+
+export const BW_PATH: BWPath = {
+  _: 'admin',
+  DASHBOARD: {
+    _: 'dashboard',
+    OVERVIEW: 'overview',
+    BATTERY_STATUS: 'battery-status',
+    OPERATION_STATUS: 'operation-status',
+  },
+  LOGIN: {
+    _: 'login',
+  },
+  MANAGEMENT: {
+    _: 'management',
+    COMPANY: 'company',
+    GROUP: 'group',
+    BATTERY: 'battery',
+  },
+  get(path?: string) {
+    if (!path) return `/${this._}`;
+    return `/${this._}/${path}`;
+  }
+};
+
 export const PATH = {
   DASHBOARD: {
     _: '/',   

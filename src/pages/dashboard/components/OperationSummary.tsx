@@ -39,10 +39,10 @@ const OperationSummary: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-800 p-4 rounded-lg border border-white h-full">
+    <div className="bg-slate-800 p-3 rounded-lg border border-white/20 h-full">
       <div className="flex justify-between items-center mb-4">
         <h3 
-          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
           onClick={() => setIsModalOpen(true)}
         >
           운영 현황

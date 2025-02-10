@@ -242,15 +242,16 @@ const CompanyRegistrationPage: React.FC = () => {
             isPagination
             pagination={{
               total: getFilteredData.length,
-              pageSize: 14,
+              pageSize: 12,
             }}
             paginationMarginTop='32px'
             emptyMessage={trans('데이터가 없습니다.')}
+            headerClassName="h-12 bg-hw-dark-2"
           />
         </div>
 
         <div className='w-full block xs:hidden'>
-          {/* 모일 테이블 구현 */}
+          {/* 모바일 테이블 구현 */}
         </div>
       </div>
 

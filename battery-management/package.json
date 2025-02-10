@@ -1,0 +1,18 @@
+{
+  "name": "battery-management",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:customer": "turbo run dev --filter=customer-portal",
+    "dev:admin": "turbo run dev --filter=admin-portal",
+    "build:customer": "turbo run build --filter=customer-portal",
+    "build:admin": "turbo run build --filter=admin-portal",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^1.11.3"
+  }
+} 

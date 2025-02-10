@@ -5,6 +5,8 @@ import { cn } from '@/helpers/class-name.helper';
 import { OverflowX } from '@/enums/table';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+// import { classNames } from '@/helpers/class-name.helper';
+import { TEXT_ALIGN } from '@/enums/table';
 
 type TableDataProps<T> = {
     data: T[];
@@ -25,6 +27,7 @@ type TableDataProps<T> = {
     onCellContextMenu?: (e: React.MouseEvent, columnIndex: number) => void;
     selectedRows?: string[];
     onClick?: (row: T) => void;
+    tableLayout?: 'auto' | 'fixed';
 };
 
 function formatMultiLineString(str: any) {
@@ -50,6 +53,7 @@ export default function TableData<T extends { id: number }>({
     onCellContextMenu,
     selectedRows = [],
     onClick,
+    tableLayout,
 }: TableDataProps<T>) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [pageNumberA, setPageNumberA] = useState<number>(pageNumber);
@@ -82,25 +86,26 @@ export default function TableData<T extends { id: number }>({
                 style={{ overflowX }}
                 className='relative w-full h-full bg-hw-dark-2 overflow-x-scroll rounded-none xs:rounded-lg'>
                 <table
-                    className='w-full text-base font-light text-hw-white-1 bg-hw-dark-2 rounded-none xs:rounded-lg whitespace-nowrap table-auto'
+                    className={cn('w-full text-base font-light text-hw-white-1 bg-hw-dark-2 rounded-none xs:rounded-lg whitespace-nowrap table-auto', className)}
                     style={{ maxHeight, minWidth }}>
                     <thead className='text-hw-white-2 border-b border-hw-gray-7 font-light'>
                         <tr>
                             {columns.map((item: TableColumn<T>) => (
-                                <td
-                                    className='py-[18px] leading-[125%] max-xs:!px-[18px]'
+                                <th
                                     key={item.dataIndex}
-                                    style={
-                                        item.width
-                                            ? {
-                                                width: item.width,
-                                                paddingInline: item.paddingInline,
-                                                textAlign: item.align as 'left' | 'center' | 'right'
-                                            }
-                                            : { paddingInline: item.paddingInline, textAlign: item.align as 'left' | 'center' | 'right' }
-                                    }>
+                                    className={cn(
+                                        'py-[18px] leading-[125%] max-xs:!px-[18px]',
+                                        item.fixed === 'right' && 'sticky right-0 z-10',
+                                        item.align === TEXT_ALIGN.CENTER && 'text-center',
+                                        item.align === TEXT_ALIGN.RIGHT && 'text-right'
+                                    )}
+                                    style={{
+                                        ...item.style,
+                                        width: item.fixedWidth || item.width,
+                                        padding: item.noPaddingBlock ? `0 ${item.paddingInline || '12px'}` : `12px ${item.paddingInline || '12px'}`
+                                    }}>
                                     {item.title || trans(item.name)}
-                                </td>
+                                </th>
                             ))}
                         </tr>
                     </thead>
@@ -134,36 +139,36 @@ export default function TableData<T extends { id: number }>({
                                                 'border-2 bg-gradient-to-t from-[rgba(0,0,0,0.30)] 0% to-[rgba(0,0,0,0.30)] 100% bg-[#363E4B] border-[#7082A0]',
                                                 onClick && 'cursor-pointer hover:bg-hw-gray-9',
                                                 'transition-colors odd:bg-[#363E4B]',
+                                                selectedRows.includes(String(row.id)) && 'bg-hw-dark-1'
                                             )}>
-                                            {columns.map((item: TableColumn<T>, columnIndex: number) => (
-                                                <td
-                                                    key={item.dataIndex}
-                                                    style={{
-                                                        textAlign: item.align as 'left' | 'center' | 'right',
-                                                        paddingInline: item.paddingInline,
-                                                    }}
-                                                    onContextMenu={(e) => columnIndex === 0 && selectedRows.length > 0 && onCellContextMenu?.(e, columnIndex)}
-                                                    className={cn(
-                                                        'max-xs:!px-[18px]',
-                                                        !item.noPaddingBlock && 'py-[14px]',
-                                                        'leading-[125%]',
-                                                        columnIndex === 0 && selectedRows.length > 0 && 'cursor-context-menu'
-                                                    )}>
-                                                    {item.dataIndex === 'modelType' ? (
-                                                        row.modelType === '공랭식' ? trans('airCooling') :
-                                                            row.modelType === '액침식' ? trans('immersionCooling') :
-                                                                row.modelType
-                                                    ) : (
-                                                        item.render ? item.render(row, item.dataIndex) : (
-                                                            item.dataIndex === 'modbusUpdateTime' || item.dataIndex === 'canUpdateTime' ? (
-                                                                <span dangerouslySetInnerHTML={{ __html: formatMultiLineString(row[item.dataIndex]) }} />
-                                                            ) : (
-                                                                row[item.dataIndex as string] || ''
-                                                            )
-                                                        )
-                                                    )}
-                                                </td>
-                                            ))}
+                                            {columns.map((item: TableColumn<T>, columnIndex: number) => {
+                                                const value = item.render 
+                                                    ? item.render(row, item.dataIndex) 
+                                                    : (row[item.dataIndex as keyof T] ?? '-');  // null, undefined, 0 등의 값 처리
+
+                                                return (
+                                                    <td
+                                                        key={item.dataIndex}
+                                                        style={{
+                                                            ...item.style,
+                                                            width: item.fixedWidth || item.width,
+                                                            padding: item.noPaddingBlock ? `0 ${item.paddingInline || '12px'}` : `12px ${item.paddingInline || '12px'}`
+                                                        }}
+                                                        onContextMenu={(e) => columnIndex === 0 && selectedRows.length > 0 && onCellContextMenu?.(e, columnIndex)}
+                                                        className={cn(
+                                                            'max-xs:!px-[18px]',
+                                                            !item.noPaddingBlock && 'py-[12px]',
+                                                            'leading-[125%]',
+                                                            columnIndex === 0 && selectedRows.length > 0 && 'cursor-context-menu',
+                                                            item.fixed === 'right' && 'sticky right-0 z-10',
+                                                            item.align === TEXT_ALIGN.CENTER && 'text-center',
+                                                            item.align === TEXT_ALIGN.RIGHT && 'text-right',
+                                                            item.className
+                                                        )}>
+                                                        {value}
+                                                    </td>
+                                                );
+                                            })}
                                         </tr>
                                     );
                                 }

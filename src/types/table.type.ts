@@ -11,4 +11,6 @@ export type TableColumn<T> = {
   fixed?: 'left' | 'right';
   title?: React.ReactNode;
   render?: (row: T, dataIndex: string) => React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
 };

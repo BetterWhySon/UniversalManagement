@@ -19,6 +19,11 @@ export default function Header() {
 
   useEffect(() => {
     // ... (기존 useEffect 코드 유지)
+    const token = localStorage.getItem("token");
+    if (token === null) {
+      navigate('/login');
+      return;
+    }
   }, []);
 
   function tick() {

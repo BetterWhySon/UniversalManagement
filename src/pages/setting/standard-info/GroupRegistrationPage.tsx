@@ -238,7 +238,7 @@ const GroupRegistrationPage: React.FC = () => {
             isPagination
             pagination={{
               total: getFilteredData.length,
-              pageSize: 14,
+              pageSize: 12,
             }}
             paginationMarginTop='32px'
             emptyMessage={trans('데이터가 없습니다.')}
