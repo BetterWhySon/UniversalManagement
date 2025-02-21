@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { DeviceTypeData } from './DeviceTypeSearchPopup';
+import useAdmBetteryModel from '@/api/admin/admBetteryModel';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string, description: string, id?: number) => void;
+  onSubmit: () => void;
   mode?: 'create' | 'edit';
-  initialData?: DeviceTypeData;
+  initialData?: { id: number; name: string; description: string };
 }
 
 export default function DeviceTypeAddPopup({ isOpen, onClose, onSubmit, mode = 'create', initialData }: Props) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const { t: trans } = useTranslation('translation');
+  const { storeBetteryDeviceCreate, storeBetteryDeviceEdit } = useAdmBetteryModel();
 
   useEffect(() => {
     if (mode === 'edit' && initialData) {
@@ -23,18 +26,27 @@ export default function DeviceTypeAddPopup({ isOpen, onClose, onSubmit, mode = '
     }
   }, [mode, initialData]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(name, description, initialData?.id);
-    setName('');
-    setDescription('');
-    onClose();
+    try {
+      if (mode === 'edit' && initialData) {
+        await storeBetteryDeviceEdit(initialData.id, name, description, trans);
+      } else {
+        await storeBetteryDeviceCreate(name, description, trans);
+      }
+      onSubmit();
+      setName('');
+      setDescription('');
+      onClose();
+    } catch (error) {
+      console.error('Error saving device type:', error);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999]">
       <div className="bg-hw-dark-2 rounded-lg p-6 w-[500px]">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl text-white">
@@ -51,7 +63,7 @@ export default function DeviceTypeAddPopup({ isOpen, onClose, onSubmit, mode = '
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">기종</label>
+              <label className="block text-sm text-gray-400 mb-1">기기 종류</label>
               <input
                 type="text"
                 value={name}
@@ -67,7 +79,6 @@ export default function DeviceTypeAddPopup({ isOpen, onClose, onSubmit, mode = '
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-4 py-2 bg-hw-dark-1 text-white border border-hw-gray-7 rounded"
-                required
               />
             </div>
           </div>

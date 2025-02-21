@@ -1,40 +1,79 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AdminFormData } from '../page';
+import useAdmUser from '@/api/admin/admUser';
+import { typeAdmUserList } from '@/api/types/admin/typeAdmUser';
 import CompanySearchPopup from './CompanySearchPopup';
 
-interface AdminRegistrationPopupProps {
+interface Props {
   onClose: () => void;
-  onSave: (data: AdminFormData) => void;
-  initialData?: AdminFormData;  // 수정 시 초기 데이터
-  mode?: 'create' | 'edit';     // 생성/수정 모드
+  onSuccess?: () => void;  // 성공 시 리스트 갱신을 위한 콜백
+  initialData?: typeAdmUserList;
+  mode?: 'create' | 'edit';
 }
 
 export default function AdminRegistrationPopup({ 
   onClose, 
-  onSave, 
+  onSuccess,
   initialData,
   mode = 'create' 
-}: AdminRegistrationPopupProps) {
+}: Props) {
   const { t: trans } = useTranslation('translation');
-  const [formData, setFormData] = useState<AdminFormData>(initialData || {
-    companyName: '',
-    userId: '',
+  const { storeUserCreate, storeUserEdit, storeUserList } = useAdmUser();
+  const isSuperUser = localStorage.getItem("is_admin_superuser") === "true";
+
+  const [formData, setFormData] = useState<typeAdmUserList>({
+    id: initialData?.id || 0,
+    user_id: initialData?.user_id || '',
+    username: initialData?.username || '',
     password: '',
-    name: '',
-    contact: '',
-    email: '',
-    role: 'admin'
+    customer_id: initialData?.customer_id || 0,
+    customer: initialData?.customer || '',
+    phonenumber: initialData?.phonenumber || '',
+    email: initialData?.email || '',
+    is_staff: initialData?.is_staff ?? false
   });
   const [isCompanySearchOpen, setIsCompanySearchOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    try {
+      if (mode === 'edit') {
+        await storeUserEdit(
+          formData.id.toString(),
+          formData.username,
+          formData.password,
+          formData.customer_id.toString(),
+          formData.phonenumber,
+          formData.email,
+          formData.is_staff,
+          trans
+        );
+      } else {
+        await storeUserCreate(
+          formData.user_id,
+          formData.username,
+          formData.password,
+          formData.customer_id.toString(),
+          formData.phonenumber,
+          formData.email,
+          formData.is_staff,
+          trans
+        );
+      }
+      await storeUserList(trans);  // 리스트 갱신
+      onSuccess?.();  // 성공 콜백 호출
+      onClose();
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
   };
 
-  const handleCompanySelect = (company: { name: string }) => {
-    setFormData(prev => ({ ...prev, companyName: company.name }));
+  const handleCompanySelect = (company: { id: number; name: string }) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      customer_id: company.id,
+      customer: company.name 
+    }));
     setIsCompanySearchOpen(false);
   };
 
@@ -61,9 +100,9 @@ export default function AdminRegistrationPopup({
                   <div className="flex items-center justify-between w-full">
                     <input
                       type="text"
-                      value={formData.companyName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                      className="w-[250px] h-8 px-3 bg-hw-dark-1 rounded text-white border border-gray-600"
+                      value={formData.customer}
+                      readOnly
+                      className="w-[250px] h-8 px-3 bg-gray-600/50 rounded text-gray-400 border border-gray-600 cursor-not-allowed"
                     />
                     <button
                       type="button"
@@ -81,8 +120,9 @@ export default function AdminRegistrationPopup({
                 <div className="flex-1" style={{ maxWidth: '338px' }}>
                   <input
                     type="text"
-                    value={formData.userId}
-                    onChange={(e) => setFormData(prev => ({ ...prev, userId: e.target.value }))}
+                    value={formData.user_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, user_id: e.target.value }))}
+                    disabled={mode === 'edit'}
                     className="w-full h-8 px-3 bg-hw-dark-1 rounded text-white border border-gray-600"
                   />
                 </div>
@@ -105,8 +145,8 @@ export default function AdminRegistrationPopup({
                 <div className="flex-1" style={{ maxWidth: '338px' }}>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    value={formData.username}
+                    onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
                     className="w-full h-8 px-3 bg-hw-dark-1 rounded text-white border border-gray-600"
                   />
                 </div>
@@ -117,8 +157,8 @@ export default function AdminRegistrationPopup({
                 <div className="flex-1" style={{ maxWidth: '338px' }}>
                   <input
                     type="text"
-                    value={formData.contact}
-                    onChange={(e) => setFormData(prev => ({ ...prev, contact: e.target.value }))}
+                    value={formData.phonenumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phonenumber: e.target.value }))}
                     className="w-full h-8 px-3 bg-hw-dark-1 rounded text-white border border-gray-600"
                   />
                 </div>
@@ -136,29 +176,31 @@ export default function AdminRegistrationPopup({
                 </div>
               </div>
 
-              <div className="flex items-center">
-                <label className="w-32 text-white">권한:</label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      checked={formData.role === 'admin'}
-                      onChange={() => setFormData(prev => ({ ...prev, role: 'admin' }))}
-                      className="form-radio text-blue-500"
-                    />
-                    <span className="text-white">관리자(등록,조회)</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      checked={formData.role === 'user'}
-                      onChange={() => setFormData(prev => ({ ...prev, role: 'user' }))}
-                      className="form-radio text-blue-500"
-                    />
-                    <span className="text-white">일반(조회)</span>
-                  </label>
+              {isSuperUser && (
+                <div className="flex items-center">
+                  <label className="w-32 text-white">권한:</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        checked={formData.is_staff === true}
+                        onChange={() => setFormData(prev => ({ ...prev, is_staff: true }))}
+                        className="form-radio text-blue-500"
+                      />
+                      <span className="text-white">관리자(등록,조회)</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        checked={formData.is_staff === false}
+                        onChange={() => setFormData(prev => ({ ...prev, is_staff: false }))}
+                        className="form-radio text-blue-500"
+                      />
+                      <span className="text-white">일반(조회)</span>
+                    </label>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="flex justify-center gap-4 mt-8">

@@ -246,7 +246,6 @@ const CompanyRegistrationPage: React.FC = () => {
             }}
             paginationMarginTop='32px'
             emptyMessage={trans('데이터가 없습니다.')}
-            headerClassName="h-12 bg-hw-dark-2"
           />
         </div>
 

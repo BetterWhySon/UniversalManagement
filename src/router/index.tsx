@@ -33,6 +33,7 @@ import CompanyPage from '@/pages_bw/company/page';
 import AdminUserPage from '@/pages_bw/admin-user/page';
 import BatteryModelPage from '@/pages_bw/battery-model/page';
 import BatteryPackPage from '@/pages_bw/battery-pack/page';
+import BatteryDataConfigPage from '@/pages_bw/battery-data-config/page';
 
 const router = createBrowserRouter([
   // 고객용 라우터
@@ -95,6 +96,7 @@ const router = createBrowserRouter([
       { path: 'company', Component: CompanyPage },
       { path: 'admin-user', Component: AdminUserPage },
       { path: 'battery-model', Component: BatteryModelPage },
+      { path: 'battery-data-config', Component: BatteryDataConfigPage },
       { path: 'battery-pack', Component: BatteryPackPage },
     ],
   },

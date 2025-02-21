@@ -35,6 +35,9 @@ export default function ManufacturerSearchPopup({ isOpen, onClose, onSelect }: P
       dataIndex: 'name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
+      render: (row: ManufacturerData) => (
+        <span className="text-yellow-400">{row.name}</span>
+      )
     },
     {
       name: '사업자번호',
@@ -80,11 +83,14 @@ export default function ManufacturerSearchPopup({ isOpen, onClose, onSelect }: P
         </div>
 
         <div className="flex-1 overflow-hidden">
-          <TableData
+          <TableData<ManufacturerData>
             data={filteredManufacturers}
             columns={columns}
-            onClick={(row) => onSelect(row as ManufacturerData)}
-            maxHeight="350px"
+            onClick={(row) => {
+              onSelect(row);
+              onClose();
+            }}
+            className="cursor-pointer hover:bg-hw-dark-1"
           />
         </div>
 

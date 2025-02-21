@@ -7,6 +7,13 @@ import LifeManagement from './components/LifeManagement';
 import BatteryInfo from './components/BatteryInfo';
 import ChargingHistory from './components/ChargingHistory';
 import AlarmHistory from './components/AlarmHistory';
+import DeviceSelectPopup from './components/DeviceSelectPopup';
+
+interface Selection {
+  company: string;
+  groups: string[];
+  device?: string;
+}
 
 const IndividualLookupPage: React.FC = () => {
   const { t: trans } = useTranslation('translation');
@@ -14,6 +21,7 @@ const IndividualLookupPage: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState('사용관리');
+  const [showDeviceSelect, setShowDeviceSelect] = useState(false);
 
   const tabs = ['사용관리', '수명관리', '배터리정보', '충/방전이력', '알람이력'];
 
@@ -99,51 +107,34 @@ const IndividualLookupPage: React.FC = () => {
     }
   }, []);
 
+  const handleDeviceSelect = () => {
+    setShowDeviceSelect(true);
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-70px)]">
-      <div className="px-[18px] lg:px-[55px] pt-3 pb-1">
-        <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full '>
+    <div className="flex flex-col h-[calc(100vh-64px)]">
+      <div className='flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4'>
+        <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
-            개별기기 조회
+            개별 조회
           </h1>
         </div>
 
-        <div className='w-full bg-hw-dark-1 p-3 rounded-lg text-hw-white-1'>
-          <div className='flex flex-row items-start gap-8'>
+        <div className='relative w-[180px]'>
+          <h3 className='absolute -top-2 left-4 text-white px-2 text-sm bg-transparent'>
+            {trans('검색조건')}
+          </h3>
+          <div className='border border-hw-gray-4 rounded-lg p-3 pt-4'>
             <div className='flex flex-wrap gap-2 h-8 items-center'>
-              <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
-                value={selectedCompany}
-                onChange={(e) => setSelectedCompany(e.target.value)}
+              <button 
+                className="bg-blue-600 text-white px-3 rounded h-full border border-blue-500 min-w-[140px] hover:bg-blue-700 transition-colors w-full"
+                onClick={handleDeviceSelect}
               >
-                <option value="">{trans('사업장')}</option>
-                <option value="신일운수">신일운수</option>
-              </select>
-              <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
-                value={selectedGroup}
-                onChange={(e) => setSelectedGroup(e.target.value)}
-              >
-                <option value="">{trans('그룹명')}</option>
-                <option value="영업1팀">영업1팀</option>
-                <option value="영업2팀">영업2팀</option>
-              </select>
-              <select 
-                className="bg-hw-dark-3 text-hw-white-1 p-1.5 rounded h-full border-none outline-none min-w-[120px]"
-                value={selectedDevice}
-                onChange={(e) => setSelectedDevice(e.target.value)}
-              >
-                <option value="">{trans('기기명')}</option>
-                <option value="배터리1호">배터리1호</option>
-                <option value="배터리2호">배터리2호</option>
-              </select>
+                <span className="block text-center">
+                  {selectedDevice ? `${selectedCompany} / ${selectedGroup} / ${selectedDevice}` : '기기 선택'}
+                </span>
+              </button>
             </div>
-
-            <button className='py-1 px-4 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center h-8'>
-              <span className='text-hw-white-1 font-light text-base leading-[125%] whitespace-nowrap'>
-                {trans('조회')}
-              </span>
-            </button>
           </div>
         </div>
       </div>
@@ -285,6 +276,24 @@ const IndividualLookupPage: React.FC = () => {
           {selectedTab === '알람이력' && <AlarmHistory />}
         </div>
       </div>
+
+      {showDeviceSelect && (
+        <DeviceSelectPopup 
+          isOpen={showDeviceSelect}
+          onClose={() => setShowDeviceSelect(false)}
+          onSelect={(selections, selectedDevices) => {
+            if (selections.length > 0) {
+              const firstDevice = selections[0];
+              setSelectedCompany(firstDevice.company);
+              setSelectedGroup(firstDevice.groups[0] || '');
+              setSelectedDevice(firstDevice.device || '');
+            }
+            setShowDeviceSelect(false);
+          }}
+          conditionType="기기"
+          title="기기 선택"
+        />
+      )}
     </div>
   );
 };

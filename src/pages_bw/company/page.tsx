@@ -36,19 +36,6 @@ export default function CompanyPage() {
     storeCustomerList(trans);
   }, []);
 
-//   useEffect(() => {
-//       console.log(location);
-//       const token = localStorage.getItem("token");
-//       if (token === null) {
-//           navigate('/login');
-//           return;
-//       }
-//       const parts = location.pathname.split('/');
-//       storeDiagnostics2Data(Number(parts[2]), trans)
-//   }, [location]);
-
- 
-
 
   const columns = useMemo(() => [
     {
@@ -222,10 +209,7 @@ export default function CompanyPage() {
   };
 
   const handleOpenRegistration = () => {
-    // setIsRegistrationPopupOpen(true);  // 기존 코드 주석 처리
-    
-    // EVcheck 커스텀 스키마 호출
-    window.location.href = 'EVcheck://';
+    setIsRegistrationPopupOpen(true);  // 기존 코드 주석 처리
   };
 
   return (

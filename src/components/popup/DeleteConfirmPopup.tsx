@@ -20,8 +20,8 @@ const DeleteConfirmPopup: React.FC<DeleteConfirmPopupProps> = ({ onClose, onConf
           </button>
         </div>
 
-        <div className="p-8 text-center">
-          <p className="text-white text-lg">{message}</p>
+        <div className="p-6 text-center">
+          <p className="text-white text-base whitespace-pre-line">{message}</p>
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t border-gray-600">

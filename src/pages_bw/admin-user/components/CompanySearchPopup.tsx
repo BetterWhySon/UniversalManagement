@@ -1,62 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TEXT_ALIGN } from '@/enums/table';
 import TableData from '@/components/table/TableData';
+import useAdmCustomer from '@/api/admin/admCustomer';
+import { typeAdmCustomerList } from '@/api/types/admin/typeAdmCustomer';
 
 interface CompanySearchPopupProps {
   onClose: () => void;
-  onSelect: (company: CompanyData) => void;
-}
-
-interface CompanyData {
-  id: number;
-  name: string;
-  businessNumber: string;
-  businessType: string;
+  onSelect: (company: { id: number; name: string }) => void;
 }
 
 export default function CompanySearchPopup({ onClose, onSelect }: CompanySearchPopupProps) {
   const { t: trans } = useTranslation('translation');
+  const { dataListCustomer, storeCustomerList } = useAdmCustomer();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
 
-  const dummyData: CompanyData[] = [
-    {
-      id: 1,
-      name: 'FF캠핑카',
-      businessNumber: '656-41-31231',
-      businessType: '제조업'
-    },
-    {
-      id: 2,
-      name: '신일운수',
-      businessNumber: '754-41-1231',
-      businessType: '서비스업'
-    },
-    {
-      id: 3,
-      name: '캠핑콜',
-      businessNumber: '546-72-4412',
-      businessType: '제조업'
-    },
-    {
-      id: 4,
-      name: '케이원캠핑',
-      businessNumber: '456-81-8411',
-      businessType: '서비스업'
-    },
-    {
-      id: 5,
-      name: '유니캠프',
-      businessNumber: '951-74-1111',
-      businessType: '서비스업'
-    },
-    {
-      id: 6,
-      name: '배터와이',
-      businessNumber: '656-87-0171',
-      businessType: '제조업'
-    }
-  ];
+  useEffect(() => {
+    storeCustomerList(trans);
+  }, []);
 
   const columns = useMemo(() => [
     {
@@ -64,30 +25,32 @@ export default function CompanySearchPopup({ onClose, onSelect }: CompanySearchP
       dataIndex: 'name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
-      render: (row: CompanyData) => (
+      render: (row: typeAdmCustomerList) => (
         <span className="text-yellow-400">{row.name}</span>
       )
     },
     {
       name: '사업자번호',
-      dataIndex: 'businessNumber',
+      dataIndex: 'identity_number',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px'
     },
     {
       name: '업종',
-      dataIndex: 'businessType',
+      dataIndex: 'business_field',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '120px'
     }
   ], []);
 
   const getFilteredData = useMemo(() => {
-    if (!searchKeyword) return dummyData;
-    return dummyData.filter(item => 
+    if (!dataListCustomer) return [];
+    if (!searchKeyword) return dataListCustomer;
+    
+    return dataListCustomer.filter(item => 
       item.name.toLowerCase().includes(searchKeyword.toLowerCase())
     );
-  }, [searchKeyword]);
+  }, [searchKeyword, dataListCustomer]);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -113,10 +76,10 @@ export default function CompanySearchPopup({ onClose, onSelect }: CompanySearchP
           </div>
 
           <div className="max-h-[400px] overflow-auto">
-            <TableData<CompanyData>
+            <TableData<typeAdmCustomerList>
               data={getFilteredData}
               columns={columns}
-              onClick={onSelect}
+              onClick={(row) => onSelect({ id: row.id, name: row.name })}
               className="cursor-pointer hover:bg-hw-dark-1"
             />
           </div>

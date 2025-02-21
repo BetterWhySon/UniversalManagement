@@ -87,6 +87,13 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 필수 필드 검증
+    if (!formData.postcode || !formData.address) {
+      alert('사업장 주소를 입력해주세요.');
+      return;
+    }
+    
     onSave({
       code: formData.code,
       company: formData.company,
@@ -109,91 +116,99 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="space-y-4">
-            <div className="flex items-center">
-              <label className="w-32 text-white">CODE :</label>
-              <input
-                type="text"
-                className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                value={formData.code}
-                onChange={(e) => setFormData({...formData, code: e.target.value})}
-              />
-            </div>
+        <form noValidate onSubmit={handleSubmit}>
+          <div className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <label className="w-32 text-white">코드 :</label>
+                <input
+                  type="text"
+                  className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                  value={formData.code}
+                  onChange={(e) => setFormData({...formData, code: e.target.value})}
+                  required
+                />
+              </div>
 
-            <div className="flex items-center">
-              <label className="w-32 text-white">사업장 :</label>
-              <input
-                type="text"
-                className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                value={formData.company}
-                onChange={(e) => setFormData({...formData, company: e.target.value})}
-              />
-            </div>
+              <div className="flex items-center">
+                <label className="w-32 text-white">사업장 :</label>
+                <input
+                  type="text"
+                  className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                  value={formData.company}
+                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  required
+                />
+              </div>
 
-            <div className="flex">
-              <label className="w-32 text-white mt-2">사업장 주소 :</label>
-              <div className="flex-1 space-y-2">
-                <div className="flex gap-2">
+              <div className="flex">
+                <label className="w-32 text-white mt-2">사업장 주소 :</label>
+                <div className="flex-1 space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      className="w-32 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500 cursor-pointer"
+                      placeholder="우편번호"
+                      value={formData.postcode}
+                      required
+                      readOnly
+                      onClick={handlePostcode}
+                    />
+                    <button
+                      type="button"
+                      onClick={handlePostcode}
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      우편번호 검색
+                    </button>
+                  </div>
                   <input
                     type="text"
-                    className="w-32 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                    placeholder="우편번호"
-                    value={formData.postcode}
+                    className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500 cursor-pointer"
+                    value={formData.address}
+                    required
                     readOnly
-                  />
-                  <button
-                    type="button"
                     onClick={handlePostcode}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    우편번호 검색
-                  </button>
+                    placeholder="주소"
+                  />
+                  <input
+                    type="text"
+                    className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                    value={formData.detailAddress}
+                    onChange={(e) => setFormData({...formData, detailAddress: e.target.value})}
+                    placeholder="상세주소"
+                  />
                 </div>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-32 text-white">설명 :</label>
                 <input
                   type="text"
-                  className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                  value={formData.address}
-                  readOnly
-                  placeholder="주소"
-                />
-                <input
-                  type="text"
-                  className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                  value={formData.detailAddress}
-                  onChange={(e) => setFormData({...formData, detailAddress: e.target.value})}
-                  placeholder="상세주소"
+                  className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
                 />
               </div>
             </div>
-
-            <div className="flex items-center">
-              <label className="w-32 text-white">Description :</label>
-              <input
-                type="text"
-                className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-              />
-            </div>
           </div>
-        </div>
 
-        <div className="flex justify-end gap-4 p-6 border-t border-gray-600">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2 border border-hw-orange-1 text-hw-orange-1 rounded hover:bg-hw-orange-1/10"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90"
-          >
-            저장
-          </button>
-        </div>
+          <div className="flex justify-end gap-4 p-6 border-t border-gray-600">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border border-hw-orange-1 text-hw-orange-1 rounded hover:bg-hw-orange-1/10"
+            >
+              취소
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90"
+            >
+              저장
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

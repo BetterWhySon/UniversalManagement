@@ -6,18 +6,20 @@ import CompanySelectPopup from './components/CompanySelectPopup';
 import AlertPopup from './components/AlertPopup';
 import GroupSelectPopup from './components/GroupSelectPopup';
 import BatteryEditPopup from './components/BatteryEditPopup';
+import DeleteConfirmPopup from './components/DeleteConfirmPopup';
 
 interface BatteryData {
   id: number;
   company: string;
   group: string;
+  deviceName: string;
+  application: string;
+  manufacturer: string;
+  packId: string;
+  packModel: string;
   user: string;
   contact: string;
   address: string;
-  itemCategory: string;
-  batteryStatus: string;
-  packId: string;
-  approvalStatus: string;
   registrationDate: string;
 }
 
@@ -32,6 +34,8 @@ const BatteryRegistrationPage: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
   const [editData, setEditData] = useState<BatteryData | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [alertMessage, setAlertMessage] = useState('배터리를 선택해주세요.');
 
   // 이벤트 핸들러 수정
   const handleCompanyAssign = () => {
@@ -47,6 +51,17 @@ const BatteryRegistrationPage: React.FC = () => {
       setShowAlert(true);
       return;
     }
+
+    // 선택된 데이터들의 사업장 확인
+    const selectedItems = getFilteredData.filter(item => selectedRows.includes(item.id));
+    const companies = new Set(selectedItems.map(item => item.company));
+
+    if (companies.size > 1) {
+      setShowAlert(true);
+      setAlertMessage('같은 사업장만 선택 가능합니다.');
+      return;
+    }
+
     setIsGroupSelectOpen(true);
   };
 
@@ -78,27 +93,34 @@ const BatteryRegistrationPage: React.FC = () => {
 
   // 더미 데이터 수정
   const dummyData: BatteryData[] = [
-    // 서울지점
-    { id: 1, company: '서울지점', group: 'FF캠핑카', user: 'BAT-001', contact: '010-1234-5678', address: '서울시 강남구', itemCategory: '캠핑카', batteryStatus: '정상', packId: 'ff-001', approvalStatus: 'O', registrationDate: '2024.11.08' },
-    { id: 2, company: '서울지점', group: '베이런전동바이크', user: 'BAT-101', contact: '010-2345-6789', address: '서울시 서초구', itemCategory: '전동바이크', batteryStatus: '정상', packId: 'bayrun-001', approvalStatus: 'O', registrationDate: '2024.11.08' },
-    
-    // 부산지점
-    { id: 3, company: '부산지점', group: '캠핑존', user: 'BAT-001', contact: '010-3456-7890', address: '부산시 해운대구', itemCategory: '캠핑카', batteryStatus: '정상', packId: 'camp-001', approvalStatus: 'O', registrationDate: '2024.11.07' },
-    { id: 4, company: '부산지점', group: '드론파크', user: 'BAT-001', contact: '010-4567-8901', address: '부산시 수영구', itemCategory: '드론', batteryStatus: '정상', packId: 'drone-001', approvalStatus: 'O', registrationDate: '2024.11.07' },
-    
-    // 대구지점
-    { id: 5, company: '대구지점', group: '아웃도어파크', user: 'BAT-001', contact: '010-5678-9012', address: '대구시 중구', itemCategory: '아웃도어', batteryStatus: '정상', packId: 'outdoor-001', approvalStatus: 'O', registrationDate: '2024.11.06' },
-    { id: 6, company: '대구지점', group: '대구전동바이크', user: 'BAT-001', contact: '010-6789-0123', address: '대구시 수성구', itemCategory: '전동바이크', batteryStatus: '정상', packId: 'bike-001', approvalStatus: 'O', registrationDate: '2024.11.06' },
-    { id: 7, company: '대구지점', group: '캠핑존원', user: 'BAT-001', contact: '010-7890-1234', address: '대구시 동구', itemCategory: '캠핑카', batteryStatus: '정상', packId: 'camp1-001', approvalStatus: 'O', registrationDate: '2024.11.05' },
-    { id: 8, company: '대구지점', group: '캠핑존투', user: 'BAT-001', contact: '010-8901-2345', address: '대구시 서구', itemCategory: '캠핑카', batteryStatus: '정상', packId: 'camp2-001', approvalStatus: 'O', registrationDate: '2024.11.05' },
-    
-    // 광주지점
-    { id: 9, company: '광주지점', group: '아웃도어파크', user: 'BAT-001', contact: '010-9012-3456', address: '광주시 서구', itemCategory: '아웃도어', batteryStatus: '정상', packId: 'gwangju-out-001', approvalStatus: 'O', registrationDate: '2024.11.04' },
-    { id: 10, company: '광주지점', group: '전동바이크', user: 'BAT-001', contact: '010-0123-4567', address: '광주시 남구', itemCategory: '전동바이크', batteryStatus: '정상', packId: 'gwangju-bike-001', approvalStatus: 'O', registrationDate: '2024.11.04' },
-    
-    // 인천지점
-    { id: 11, company: '인천지점', group: '마린스포츠', user: 'BAT-001', contact: '010-1111-2222', address: '인천시 연수구', itemCategory: '수상레저', batteryStatus: '정상', packId: 'incheon-mar-001', approvalStatus: 'O', registrationDate: '2024.11.03' },
-    { id: 12, company: '인천지점', group: '드론파크', user: 'BAT-001', contact: '010-2222-3333', address: '인천시 중구', itemCategory: '드론', batteryStatus: '정상', packId: 'incheon-drone-001', approvalStatus: 'O', registrationDate: '2024.11.03' }
+    { 
+      id: 1, 
+      company: '서울지점', 
+      group: 'FF캠핑카', 
+      deviceName: 'BAT-001',
+      application: '캠핑카',
+      manufacturer: '삼성SDI',
+      packId: 'PACK-001',
+      packModel: 'MODEL-A1',
+      user: '홍길동',
+      contact: '010-1234-5678',
+      address: '서울시 강남구 테헤란로 123', 
+      registrationDate: '2024.03.19'
+    },
+    { 
+      id: 2, 
+      company: '부산지점', 
+      group: '마린스포츠', 
+      deviceName: 'BAT-002',
+      application: '수상레저',
+      manufacturer: 'LG에너지솔루션',
+      packId: 'PACK-002',
+      packModel: 'MODEL-B2',
+      user: '김철수',
+      contact: '010-2345-6789',
+      address: '부산시 해운대구 마린시티로 456', 
+      registrationDate: '2024.03.18'
+    }
   ];
 
   const getFilteredData = useMemo(() => {
@@ -122,24 +144,14 @@ const BatteryRegistrationPage: React.FC = () => {
       name: '',
       dataIndex: 'checkbox',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '50px',
+      fixedWidth: '40px',
       render: (row: BatteryData) => (
         <div className="px-3">
           <input
             type="checkbox"
             checked={selectedRows.includes(row.id)}
             onChange={() => handleSelectRow(row.id)}
-            className="w-4 h-4 accent-blue-500 cursor-pointer"
-          />
-        </div>
-      ),
-      title: (
-        <div className="px-3">
-          <input
-            type="checkbox"
-            checked={selectedRows.length === getFilteredData.length && getFilteredData.length > 0}
-            onChange={(e) => handleSelectAll(e.target.checked)}
-            className="w-4 h-4 accent-blue-500 cursor-pointer"
+            className="w-4 h-4 accent-blue-500"
           />
         </div>
       )
@@ -148,91 +160,67 @@ const BatteryRegistrationPage: React.FC = () => {
       name: '사업장',
       dataIndex: 'company',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px',
-      render: (row: BatteryData) => (
-        <div 
-          className="cursor-pointer"
-          onDoubleClick={() => {
-            setSelectedRows([row.id]);  // 해당 행만 선택
-            setIsCompanySelectOpen(true);  // 사업장 지정 팝업 열기
-          }}
-        >
-          {row.company}
-        </div>
-      )
+      fixedWidth: '80px'
     },
     {
-      name: '그룹',
+      name: '그룹명',
       dataIndex: 'group',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px',
-      render: (row: BatteryData) => (
-        <div 
-          className="cursor-pointer"
-          onDoubleClick={() => {
-            setSelectedRows([row.id]);
-            setIsGroupSelectOpen(true);
-          }}
-        >
-          {row.group}
-        </div>
-      )
+      fixedWidth: '100px'
     },
     {
       name: '기기명',
-      dataIndex: 'user',
+      dataIndex: 'deviceName',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '100px',
-      render: (row: BatteryData) => (
-        <div 
-          className="cursor-pointer"
-          onDoubleClick={() => handleEdit(row.id)}
-        >
-          {row.user}
-        </div>
-      )
+      fixedWidth: '80px'
+    },
+    {
+      name: '어플리케이션',
+      dataIndex: 'application',
+      align: TEXT_ALIGN.CENTER,
+      fixedWidth: '100px'
+    },
+    {
+      name: '배터리 제조사',
+      dataIndex: 'manufacturer',
+      align: TEXT_ALIGN.CENTER,
+      fixedWidth: '100px'
+    },
+    {
+      name: '팩 ID',
+      dataIndex: 'packId',
+      align: TEXT_ALIGN.CENTER,
+      fixedWidth: '80px'
+    },
+    {
+      name: '팩 모델정보',
+      dataIndex: 'packModel',
+      align: TEXT_ALIGN.CENTER,
+      fixedWidth: '100px'
     },
     {
       name: '사용자',
+      dataIndex: 'user',
+      align: TEXT_ALIGN.CENTER,
+      fixedWidth: '80px'
+    },
+    {
+      name: '연락처',
       dataIndex: 'contact',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '150px'
+      fixedWidth: '100px'
     },
     {
       name: '주소',
       dataIndex: 'address',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '300px'
-    },
-    {
-      name: '아이템카테고리',
-      dataIndex: 'itemCategory',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
-    },
-    {
-      name: '배터리생산처',
-      dataIndex: 'batteryStatus',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
-    },
-    {
-      name: '팩 모델정보',
-      dataIndex: 'packId',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
-    },
-    {
-      name: '개인(위치)정보제공 동의',
-      dataIndex: 'approvalStatus',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '180px'
+      fixedWidth: '200px'
     },
     {
       name: '등록일자',
       dataIndex: 'registrationDate',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
+      fixedWidth: '80px'
     },
     {
       name: '관리',
@@ -241,16 +229,15 @@ const BatteryRegistrationPage: React.FC = () => {
       fixedWidth: '100px',
       render: (row: BatteryData) => (
         <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => handleEdit(row.id)}
-            className="p-1 hover:bg-gray-700 rounded transition-colors"
-            title="수정"
+          <button 
+            onClick={() => setEditData(row)}
+            className="opacity-80 hover:opacity-100 transition-opacity"
           >
             <svg 
-              className="w-5 h-5 text-white" 
+              className="w-5 h-5 text-white"
               fill="none" 
               stroke="currentColor" 
-              viewBox="0 0 20 20"
+              viewBox="0 0 24 24"
             >
               <path 
                 strokeLinecap="round" 
@@ -260,22 +247,21 @@ const BatteryRegistrationPage: React.FC = () => {
               />
             </svg>
           </button>
-          <button
-            onClick={() => handleReset(row.id)}
-            className="p-1 hover:bg-gray-700 rounded transition-colors"
-            title="해제"
+          <button 
+            onClick={() => handleDelete(row.id)}
+            className="opacity-80 hover:opacity-100 transition-opacity"
           >
             <svg 
-              className="w-5 h-5 text-white" 
+              className="w-5 h-5 text-white"
               fill="none" 
               stroke="currentColor" 
-              viewBox="0 0 20 20"
+              viewBox="0 0 24 24"
             >
               <path 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M6 18L18 6M6 6l12 12" 
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
               />
             </svg>
           </button>
@@ -316,6 +302,10 @@ const BatteryRegistrationPage: React.FC = () => {
   const handleReset = (id: number) => {
     // TODO: 해제 로직 구현
     console.log('Reset:', id);
+  };
+
+  const handleDelete = (id: number) => {
+    setDeleteTarget(id);
   };
 
   return (
@@ -385,7 +375,7 @@ const BatteryRegistrationPage: React.FC = () => {
               pageSize: 14,
             }}
             paginationMarginTop='32px'
-            emptyMessage={trans('데이터가 없습니다.')}
+            // emptyMessage={trans('데이터가 없습니다.')}
           />
         </div>
 
@@ -410,8 +400,11 @@ const BatteryRegistrationPage: React.FC = () => {
 
       {showAlert && (
         <AlertPopup
-          message="배터리를 선택해주세요."
-          onClose={() => setShowAlert(false)}
+          message={alertMessage}
+          onClose={() => {
+            setShowAlert(false);
+            setAlertMessage('배터리를 선택해주세요.');  // 기본 메시지로 초기화
+          }}
         />
       )}
 
@@ -420,6 +413,19 @@ const BatteryRegistrationPage: React.FC = () => {
           onClose={() => setEditData(null)}
           onSave={handleSaveEdit}
           initialData={editData}
+        />
+      )}
+
+      {deleteTarget && (
+        <DeleteConfirmPopup
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={() => {
+            // TODO: 삭제 로직 구현
+            console.log('Deleted:', deleteTarget);
+            setDeleteTarget(null);
+          }}
+          title="배터리 삭제"
+          message="해당 배터리를 삭제하시겠습니까?"
         />
       )}
     </div>

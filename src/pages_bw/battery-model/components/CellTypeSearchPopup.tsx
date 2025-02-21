@@ -1,101 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
+import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
 import CellTypeAddPopup from './CellTypeAddPopup';
 import DeleteConfirmPopup from '@/components/popup/DeleteConfirmPopup';
+import useAdmBetteryModel from '@/api/admin/admBetteryModel';
+import { typeAdmBetteryCellTypeList } from '@/api/types/admin/typeAdmBetteryModel';
 
-export interface CellTypeData {
-  id: number;
-  name: string;
-  description: string;
-}
-
-interface Props {
+interface CellTypeSearchPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (cellType: CellTypeData) => void;
+  onSelect: (cell: { id: number; name: string }) => void;
 }
 
-export default function CellTypeSearchPopup({ isOpen, onClose, onSelect }: Props) {
+export default function CellTypeSearchPopup({ isOpen, onClose, onSelect }: CellTypeSearchPopupProps) {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false);
-  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
-  const [editData, setEditData] = useState<CellTypeData | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<CellTypeData | null>(null);
-  const [cellTypes, setCellTypes] = useState<CellTypeData[]>([
-    { id: 1, name: 'NCM(energy)', description: '리튬 니켈 코발트 망간 산화물- 에너지' },
-    { id: 2, name: 'NCM(power)', description: '리튬 니켈 코발트 망간 산화물- 파워' },
-    { id: 3, name: 'NCM-polymer', description: '리튬 니켈 코발트 망간 산화물- 폴리머' },
-    { id: 4, name: 'LFP', description: '리튬 인산철' },
-    { id: 5, name: 'LCO', description: '리튬 코발트 산화물' },
-    { id: 6, name: 'LMO', description: '리튬 망간 산화물' },
-    { id: 7, name: 'NCA', description: '리튬 니켈 코발트 알루미늄 산화물' },
-    { id: 8, name: 'LTO', description: '리튬 티타네이트' },
-  ]);
+  const { t: trans } = useTranslation('translation');
+  const [editData, setEditData] = useState<{ id: number; name: string; description: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+  const { dataListBetteryCellType, storeBetteryCellTypeList, storeBetteryCellTypeDelete } = useAdmBetteryModel();
 
-  const handleAdd = (name: string, description: string) => {
-    const newCellType = {
-      id: cellTypes.length + 1,
-      name,
-      description
-    };
-    setCellTypes([...cellTypes, newCellType]);
-  };
-
-  const handleEdit = (cellType: CellTypeData) => {
-    setEditData(cellType);
-    setIsEditPopupOpen(true);
-  };
-
-  const handleDelete = (cellType: CellTypeData) => {
-    setDeleteTarget(cellType);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteTarget) {
-      setCellTypes(prev => prev.filter(item => item.id !== deleteTarget.id));
-      setDeleteTarget(null);
-    }
-  };
-
-  const filteredCellTypes = cellTypes.filter(
-    (cellType) =>
-      cellType.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      cellType.description.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
+  useEffect(() => {
+    storeBetteryCellTypeList(trans);
+  }, []);
 
   const columns = [
     {
       name: '셀 종류',
-      dataIndex: 'name',
+      dataIndex: 'cell_name',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '150px',
+      fixedWidth: '200px',
+      render: (row: typeAdmBetteryCellTypeList) => (
+        <span className="text-yellow-400">{row.cell_name}</span>
+      )
     },
     {
       name: '설명',
       dataIndex: 'description',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '250px',
+      fixedWidth: '300px'
     },
     {
       name: '수정/삭제',
       dataIndex: 'actions',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
-      render: (row: CellTypeData) => (
+      render: (row: typeAdmBetteryCellTypeList) => (
         <div className="flex items-center justify-center gap-2">
-          <button
+          <button 
+            className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(row);
+              setEditData({ id: row.id, name: row.cell_name, description: row.description });
+              setIsAddPopupOpen(true);
             }}
-            className="p-1 hover:bg-white/10 rounded"
           >
             <svg 
               className="w-5 h-5 text-white"
               fill="none" 
               stroke="currentColor" 
-              viewBox="0 0 24 24"
+              viewBox="0 0 22 22"
             >
               <path 
                 strokeLinecap="round" 
@@ -105,18 +70,18 @@ export default function CellTypeSearchPopup({ isOpen, onClose, onSelect }: Props
               />
             </svg>
           </button>
-          <button
+          <button 
+            className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(row);
+              handleDelete({ id: row.id, name: row.cell_name });
             }}
-            className="p-1 hover:bg-white/10 rounded"
           >
             <svg 
               className="w-5 h-5 text-white"
               fill="none" 
               stroke="currentColor" 
-              viewBox="0 0 24 24"
+              viewBox="0 0 22 22"
             >
               <path 
                 strokeLinecap="round" 
@@ -131,91 +96,103 @@ export default function CellTypeSearchPopup({ isOpen, onClose, onSelect }: Props
     }
   ];
 
+  const getFilteredData = useMemo(() => {
+    if (!dataListBetteryCellType) return [];
+    return dataListBetteryCellType.filter(cell => 
+      (cell.cell_name?.toLowerCase() || '').includes(searchKeyword.toLowerCase()) ||
+      (cell.description?.toLowerCase() || '').includes(searchKeyword.toLowerCase())
+    );
+  }, [dataListBetteryCellType, searchKeyword]);
+
+  const handleAddSubmit = () => {
+    storeBetteryCellTypeList(trans);
+  };
+
+  const handleDelete = (row: { id: number; name: string }) => {
+    setDeleteTarget(row);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteTarget) {
+      await storeBetteryCellTypeDelete(deleteTarget.id, trans);
+      setDeleteTarget(null);
+      storeBetteryCellTypeList(trans);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-      <div className="bg-hw-dark-2 rounded-lg p-6 w-[800px] h-[600px] flex flex-col">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999]">
+      <div className="bg-hw-dark-2 rounded-lg p-6 w-[800px]">
+        <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl text-white">셀 종류 선택</h2>
-          <button 
-            onClick={onClose}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        
-        <div className="mb-4 flex gap-2">
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="셀 종류 입력"
-            className="flex-1 px-4 py-2 bg-hw-dark-1 text-white border border-hw-gray-7 rounded"
-          />
-          <button
-            onClick={() => setIsAddPopupOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors whitespace-nowrap"
-          >
-            추가
-          </button>
+          <button onClick={onClose} className="text-white hover:text-gray-300">✕</button>
         </div>
 
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-auto">
-            <TableData
-              data={filteredCellTypes}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">검색</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="h-9 px-4 bg-hw-dark-1 text-white border border-hw-gray-7 rounded flex-1"
+                placeholder="셀 종류나 설명을 입력하세요"
+              />
+              <button
+                type="button"
+                className="h-9 px-4 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 whitespace-nowrap"
+                onClick={() => setIsAddPopupOpen(true)}
+              >
+                추가
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-[400px] overflow-auto">
+            <TableData<typeAdmBetteryCellTypeList>
+              data={getFilteredData}
               columns={columns}
-              onClick={(row) => onSelect(row as CellTypeData)}
-              maxHeight="none"
+              onClick={(row) => onSelect({ id: row.id, name: row.cell_name })}
+              className="cursor-pointer hover:bg-hw-dark-1"
             />
           </div>
         </div>
 
-        <div className="flex justify-end mt-4 pt-4 border-t border-hw-gray-7">
+        <div className="flex justify-end gap-2 mt-6">
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 bg-hw-dark-1 text-white rounded hover:bg-hw-dark-3"
           >
-            닫기
+            취소
           </button>
         </div>
+      </div>
 
+      {isAddPopupOpen && (
         <CellTypeAddPopup
-          isOpen={isAddPopupOpen || isEditPopupOpen}
+          isOpen={isAddPopupOpen}
           onClose={() => {
             setIsAddPopupOpen(false);
-            setIsEditPopupOpen(false);
             setEditData(null);
           }}
-          onAdd={(name, description) => {
-            if (editData) {
-              // 수정 모드
-              setCellTypes(prev => prev.map(item => 
-                item.id === editData.id ? { ...item, name, description } : item
-              ));
-              setEditData(null);
-              setIsEditPopupOpen(false);
-            } else {
-              // 추가 모드
-              handleAdd(name, description);
-              setIsAddPopupOpen(false);
-            }
-          }}
+          onSubmit={handleAddSubmit}
+          mode={editData ? 'edit' : 'create'}
           initialData={editData || undefined}
-          mode={isEditPopupOpen ? 'edit' : 'create'}
         />
+      )}
 
-        {deleteTarget && (
-          <DeleteConfirmPopup
-            title="셀 종류 삭제"
-            message="해당 셀 종류를 삭제하시겠습니까?"
-            onClose={() => setDeleteTarget(null)}
-            onConfirm={handleConfirmDelete}
-          />
-        )}
-      </div>
+      {deleteTarget && (
+        <DeleteConfirmPopup
+          title="셀 종류 삭제"
+          message="해당 셀 종류를 삭제하시겠습니까?"
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </div>
   );
 } 

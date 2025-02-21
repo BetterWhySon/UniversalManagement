@@ -2,57 +2,56 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
-import DeviceTypeAddPopup from './DeviceTypeAddPopup';
+import ModelGroupAddPopup from './ModelGroupAddPopup';
 import DeleteConfirmPopup from '@/components/popup/DeleteConfirmPopup';
-import useAdmBetteryModel from '@/api/admin/admBetteryModel';
-import { typeAdmBetteryDeviceList } from '@/api/types/admin/typeAdmBetteryModel';
+import useAdmBatteryModel from '@/api/admin/admBetteryModel';
+import { typeAdmBetteryModelGroupList } from '@/api/types/admin/typeAdmBetteryModel';
 
-interface DeviceTypeSearchPopupProps {
+interface ModelGroupSearchPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (device: { id: number; name: string }) => void;
+  onSelect: (model: { id: number; name: string }) => void;
 }
 
-export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: DeviceTypeSearchPopupProps) {
+interface ModelGroup {
+  id: number;
+  name: string;
+}
+
+export default function ModelGroupSearchPopup({ isOpen, onClose, onSelect }: ModelGroupSearchPopupProps) {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false);
   const { t: trans } = useTranslation('translation');
-  const [editData, setEditData] = useState<{ id: number; name: string; description: string } | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
-  const { dataListBetteryDevice, storeBetteryDeviceList, storeBetteryDeviceDelete } = useAdmBetteryModel();
+  const [editData, setEditData] = useState<ModelGroup | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ModelGroup | null>(null);
+  const { dataListBetteryModelGroup, storeBetteryModelGroupList, storeBetteryModelGroupDelete } = useAdmBatteryModel();
 
   useEffect(() => {
-    storeBetteryDeviceList(trans);
+    storeBetteryModelGroupList(trans);
   }, []);
 
   const columns = [
     {
-      name: '기기 종류',
-      dataIndex: 'device_name',
+      name: '모델그룹명',
+      dataIndex: 'group_name',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '200px',
-      render: (row: typeAdmBetteryDeviceList) => (
-        <span className="text-yellow-400">{row.device_name}</span>
+      fixedWidth: '300px',
+      render: (row: typeAdmBetteryModelGroupList) => (
+        <span className="text-yellow-400">{row.group_name}</span>
       )
-    },
-    {
-      name: '설명',
-      dataIndex: 'description',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '300px'
     },
     {
       name: '수정/삭제',
       dataIndex: 'actions',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
-      render: (row: typeAdmBetteryDeviceList) => (
+      render: (row: typeAdmBetteryModelGroupList) => (
         <div className="flex items-center justify-center gap-2">
           <button 
             className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
-              setEditData({ id: row.id, name: row.device_name, description: row.description });
+              setEditData({ id: row.id, name: row.group_name });
               setIsAddPopupOpen(true);
             }}
           >
@@ -74,7 +73,7 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
             className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete({ id: row.id, name: row.device_name });
+              handleDelete({ id: row.id, name: row.group_name });
             }}
           >
             <svg 
@@ -97,26 +96,25 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
   ];
 
   const getFilteredData = useMemo(() => {
-    if (!dataListBetteryDevice) return [];
-    return dataListBetteryDevice.filter(device => 
-      (device.device_name?.toLowerCase() || '').includes(searchKeyword.toLowerCase()) ||
-      (device.description?.toLowerCase() || '').includes(searchKeyword.toLowerCase())
+    if (!dataListBetteryModelGroup) return [];
+    return dataListBetteryModelGroup.filter(group => 
+      group.group_name.toLowerCase().includes(searchKeyword.toLowerCase())
     );
-  }, [dataListBetteryDevice, searchKeyword]);
+  }, [dataListBetteryModelGroup, searchKeyword]);
 
-  const handleAddSubmit = () => {
-    storeBetteryDeviceList(trans);
+  const handleAddSubmit = (name: string, id?: number) => {
+    storeBetteryModelGroupList(trans);
   };
 
-  const handleDelete = (row: { id: number; name: string }) => {
+  const handleDelete = (row: ModelGroup) => {
     setDeleteTarget(row);
   };
 
   const handleConfirmDelete = async () => {
     if (deleteTarget) {
-      await storeBetteryDeviceDelete(deleteTarget.id, trans);
+      await storeBetteryModelGroupDelete(deleteTarget.id, trans);
       setDeleteTarget(null);
-      storeBetteryDeviceList(trans);
+      storeBetteryModelGroupList(trans);
     }
   };
 
@@ -124,22 +122,23 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999]">
-      <div className="bg-hw-dark-2 rounded-lg p-6 w-[800px]">
+      <div className="bg-hw-dark-2 rounded-lg p-6 w-[600px]">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl text-white">기기 종류 선택</h2>
+          <h2 className="text-xl text-white">모델그룹 선택</h2>
           <button onClick={onClose} className="text-white hover:text-gray-300">✕</button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">검색</label>
+            <label className="block text-sm text-gray-400 mb-1">모델그룹명</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 className="h-9 px-4 bg-hw-dark-1 text-white border border-hw-gray-7 rounded flex-1"
-                placeholder="기기 종류나 설명을 입력하세요"
+                placeholder="검색어를 입력하세요"
+                required
               />
               <button
                 type="button"
@@ -152,10 +151,10 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
           </div>
 
           <div className="max-h-[400px] overflow-auto">
-            <TableData<typeAdmBetteryDeviceList>
+            <TableData<typeAdmBetteryModelGroupList>
               data={getFilteredData}
               columns={columns}
-              onClick={(row) => onSelect({ id: row.id, name: row.device_name })}
+              onClick={(row) => onSelect({ id: row.id, name: row.group_name })}
               className="cursor-pointer hover:bg-hw-dark-1"
             />
           </div>
@@ -173,7 +172,7 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
       </div>
 
       {isAddPopupOpen && (
-        <DeviceTypeAddPopup
+        <ModelGroupAddPopup
           isOpen={isAddPopupOpen}
           onClose={() => {
             setIsAddPopupOpen(false);
@@ -187,8 +186,8 @@ export default function DeviceTypeSearchPopup({ isOpen, onClose, onSelect }: Dev
 
       {deleteTarget && (
         <DeleteConfirmPopup
-          title="기기 종류 삭제"
-          message="해당 기기 종류를 삭제하시겠습니까?"
+          title="모델그룹 삭제"
+          message="해당 모델그룹을 삭제하시겠습니까?"
           onClose={() => setDeleteTarget(null)}
           onConfirm={handleConfirmDelete}
         />

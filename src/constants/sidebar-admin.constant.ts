@@ -17,6 +17,10 @@ export const ADMIN_SIDEBAR_MENU = [
         href: BW_PATH.get('battery-model')
       },
       {
+        title: '배터리 Data Config',
+        href: BW_PATH.get('battery-data-config')
+      },
+      {
         title: '배터리 팩 관리',
         href: BW_PATH.get('battery-pack')
       }

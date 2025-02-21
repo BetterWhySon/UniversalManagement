@@ -16,6 +16,7 @@ import BWIcon from '@/assets/images/white-logo.png';
 interface ILoginData {
   username: string;
   is_admin: boolean;
+  is_superuser: boolean;
   level1: boolean;
   level2: boolean;
   access_token: string;
@@ -44,6 +45,7 @@ export default function LoginPageBW() {
         localStorage.setItem("token_admin", loginData.access_token);
         localStorage.setItem("username_admin", loginData.username);
         localStorage.setItem("is_admin_admin", loginData.is_admin.toString());
+        localStorage.setItem("is_admin_superuser", loginData.is_superuser.toString());
         // localStorage.setItem("level1", loginData.level1.toString());
         // localStorage.setItem("level2", loginData.level2.toString());
         storeUsername(username);

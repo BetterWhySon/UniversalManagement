@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
 import AdminRegistrationPopup from './components/AdminRegistrationPopup';
 import DeleteConfirmPopup from '@/pages/setting/standard-info/components/DeleteConfirmPopup';
+import useAdmUser from '@/api/admin/admUser';
+import { typeAdmUserList } from '@/api/types/admin/typeAdmUser';
 
 interface AdminUserData {
   id: number;
@@ -18,53 +20,53 @@ interface AdminUserData {
 }
 
 export interface AdminFormData {
-  companyName: string;
-  userId: string;
+  id?: number;
+  username: string;      // userId -> username
   password: string;
-  name: string;
-  contact: string;
+  customer_id: number;   // 추가
+  phonenumber: string;   // contact -> phonenumber
   email: string;
-  role: 'admin' | 'user';
+  is_staff: boolean;     // role -> is_staff
+  customer: string;      // companyName -> customer
 }
 
 export default function AdminUserPage() {
   const { t: trans } = useTranslation('translation');
+  const { dataListUser, storeUserList, storeUserDelete, storeUserEdit, storeUserCreate } = useAdmUser();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
-  const [editData, setEditData] = useState<AdminFormData | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<AdminUserData | null>(null);
+  const [editData, setEditData] = useState<typeAdmUserList | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<typeAdmUserList | null>(null);
+
+  useEffect(() => {
+    storeUserList(trans);
+  }, []);
 
   const columns = useMemo(() => [
     {
       name: '업체명',
-      dataIndex: 'companyName',
+      dataIndex: 'customer',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
-      render: (row: AdminUserData) => (
-        <span className="text-yellow-400">{row.companyName}</span>
+      render: (row: typeAdmUserList) => (
+        <span className="text-yellow-400">{row.customer}</span>
       )
     },
     {
       name: '아이디',
-      dataIndex: 'userId',
+      dataIndex: 'user_id',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px'
     },
     {
-      name: '비밀번호',
-      dataIndex: 'password',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
-    },
-    {
       name: '이름',
-      dataIndex: 'name',
+      dataIndex: 'username',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '120px'
     },
     {
       name: '연락처',
-      dataIndex: 'contact',
+      dataIndex: 'phonenumber',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px'
     },
@@ -76,9 +78,12 @@ export default function AdminUserPage() {
     },
     {
       name: '권한',
-      dataIndex: 'role',
+      dataIndex: 'is_staff',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '120px'
+      fixedWidth: '120px',
+      render: (row: typeAdmUserList) => (
+        <span>{row.is_staff ? '관리자' : '일반'}</span>
+      )
     },
     {
       name: '등록일자',
@@ -91,7 +96,7 @@ export default function AdminUserPage() {
       dataIndex: 'actions',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '100px',
-      render: (row: AdminUserData) => (
+      render: (row: typeAdmUserList) => (
         <div className="flex items-center justify-center gap-2">
           <button 
             className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
@@ -134,103 +139,79 @@ export default function AdminUserPage() {
     }
   ], []);
 
-  const dummyData: AdminUserData[] = [
-    {
-      id: 1,
-      companyName: 'FF캠핑카',
-      userId: 'bank123',
-      password: '1234',
-      name: '윤수근',
-      contact: '054-123-4567',
-      email: 'ff@ffcamp.com',
-      role: '관리자',
-      registrationDate: '2020.5.4'
-    },
-    {
-      id: 2,
-      companyName: '배터리웨이',
-      userId: 'saykim6588',
-      password: '1234',
-      name: '김경각',
-      contact: '010-5551-6158',
-      email: 'saykim6588@betterwhy.com',
-      role: '관리자',
-      registrationDate: '2022.5.4'
-    },
-    {
-      id: 3,
-      companyName: '배터리웨이',
-      userId: 'hyjo1234',
-      password: '1234',
-      name: '조훈영',
-      contact: '010-5464-1234',
-      email: 'hyjo1234@betterwhy.com',
-      role: '관리자',
-      registrationDate: '2022.5.4'
-    },
-    {
-      id: 4,
-      companyName: '배터리웨이',
-      userId: 'jykim5678',
-      password: '1234',
-      name: '김진용',
-      contact: '010-5516-1548',
-      email: 'jykim5678@betterwhy.com',
-      role: '일반',
-      registrationDate: '2020.5.4'
-    },
-    {
-      id: 5,
-      companyName: 'LG엔솔',
-      userId: '',
-      password: '',
-      name: '',
-      contact: '',
-      email: '',
-      role: '',
-      registrationDate: '2020.5.4'
-    }
-  ];
-
   const getFilteredData = useMemo(() => {
-    if (!searchKeyword) return dummyData;
-    return dummyData.filter(item => 
-      item.companyName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      item.userId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      item.name.toLowerCase().includes(searchKeyword.toLowerCase())
+    if (!dataListUser) return [];
+    
+    if (!searchKeyword) return dataListUser;
+    
+    return dataListUser.filter(item => 
+      item.customer.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      item.username.toLowerCase().includes(searchKeyword.toLowerCase())
     );
-  }, [searchKeyword, dummyData]);
+  }, [searchKeyword, dataListUser]);
 
-  const handleSave = (data: AdminFormData) => {
-    console.log('Save:', data);
-    // TODO: API 연동
-    setIsRegistrationPopupOpen(false);
-    setEditData(null);
+  const handleSave = async (data: typeAdmUserList) => {
+    try {
+      if (editData) {
+        await storeUserEdit(
+          editData.id.toString(),
+          data.username,
+          data.password,
+          data.customer_id.toString(),
+          data.phonenumber,
+          data.email,
+          data.is_staff,
+          trans
+        );
+      } else {
+        await storeUserCreate(
+          data.user_id,
+          data.username,
+          data.password,
+          data.customer_id.toString(),
+          data.phonenumber,
+          data.email,
+          data.is_staff,
+          trans
+        );
+      }
+      await storeUserList(trans);
+      setIsRegistrationPopupOpen(false);
+      setEditData(null);
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
   };
 
-  const handleEdit = (row: AdminUserData) => {
-    const editFormData: AdminFormData = {
-      companyName: row.companyName,
-      userId: row.userId,
-      password: row.password,
-      name: row.name,
-      contact: row.contact,
+  const handleEdit = (row: typeAdmUserList) => {
+    const editFormData: typeAdmUserList = {
+      id: row.id,
+      user_id: row.user_id,
+      username: row.username,
+      password: '',
+      customer_id: row.customer_id,
+      customer: row.customer,
+      phonenumber: row.phonenumber,
       email: row.email,
-      role: row.role === '관리자' ? 'admin' : 'user'
+      is_staff: row.is_staff
     };
     
     setEditData(editFormData);
     setIsRegistrationPopupOpen(true);
   };
 
-  const handleDelete = (row: AdminUserData) => {
+  const handleDelete = (row: typeAdmUserList) => {
     setDeleteTarget(row);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteTarget) {
-      console.log('Delete confirmed:', deleteTarget);
-      // TODO: 실제 삭제 API 호출
+      try {
+        await storeUserDelete(deleteTarget.id.toString(), trans);
+        await storeUserList(trans);  // 리스트 갱신
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
     }
     setDeleteTarget(null);
   };
@@ -274,7 +255,7 @@ export default function AdminUserPage() {
 
       <div className="flex-1 overflow-auto px-[18px] lg:px-[55px]">
         <div className='w-full hidden xs:block'>
-          <TableData<AdminUserData>
+          <TableData<typeAdmUserList>
             data={getFilteredData}
             columns={columns}
             isPagination
@@ -307,7 +288,7 @@ export default function AdminUserPage() {
             setIsRegistrationPopupOpen(false);
             setEditData(null);
           }}
-          onSave={handleSave}
+          onSuccess={() => storeUserList(trans)}
           initialData={editData || undefined}
           mode={editData ? 'edit' : 'create'}
         />

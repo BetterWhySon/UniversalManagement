@@ -121,26 +121,24 @@ const CompanyGroupMappingPage: React.FC = () => {
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '80px',
       render: (row: GroupData) => (
-        <div className="flex items-center justify-center">
-          <button 
-            className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
-            onClick={() => handleDelete(row)}
+        <button 
+          className="w-5 h-5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
+          onClick={() => handleDelete(row)}
+        >
+          <svg 
+            className="w-5 h-5 text-white"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
           >
-            <svg 
-              className="w-5 h-5 text-white"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
       )
     }
   ];
@@ -186,16 +184,18 @@ const CompanyGroupMappingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 사업장 현황 */}
           <div className="w-full hidden xs:block">
-            <div className="mb-2 flex justify-between items-center">
-              <h2 className="text-white text-lg font-medium">사업장 현황</h2>
-              <div className="w-[200px]">
-                <input 
-                  type="text" 
-                  placeholder="검색어를 입력하세요"
-                  value={searchCompany}
-                  onChange={(e) => setSearchCompany(e.target.value)}
-                  className="w-full h-7 text-sm px-3 bg-hw-dark-1 rounded-lg outline-none border border-white/20 text-white"
-                />
+            <div className='w-full bg-hw-dark-2 py-3 px-4 rounded-lg text-hw-white-1 mb-4'>
+              <div className='flex flex-row items-center justify-between'>
+                <h2 className="text-white text-lg font-medium">사업장 현황</h2>
+                <div className='flex items-center'>
+                  <input 
+                    type="text" 
+                    placeholder="검색어를 입력하세요"
+                    value={searchCompany}
+                    onChange={(e) => setSearchCompany(e.target.value)}
+                    className="h-8 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[200px]"
+                  />
+                </div>
               </div>
             </div>
             <div className="h-[calc(100vh-220px)] overflow-auto">
@@ -211,14 +211,21 @@ const CompanyGroupMappingPage: React.FC = () => {
 
           {/* 그룹 지정 */}
           <div className="w-full hidden xs:block">
-            <div className="mb-2 flex justify-between items-center">
-              <h2 className="text-white text-lg font-medium">그룹 지정</h2>
-              <button 
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
-                onClick={() => setShowGroupSelect(true)}
-              >
-                지정
-              </button>
+            <div className='w-full bg-hw-dark-2 py-3 px-4 rounded-lg text-hw-white-1 mb-4'>
+              <div className='flex flex-row items-center justify-between'>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-white text-lg font-medium">그룹 지정</h2>
+                  <span className="text-sm text-gray-400">(최대 12개까지 선택가능)</span>
+                </div>
+                <button 
+                  className='h-8 px-4 rounded-lg bg-blue-500 flex gap-2 items-center justify-center'
+                  onClick={() => setShowGroupSelect(true)}
+                >
+                  <span className='text-hw-white-1 font-light text-sm leading-[125%] whitespace-nowrap'>
+                    지정
+                  </span>
+                </button>
+              </div>
             </div>
             <div className="h-[calc(100vh-220px)] overflow-auto">
               <TableData<GroupData>

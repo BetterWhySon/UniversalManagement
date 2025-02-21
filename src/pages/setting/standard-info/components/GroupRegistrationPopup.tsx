@@ -97,7 +97,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
           <div className="p-6">
             <div className="space-y-4">
               <div className="flex items-center">
-                <label className="w-32 text-white">CODE :</label>
+                <label className="w-32 text-white">코드 :</label>
                 <input
                   type="text"
                   className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
@@ -124,9 +124,10 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      className="w-32 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                      className="w-32 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500"
                       placeholder="우편번호"
                       value={formData.postcode}
+                      required
                       readOnly
                     />
                     <button
@@ -139,8 +140,9 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   </div>
                   <input
                     type="text"
-                    className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                    className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500"
                     value={formData.address}
+                    required
                     readOnly
                     placeholder="주소"
                   />
@@ -155,7 +157,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
               </div>
 
               <div className="flex items-center">
-                <label className="w-32 text-white">Description :</label>
+                <label className="w-32 text-white">설명 :</label>
                 <input
                   type="text"
                   className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
@@ -187,4 +189,4 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
   );
 };
 
-export default GroupRegistrationPopup; 
+export default GroupRegistrationPopup;

@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import useAdmBetteryModel from '@/api/admin/admBetteryModel';
+import useAdmBatteryModel from '@/api/admin/admBetteryModel';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (name: string, id?: number) => void;
   mode?: 'create' | 'edit';
-  initialData?: { id: number; name: string; description: string };
+  initialData?: { id: number; name: string };
 }
 
-export default function CellTypeAddPopup({ isOpen, onClose, onSubmit, mode = 'create', initialData }: Props) {
+export default function ModelGroupAddPopup({ isOpen, onClose, onSubmit, mode = 'create', initialData }: Props) {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const { t: trans } = useTranslation('translation');
-  const { storeBetteryCellTypeCreate, storeBetteryCellTypeEdit } = useAdmBetteryModel();
+  const { storeBetteryModelGroupCreate, storeBetteryModelGroupEdit } = useAdmBatteryModel();
 
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setName(initialData.name);
-      setDescription(initialData.description);
     } else {
       setName('');
-      setDescription('');
     }
   }, [mode, initialData]);
 
@@ -30,16 +27,15 @@ export default function CellTypeAddPopup({ isOpen, onClose, onSubmit, mode = 'cr
     e.preventDefault();
     try {
       if (mode === 'edit' && initialData) {
-        await storeBetteryCellTypeEdit(initialData.id, name, description, trans);
+        await storeBetteryModelGroupEdit(initialData.id, name, trans);
       } else {
-        await storeBetteryCellTypeCreate(name, description, trans);
+        await storeBetteryModelGroupCreate(name, trans);
       }
-      onSubmit();
+      onSubmit(name, initialData?.id);
       setName('');
-      setDescription('');
       onClose();
     } catch (error) {
-      console.error('Error saving cell type:', error);
+      console.error('Error saving model group:', error);
     }
   };
 
@@ -50,7 +46,7 @@ export default function CellTypeAddPopup({ isOpen, onClose, onSubmit, mode = 'cr
       <div className="bg-hw-dark-2 rounded-lg p-6 w-[500px]">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl text-white">
-            {mode === 'create' ? '셀 종류 추가' : '셀 종류 수정'}
+            {mode === 'create' ? '모델그룹 추가' : '모델그룹 수정'}
           </h2>
           <button 
             onClick={onClose}
@@ -63,22 +59,13 @@ export default function CellTypeAddPopup({ isOpen, onClose, onSubmit, mode = 'cr
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">셀 종류</label>
+              <label className="block text-sm text-gray-400 mb-1">모델그룹명</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2 bg-hw-dark-1 text-white border border-hw-gray-7 rounded"
                 required
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">설명</label>
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2 bg-hw-dark-1 text-white border border-hw-gray-7 rounded"
               />
             </div>
           </div>

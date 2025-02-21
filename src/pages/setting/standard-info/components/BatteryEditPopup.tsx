@@ -10,13 +10,14 @@ interface BatteryEditData {
   id: number;
   company: string;
   group: string;
+  deviceName: string;
+  application: string;
+  manufacturer: string;
+  packId: string;
+  packModel: string;
   user: string;
   contact: string;
   address: string;
-  itemCategory: string;
-  batteryStatus: string;
-  packId: string;
-  approvalStatus: string;
   registrationDate: string;
 }
 
@@ -74,8 +75,8 @@ const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, in
                 <label className="block text-white mb-1">기기명</label>
                 <input
                   type="text"
-                  value={formData.user}
-                  onChange={(e) => setFormData({...formData, user: e.target.value})}
+                  value={formData.deviceName}
+                  onChange={(e) => setFormData({...formData, deviceName: e.target.value})}
                   className={editableStyle}
                 />
               </div>
@@ -105,7 +106,7 @@ const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, in
                 <label className="block text-white mb-1">아이템카테고리</label>
                 <input
                   type="text"
-                  value={formData.itemCategory}
+                  value={formData.application}
                   className={readOnlyStyle}
                   readOnly
                 />
@@ -114,7 +115,7 @@ const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, in
                 <label className="block text-white mb-1">배터리생산처</label>
                 <input
                   type="text"
-                  value={formData.batteryStatus}
+                  value={formData.manufacturer}
                   className={readOnlyStyle}
                   readOnly
                 />
@@ -132,7 +133,7 @@ const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, in
                 <label className="block text-white mb-1">개인정보제공 동의</label>
                 <input
                   type="text"
-                  value={formData.approvalStatus}
+                  value={formData.packModel}
                   className={readOnlyStyle}
                   readOnly
                 />
