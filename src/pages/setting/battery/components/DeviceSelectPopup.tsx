@@ -50,14 +50,14 @@ const mockData = [
 
 const columns = [
   {
-    name: '사업장',
-    dataIndex: 'company',
-    align: TEXT_ALIGN.CENTER
+    name: 'CODE',
+    dataIndex: 'code',
+    align: TEXT_ALIGN.CENTER,
   },
   {
-    name: '그룹',
-    dataIndex: 'group',
-    align: TEXT_ALIGN.CENTER
+    name: '그룹명',
+    dataIndex: 'name',
+    align: TEXT_ALIGN.CENTER,
   },
   {
     name: '기기명',
@@ -220,18 +220,21 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
                 <tr 
                   key={item.device}
                   className="cursor-pointer hover:bg-slate-700"
-                  onClick={() => handleDeviceClick(item.company, item.group, item.device)}
+                  onClick={() => {
+                    const selections = [{
+                      company: item.company,
+                      groups: [item.group],
+                      device: item.device
+                    }];
+                    
+                    const selectedDevices = {
+                      [item.company]: [item.device]
+                    };
+                    
+                    onSelect(selections, selectedDevices);
+                    onClose();
+                  }}
                 >
-                  <td className="border-b border-gray-600 p-2 text-center">
-                    <input
-                      type="radio"
-                      name="deviceSelect"
-                      checked={selectedDevice === item.device}
-                      onChange={() => {}}
-                      onClick={(e) => handleCheck(item.device, e)}
-                      className="accent-blue-500"
-                    />
-                  </td>
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.company)}</td>
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.group)}</td>
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.device)}</td>
@@ -246,18 +249,12 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
           </table>
         </div>
 
-        <div className="flex justify-end gap-4 mt-6">
+        <div className="flex justify-end gap-2 p-5 border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-400 hover:text-white border border-gray-400 rounded hover:border-white"
+            className="px-4 py-2 text-sm bg-[#363B46] text-white rounded hover:bg-[#363B46]/80 transition-colors"
           >
             취소
-          </button>
-          <button
-            onClick={handleApply}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            선택
           </button>
         </div>
       </div>

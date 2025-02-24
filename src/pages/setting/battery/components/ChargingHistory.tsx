@@ -400,11 +400,11 @@ const ChargingHistory: React.FC<ChargingHistoryProps> = ({ pageSize = 8 }) => {
               <div className="flex w-full">
                 <div className="flex items-center gap-3 w-[calc(50%-1rem)]">
                   <span className="text-gray-500 text-2xl">•</span>
-                  <h2 className="text-xl text-white">위치정보</h2>
+                  <h3 className="text-white text-[19px] mb-3">충/방전 이력</h3>
                 </div>
                 <div className="flex items-center gap-3 pl-8">
                   <span className="text-gray-500 text-2xl">•</span>
-                  <h2 className="text-xl text-white">시간대 별 Soc [%]</h2>
+                  <h3 className="text-white text-[19px] mb-2">충/방전 이력 그래프</h3>
                 </div>
               </div>
             </div>

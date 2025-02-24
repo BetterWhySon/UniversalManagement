@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import * as echarts from 'echarts';
 
 interface BarChartProps {
-  data: Array<{ id: string; soc?: number; time?: number }> | Array<{
+  data: Array<{ id: string; soc?: number; time?: number; style?: { color: string } }> | Array<{
     name: string;
     data: Array<{ id: string; soc: number }>;
     color: string;
@@ -167,6 +167,12 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 formatter: (params: any) => params.value,
                 color: '#fff',
                 fontSize: 12
+              },
+              itemStyle: {
+                color: (params: any) => {
+                  const item = data[params.dataIndex];
+                  return item.style?.color || '#FFFFFF';
+                }
               }
             }]
           ) :

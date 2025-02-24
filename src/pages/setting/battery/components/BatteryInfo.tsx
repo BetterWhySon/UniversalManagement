@@ -110,36 +110,36 @@ const BatteryInfo: React.FC = () => {
     <div className="grid grid-cols-[18fr_8fr_21fr] gap-4 -mt-2 auto-rows-[200px]">
       {/* 실제 사용가능 배터리 용량 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">실제 사용가능 배터리 용량</h3>
+        <h3 className="text-white text-[19px] mb-3">실제 사용가능 배터리 용량</h3>
         <div className="grid grid-cols-5 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">실제 사용가능 배터리 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-green-400 text-xl">189ah</div>
               <div className="text-green-400 text-l">&nbsp;</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">셀 평균 노화</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.2%</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">셀 용량 편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.5%</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">셀 SOC 편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">1.2%</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">저항</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.1%</div>
             </div>
           </div>
@@ -148,7 +148,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 배터리 용량 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">배터리 용량</h3>
+        <h3 className="text-white text-[19px] mb-2">배터리 용량</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={batteryCapacityData}
@@ -166,7 +166,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 셀용량 상세 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">셀용량 상세</h3>
+        <h3 className="text-white text-[19px] mb-2">셀용량 상세</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 텍스트 영역 - 왼쪽으로 이동 */}
           <div className="w-1/2 flex flex-col justify-center gap-1 my-8 pl-4 pr-8">
@@ -211,23 +211,23 @@ const BatteryInfo: React.FC = () => {
 
       {/* 배터리 팩 밸런스 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">배터리 팩 밸런스</h3>
+        <h3 className="text-white text-[19px] mb-3">배터리 팩 밸런스</h3>
         <div className="grid grid-cols-3 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">팩 100% 기준 전압 편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.4%</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">팩 0% 기준 전압 편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.8%</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">용량 손실률 (진행 편차)</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">1.2%</div>
             </div>
           </div>
@@ -236,7 +236,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 배터리 밸런스 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">배터리 밸런스</h3>
+        <h3 className="text-white text-[19px] mb-2">배터리 밸런스</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={batteryBalanceData}
@@ -254,7 +254,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 전체 구간 셀 밸런스 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">전체 구간 셀 밸런스</h3>
+        <h3 className="text-white text-[19px] mb-2">전체 구간 셀 밸런스</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={cellBalanceData}
@@ -273,35 +273,35 @@ const BatteryInfo: React.FC = () => {
 
       {/* 배터리 저항 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">배터리 저항</h3>
+        <h3 className="text-white text-[19px] mb-3">배터리 저항</h3>
         <div className="grid grid-cols-5 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀 평균저항</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">24.10mΩ</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">최대 셀 저항</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">24.13mΩ</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">최소 셀 저항</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">24.07mΩ</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀평균 저항편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.02mΩ</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀최대 저항편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.06mΩ</div>
             </div>
           </div>
@@ -310,7 +310,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 셀 저항 상태 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">셀 저항 상태</h3>
+        <h3 className="text-white text-[19px] mb-2">셀 저항 상태</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={cellResistanceData}
@@ -328,7 +328,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 셀 저항변화 추세 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">셀 저항변화 추세</h3>
+        <h3 className="text-white text-[19px] mb-2">셀 저항변화 추세</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={cellResistanceTrendData}
@@ -346,35 +346,35 @@ const BatteryInfo: React.FC = () => {
 
       {/* 네 번째 로우 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">셀 용량</h3>
+        <h3 className="text-white text-[19px] mb-3">셀 용량</h3>
         <div className="grid grid-cols-5 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀 평균용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">105.4Ah</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">최대 셀 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">105.4Ah</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">최소 셀 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">105.2Ah</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀평균 용량편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.2Ah</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400 whitespace-nowrap">셀최대 용량편차</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">0.2Ah</div>
             </div>
           </div>
@@ -383,7 +383,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 네 번째 로우 - 두 번째 칸 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">SOC 구간별 셀 밸런스</h3>
+        <h3 className="text-white text-[19px] mb-2">SOC 구간별 셀 밸런스</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={socBalanceData}
@@ -402,7 +402,7 @@ const BatteryInfo: React.FC = () => {
 
       {/* 네 번째 로우 - 세 번째 칸 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
-        <h3 className="text-white text-lg mb-2">셀별용량 유지율 / 셀별 가용 용량 / 셀별 공칭 저항 / 셀별 현재 저항</h3>
+        <h3 className="text-white text-[19px] mb-2">셀별용량 유지율 / 셀별 가용 용량 / 셀별 공칭 저항 / 셀별 현재 저항</h3>
         <div className="h-[calc(100%-40px)] overflow-y-auto">
           <div className="grid grid-cols-[repeat(16,35px)] gap-1 p-2">
             {Array(196).fill(null).map((_, index) => (

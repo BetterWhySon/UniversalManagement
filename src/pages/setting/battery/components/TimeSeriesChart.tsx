@@ -24,7 +24,7 @@ const TimeSeriesChart: React.FC<TimeSeriesChartProps> = () => {
 
   return (
     <div>
-      <h2 className="text-white text-xl mb-4">사용관리 지수</h2>
+      <h2 className="text-white text-[19px] mb-4">종합관리점수</h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array(20).fill(null).map((_, index) => (
           <div key={index} className="bg-hw-dark-2 p-4 rounded-lg">
@@ -53,4 +53,5 @@ const TimeSeriesChart: React.FC<TimeSeriesChartProps> = () => {
   );
 };
 
-export default TimeSeriesChart; 
+export default TimeSeriesChart;
+

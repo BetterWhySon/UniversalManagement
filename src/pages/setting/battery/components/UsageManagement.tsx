@@ -102,29 +102,29 @@ const UsageManagement: React.FC = () => {
     <div className="grid grid-cols-[17fr_9fr_21fr] gap-4 -mt-2">
       {/* 첫 번째 로우 - 운영시간 정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">운영시간 정보</h3>
+        <h3 className="text-white text-[19px] mb-3">운영시간 정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">운영 시간</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">방전 시간</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">충전 시간</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">미사용시간</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -133,7 +133,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 운영시간 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-1">운영시간 %</h3>
+        <h3 className="text-white text-[19px] mb-1">운영시간 %</h3>
         <div className="flex-1 flex flex-col">
           <div className="flex items-center h-full">
             <div className="flex flex-col text-[11px] justify-center pl-2 w-20">
@@ -158,7 +158,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 최근 방전시간(h) */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">최근 방전시간(h)</h3>
+        <h3 className="text-white text-[19px] mb-2">최근 방전시간(h)</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={dischargeTimeData}
@@ -176,29 +176,29 @@ const UsageManagement: React.FC = () => {
 
       {/* 두 번째 로우 - 방전 정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">방전 정보</h3>
+        <h3 className="text-white text-[19px] mb-3">방전 정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">누적 방전용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">고속방전 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">저속방전 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">일평균 방전용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -207,7 +207,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 방전 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-1">방전 %</h3>
+        <h3 className="text-white text-[19px] mb-1">방전 %</h3>
         <div className="flex-1 flex flex-col">
           <div className="flex items-center h-full">
             <div className="flex flex-col text-[12px] justify-center pl-2 w-20">
@@ -229,7 +229,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 적정 SOC 방전비율 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">적정 SOC 방전비율</h3>
+        <h3 className="text-white text-[19px] mb-2">적정 SOC 방전비율</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">
@@ -266,29 +266,29 @@ const UsageManagement: React.FC = () => {
 
       {/* 세 번째 로우 - 충전 정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">충전 정보</h3>
+        <h3 className="text-white text-[19px] mb-3">충전 정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">누적 충전용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">고속충전 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">저속충전 용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">일평균 충전용량</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -297,7 +297,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 충전 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-1">충전 %</h3>
+        <h3 className="text-white text-[19px] mb-1">충전 %</h3>
         <div className="flex-1 flex flex-col">
           <div className="flex items-center h-full">
             <div className="flex flex-col text-[12px] justify-center pl-2 w-20">
@@ -319,7 +319,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 최근 충전시간(h) */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">최근 충전시간(h)</h3>
+        <h3 className="text-white text-[19px] mb-2">최근 충전시간(h)</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={chargeTimeData}
@@ -337,29 +337,29 @@ const UsageManagement: React.FC = () => {
 
       {/* 네 번째 로우 - 방전 Power 정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">방전 Power 정보</h3>
+        <h3 className="text-white text-[19px] mb-3">방전 Power 정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">정격 최대</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">실제 최대</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">적정 Power</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">평균 Power</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -368,7 +368,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 방전 파워 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">방전 파워 %</h3>
+        <h3 className="text-white text-[19px] mb-2">방전 파워 %</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={dischargePowerData}
@@ -386,7 +386,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 방전시 Power % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">방전시 Power %</h3>
+        <h3 className="text-white text-[19px] mb-2">방전시 Power %</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">
@@ -422,29 +422,29 @@ const UsageManagement: React.FC = () => {
 
       {/* 다섯 번째 로우 - 충전 Power 정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">충전 Power 정보</h3>
+        <h3 className="text-white text-[19px] mb-3">충전 Power 정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">정격 최대</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">실제 최대</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">적정 Power</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">평균 Power</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -453,7 +453,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 충전 파워 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">충전 파워 %</h3>
+        <h3 className="text-white text-[19px] mb-2">충전 파워 %</h3>
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={chargePowerData}
@@ -471,7 +471,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 충전시 Power % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">충전시 Power %</h3>
+        <h3 className="text-white text-[19px] mb-2">충전시 Power %</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">

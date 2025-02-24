@@ -118,29 +118,29 @@ const LifeManagement: React.FC = () => {
     <div className="grid grid-cols-[18fr_8fr_21fr] gap-4 -mt-2">
       {/* 수명정보 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">수명정보</h3>
+        <h3 className="text-white text-[19px] mb-3">수명정보</h3>
         <div className="grid grid-cols-4 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">운영기간</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">예상 진존수명</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">가속조건 진존수명</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">우호건 진존수명</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">296h</div>
             </div>
           </div>
@@ -149,7 +149,7 @@ const LifeManagement: React.FC = () => {
 
       {/* 평균 대비 수명/에너지 비교 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">평균 대비 수명/에너지 비교</h3>
+        <h3 className="text-white text-[19px] mb-2">평균 대비 수명/에너지 비교</h3>
         <div className="text-sm text-gray-300 px-4">
           <p>배터리의 총 예상 수명은 68개월로, 전체 관리 대상 배터리 중 상위 28%에 달합니다. 또한, 에너지 소모 기준으로는 42,658kWh로 상위 33%에 속해, 성능 면에서 우수한 수준을 보여줍니다.</p>
         </div>
@@ -157,7 +157,7 @@ const LifeManagement: React.FC = () => {
 
       {/* 배터리 예상수명 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">배터리 예상수명</h3>
+        <h3 className="text-white text-[19px] mb-2">배터리 예상수명</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">
@@ -193,23 +193,23 @@ const LifeManagement: React.FC = () => {
 
       {/* 배터리 종합성능 */}
       <div className="bg-hw-dark-2 rounded-lg p-5 min-h-[200px] flex flex-col">
-        <h3 className="text-white text-lg mb-3">배터리 종합성능</h3>
+        <h3 className="text-white text-[19px] mb-3">배터리 종합성능</h3>
         <div className="grid grid-cols-3 gap-4 flex-1 items-center">
           <div className="text-center">
             <div className="text-gray-400">배터리 종합성능</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">886h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">에너지 효율</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">285h</div>
             </div>
           </div>
           <div className="text-center">
             <div className="text-gray-400">배터리 효율</div>
-            <div className="border-t border-gray-600 mt-2 pt-2">
+            <div className="border-t border-gray-600 mt-4 pt-4">
               <div className="text-white text-xl">305h</div>
             </div>
           </div>
@@ -218,7 +218,7 @@ const LifeManagement: React.FC = () => {
 
       {/* 충전 파워 % */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">충전 파워 %</h3>
+        <h3 className="text-white text-[19px] mb-2">충전 파워 %</h3>
         <div className="text-sm text-gray-300 px-4">
           <p>배터리는 종합 성능 점수 102점으로, 관리 대상 배터리 중 상위 26%에 속합니다. 에너지 효율 96%로 상위 21%에 해당해 효율 면에서도 우수한 성능을 나타냅니다.</p>
         </div>
@@ -226,7 +226,7 @@ const LifeManagement: React.FC = () => {
 
       {/* 배터리 종합성능 지수 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-lg mb-2">배터리 종합성능 지수</h3>
+        <h3 className="text-white text-[19px] mb-2">배터리 종합성능 지수</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">

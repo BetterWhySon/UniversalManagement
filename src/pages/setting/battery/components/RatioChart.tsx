@@ -26,7 +26,7 @@ const RatioChart: React.FC<RatioChartProps> = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-white text-xl">사용관리 지수</h2>
+        <h2 className="text-white text-[19px]">항목별 관리점수</h2>
         <div className="flex gap-4">
           {legendData.map((item, index) => (
             <div key={index} className="flex items-center">
@@ -61,4 +61,4 @@ const RatioChart: React.FC<RatioChartProps> = () => {
   );
 };
 
-export default RatioChart; 
+export default RatioChart;
