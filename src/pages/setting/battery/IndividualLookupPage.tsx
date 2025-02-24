@@ -210,8 +210,8 @@ const IndividualLookupPage: React.FC = () => {
                       <div className="w-full h-[120px]">
                         <BarChart 
                           data={[
-                            { id: '배터리 효율', soc: 86, style: { color: getScoreColor(60) } },
-                            { id: '배터리 용량', soc: 96, style: { color: getScoreColor(95) } },
+                            { id: '배터리 효율', soc: 86, style: { color: getScoreColor(50) } },
+                            { id: '배터리 용량', soc: 96, style: { color: getScoreColor(74) } },
                             { id: '사용관리', soc: 92, style: { color: getScoreColor(94) } }
                           ]}
                           isTimeData={false}

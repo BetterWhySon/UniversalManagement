@@ -170,8 +170,11 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
               },
               itemStyle: {
                 color: (params: any) => {
-                  const item = data[params.dataIndex];
-                  return item.style?.color || '#FFFFFF';
+                  return data[params.dataIndex].style?.color || 
+                    new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
+                      { offset: 0, color: getColor(params.dataIndex, 0) },
+                      { offset: 1, color: getColor(params.dataIndex, 1) }
+                    ]);
                 }
               }
             }]
@@ -184,10 +187,11 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
               data: data.map((item, index) => ({
                 value: isTimeData ? item.time : item.soc,
                 itemStyle: {
-                  color: new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
-                    { offset: 0, color: getColor(index, 0) },
-                    { offset: 1, color: getColor(index, 1) }
-                  ])
+                  color: data[index].style?.color || 
+                    new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
+                      { offset: 0, color: getColor(index, 0) },
+                      { offset: 1, color: getColor(index, 1) }
+                    ])
                 }
               })),
               label: {
@@ -249,10 +253,11 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
               data: data.map((item, index) => ({
                 value: isTimeData ? item.time : item.soc,
                 itemStyle: {
-                  color: new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
-                    { offset: 0, color: getColor(index, 0) },
-                    { offset: 1, color: getColor(index, 1) }
-                  ])
+                  color: data[index].style?.color || 
+                    new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
+                      { offset: 0, color: getColor(index, 0) },
+                      { offset: 1, color: getColor(index, 1) }
+                    ])
                 }
               })),
               label: {
