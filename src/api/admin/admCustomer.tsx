@@ -6,7 +6,7 @@ import { typeAdmCustomerList } from '@/api/types/admin/typeAdmCustomer';
 
 interface AdmCustomer {
     dataListCustomer: Array<typeAdmCustomerList> | null;        
-    storeCustomerList: (trans: (key: string) => string) => void;    
+    storeCustomerList: (trans: (key: string) => string, customer_id?: string) => void;    
 
     rtnMsg_creat: rtnMsg | null;    
     storeCustomerCreate: ( name: string, address: string, identity_number: string, representative: string, phonenumber: string, business_field: string, email: string, trans: (key: string) => string) => void;    
@@ -36,16 +36,35 @@ const getErrorMessage = (error: number, trans: (key: string) => string) => {
     }
 };
 
+const checkAuthError = (status: number, trans: (key: string) => string) => {
+    if (status === 401) {
+        alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+        localStorage.clear();
+        window.location.href = '/login';
+        return true;
+    }
+    if (status === 403) {
+        alert(trans('관리자 권한이 없습니다.'));
+        return true;
+    }
+    return false;
+};
+
 const useAdmCustomer = create<AdmCustomer>((set) => ({
     dataListCustomer: null,
     
-    storeCustomerList: async (trans) => {    
+    storeCustomerList: async (trans, customer_id) => {    
         try {
             const token = localStorage.getItem("token_admin");
-            const response = await api.post(backendURL_admin + 'get_customers/', {}, {
-                headers: { Authorization: "Bearer " + token },            
-            });
+            const response = await api.post(backendURL_admin + 'get_customers/', 
+                customer_id ? { customer_id } : {}, 
+                {
+                    headers: { Authorization: "Bearer " + token },            
+                }
+            );
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     const dataList: Array<typeAdmCustomerList> = response.data.data;
@@ -72,6 +91,8 @@ const useAdmCustomer = create<AdmCustomer>((set) => ({
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_creat: response.data });

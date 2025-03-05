@@ -6,7 +6,7 @@ export type typeAdmUserList = {
     customer_id: number,
     phonenumber: string,
     email: string,
-    customer: string,
+    customer_name: string,
     is_staff: boolean,
 };
 

@@ -21,9 +21,12 @@ const api_formData = axios.create({
 api.interceptors.response.use(
   response => response, // 정상 응답 시 그대로 반환
   error => {
-    // 402 응답 코드 처리
+    // 401 응답 코드 처리
     if (error.response && error.response.status === 401) {
-      window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+      // URL 경로에 따라 리다이렉트 분기
+      const isAdminPath = window.location.pathname.startsWith('/admin');
+      const loginPath = isAdminPath ? '/admin/login' : '/login';
+      window.location.href = loginPath;
     }
     return Promise.reject(error);
   }

@@ -97,6 +97,20 @@ const getErrorMessage = (error: number, trans: (key: string) => string) => {
     }
 };
 
+const checkAuthError = (status: number, trans: (key: string) => string) => {
+    if (status === 401) {
+        alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+        localStorage.clear();
+        window.location.href = '/login';
+        return true;
+    }
+    if (status === 403) {
+        alert(trans('관리자 권한이 없습니다.'));
+        return true;
+    }
+    return false;
+};
+
 const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
     dataListBetteryDataConfig: null,
 
@@ -106,6 +120,8 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
             const response = await api.post(backendURL_admin + 'get_model_data_configs/', {}, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -161,24 +177,24 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
                 gps_lon,
                 rpm
             }, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                },
+                headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_create: response.data });
-                    alert(trans('배터리 Data Config를 생성했습니다.'));
+                    alert(trans('표준 데이터가 등록되었습니다.'));
                 } else {
                     alert(getErrorMessage(response.data.error, trans));
                 }
             } else {
-                alert(trans('배터리 Data Config를 생성할 수 없습니다.'));
+                alert(trans('표준 데이터를 등록할 수 없습니다.'));
             }
         } catch (error) {
             console.error(error);
-            alert(trans('배터리 Data Config를 생성할 수 없습니다.'));
+            alert(trans('표준 데이터를 등록할 수 없습니다.'));
         }
     },
 
@@ -189,24 +205,24 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
             const response = await api.post(backendURL_admin + 'delete_model_data_config/', {
                 "id": id
             }, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                },
+                headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_delete: response.data });
-                    alert(trans('배터리 Data Config를 삭제했습니다.'));
+                    alert(trans('표준 데이터를 삭제했습니다.'));
                 } else {
                     alert(getErrorMessage(response.data.error, trans));
                 }
             } else {
-                alert(trans('배터리 Data Config를 삭제할 수 없습니다.'));
+                alert(trans('표준 데이터를 삭제할 수 없습니다.'));
             }
         } catch (error) {
             console.error(error);
-            alert(trans('배터리 Data Config를 삭제할 수 없습니다.'));
+            alert(trans('표준 데이터를 삭제할 수 없습니다.'));
         }
     },
 
@@ -249,24 +265,24 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
                 gps_lon,
                 rpm
             }, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                },
+                headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_edit: response.data });
-                    alert(trans('배터리 Data Config를 수정했습니다.'));
+                    alert(trans('표준 데이터를 수정했습니다.'));
                 } else {
                     alert(getErrorMessage(response.data.error, trans));
                 }
             } else {
-                alert(trans('배터리 Data Config를 수정할 수 없습니다.'));
+                alert(trans('표준 데이터를 수정할 수 없습니다.'));
             }
         } catch (error) {
             console.error(error);
-            alert(trans('배터리 Data Config를 수정할 수 없습니다.'));
+            alert(trans('표준 데이터를 수정할 수 없습니다.'));
         }
     },
 }));

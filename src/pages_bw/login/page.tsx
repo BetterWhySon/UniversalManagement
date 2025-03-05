@@ -20,7 +20,11 @@ interface ILoginData {
   level1: boolean;
   level2: boolean;
   access_token: string;
+  refresh_token: string;
+  customer_id: number;
+  customer_name: string;
 }
+
 export default function LoginPageBW() {
   const { t: trans } = useTranslation('translation');
   const location = useLocation();
@@ -40,27 +44,60 @@ export default function LoginPageBW() {
         password
       });
 
+      // 응답 상태 체크
+      if (response.status === 401) {
+        alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+        localStorage.clear();
+        window.location.href = '/login';
+        return;
+      }
+      if (response.status === 403) {
+        alert(trans('관리자 권한이 없는 ID입니다.'));
+        return;
+      }
+
       if (response.status === 200) {
         let loginData: ILoginData = response.data;
         localStorage.setItem("token_admin", loginData.access_token);
         localStorage.setItem("username_admin", loginData.username);
         localStorage.setItem("is_admin_admin", loginData.is_admin.toString());
         localStorage.setItem("is_admin_superuser", loginData.is_superuser.toString());
+        localStorage.setItem("customer_id", loginData.customer_id.toString());
+        localStorage.setItem("customer_name", loginData.customer_name);    
         // localStorage.setItem("level1", loginData.level1.toString());
         // localStorage.setItem("level2", loginData.level2.toString());
         storeUsername(username);
-        navigate('/admin');
+        
+        // 슈퍼유저가 아닌 경우 admin-user 페이지로 이동
+        if (!loginData.is_superuser) {
+          navigate('/admin/admin-user');
+        } else {
+          navigate('/admin');
+        }
       } else {
         alert(trans('pleaseCheckYourIDAndPassword'));    //'아이디와 비밀번호를 확인해주세요.'
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
-      if (error.response && error.response.status === 401) {
-        alert(trans('pleaseCheckYourIDAndPassword'));    //'아이디와 비밀번호를 확인해주세요.'
-      }else{
+      if (error.response) {
+        if (error.response.status === 401) {
+          alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+          localStorage.clear();
+          window.location.href = '/login';
+        } else if (error.response.status === 403) {
+          alert(trans('관리자 권한이 없습니다.'));
+        } else {
+          alert(trans('pleaseCheckYourIDAndPassword'));
+        }
+      } else {
         alert(trans('serverError'));   // '서버 오류'
       }
+    }
+  };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleLogin(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
 
@@ -114,6 +151,7 @@ export default function LoginPageBW() {
               className={cn('h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
           </div>
           <button

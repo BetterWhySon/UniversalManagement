@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useAdmBatteryModel from '@/api/admin/admBetteryModel';
 import { useTranslation } from 'react-i18next';
+import useCustomerId from '@/hooks/useCustomerId';
 
 interface Props {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export default function ModelGroupAddPopup({ isOpen, onClose, onSubmit, mode = '
   const [name, setName] = useState('');
   const { t: trans } = useTranslation('translation');
   const { storeBetteryModelGroupCreate, storeBetteryModelGroupEdit } = useAdmBatteryModel();
+  const customerId = useCustomerId();
 
   useEffect(() => {
     if (mode === 'edit' && initialData) {
@@ -27,9 +29,9 @@ export default function ModelGroupAddPopup({ isOpen, onClose, onSubmit, mode = '
     e.preventDefault();
     try {
       if (mode === 'edit' && initialData) {
-        await storeBetteryModelGroupEdit(initialData.id, name, trans);
+        await storeBetteryModelGroupEdit(initialData.id, name, trans, customerId);
       } else {
-        await storeBetteryModelGroupCreate(name, trans);
+        await storeBetteryModelGroupCreate(name, trans, customerId);
       }
       onSubmit(name, initialData?.id);
       setName('');

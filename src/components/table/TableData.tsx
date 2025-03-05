@@ -109,15 +109,17 @@ export default function TableData<T extends { id: number }>({
                             ))}
                         </tr>
                     </thead>
-                    {data.length === 0 && emptyMessage ? (
-                        <div className='absolute top-0 w-full flex justify-center items-center h-full'>
-                            <span className='text-hw-white-2 text-base font-light leading-[125%] w-full h-fit text-center'>
-                                {emptyMessage}
-                            </span>
-                        </div>
-                    ) : (
-                        <tbody className='h-calc(100%-48px)]'>
-                            {data.map((row: any, index: number) => {
+                    <tbody className='h-calc(100%-48px)]'>
+                        {data.length === 0 && emptyMessage ? (
+                            <tr>
+                                <td colSpan={columns.length} className="text-center py-8">
+                                    <span className='text-hw-white-2 text-base font-light leading-[125%]'>
+                                        {emptyMessage}
+                                    </span>
+                                </td>
+                            </tr>
+                        ) : (
+                            data.map((row: any, index: number) => {
                                 var tNum = 0;
                                 if (pageNumber) {
                                     tNum = pageNumber;
@@ -144,7 +146,7 @@ export default function TableData<T extends { id: number }>({
                                             {columns.map((item: TableColumn<T>, columnIndex: number) => {
                                                 const value = item.render 
                                                     ? item.render(row, item.dataIndex) 
-                                                    : (row[item.dataIndex as keyof T] ?? '-');  // null, undefined, 0 등의 값 처리
+                                                    : (row[item.dataIndex as keyof T] ?? '-');
 
                                                 return (
                                                     <td
@@ -172,10 +174,10 @@ export default function TableData<T extends { id: number }>({
                                         </tr>
                                     );
                                 }
-                            }
-                            )}
-                        </tbody>
-                    )}
+                                return null;
+                            })
+                        )}
+                    </tbody>
                 </table>
             </div>
             {isPagination && data.length > 0 && (

@@ -1,10 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import ManufacturerSearchPopup from './ManufacturerSearchPopup';
 import DeviceTypeSearchPopup from './DeviceTypeSearchPopup';
 import CellTypeSearchPopup from './CellTypeSearchPopup';
 import ModelGroupSearchPopup from './ModelGroupSearchPopup';
-import CompanySearchPopup from '@/pages_bw/admin-user/components/CompanySearchPopup';
 import useAdmBetteryModel from '@/api/admin/admBetteryModel';
 
 interface CustomDataDefinition {
@@ -98,7 +96,7 @@ export default function BatteryModelRegistrationPopup({
   const [formData, setFormData] = useState<BatteryModelFormData>(initialData || {
     id: 0,
     manufacturer: '',
-    manufacturerId: 0,
+    manufacturerId: Number(localStorage.getItem("customer_id")) || 0,
     modelGroup: '',
     modelGroupId: 0,
     modelName: '',
@@ -153,11 +151,9 @@ export default function BatteryModelRegistrationPopup({
     customDataDefinitions: []
   });
 
-  const [isManufacturerSearchOpen, setIsManufacturerSearchOpen] = useState(false);
   const [isDeviceTypeSearchOpen, setIsDeviceTypeSearchOpen] = useState(false);
   const [isCellTypeSearchOpen, setIsCellTypeSearchOpen] = useState(false);
   const [isModelNameSearchOpen, setIsModelNameSearchOpen] = useState(false);
-  const [isCompanySearchOpen, setIsCompanySearchOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -169,7 +165,7 @@ export default function BatteryModelRegistrationPopup({
         device_type: formData.categoryId,
         model_group: formData.modelGroupId,
         cell_type: formData.cellTypeId,
-        pack_manufacturer: formData.manufacturerId,
+        pack_manufacturer: Number(localStorage.getItem("customer_id")) || 0,
         series_cell_cnt: formData.cellCount,
         batt_temp_cnt: formData.parallelCount,
         sys_temp_cnt: formData.systemCount,
@@ -286,26 +282,6 @@ export default function BatteryModelRegistrationPopup({
             </div>
 
             <div className="grid grid-cols-6 gap-6 px-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">제조 업체명</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    name="manufacturer"
-                    value={formData.manufacturer}
-                    onChange={handleChange}
-                    className="w-full h-9 px-4 bg-hw-dark-1 rounded text-white"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="h-9 px-4 rounded bg-blue-500 text-white text-xs hover:bg-blue-600 transition-colors flex items-center justify-center whitespace-nowrap"
-                    onClick={() => setIsCompanySearchOpen(true)}
-                  >
-                    검색
-                  </button>
-                </div>
-              </div>
               <div>
                 <label className="block text-sm text-gray-400 mb-1">모델그룹 종류</label>
                 <div className="flex gap-2">
@@ -636,21 +612,6 @@ export default function BatteryModelRegistrationPopup({
         </form>
 
         {/* form 바깥으로 이동 */}
-        {isManufacturerSearchOpen && (
-          <ManufacturerSearchPopup
-            isOpen={isManufacturerSearchOpen}
-            onClose={() => setIsManufacturerSearchOpen(false)}
-            onSelect={(manufacturer) => {
-              setFormData(prev => ({
-                ...prev,
-                manufacturer: manufacturer.name,
-                manufacturerId: manufacturer.id
-              }));
-              setIsManufacturerSearchOpen(false);
-            }}
-          />
-        )}
-
         {isDeviceTypeSearchOpen && (
           <DeviceTypeSearchPopup
             isOpen={isDeviceTypeSearchOpen}
@@ -692,20 +653,6 @@ export default function BatteryModelRegistrationPopup({
                 modelGroupId: model.id
               }));
               setIsModelNameSearchOpen(false);
-            }}
-          />
-        )}
-
-        {isCompanySearchOpen && (
-          <CompanySearchPopup
-            onClose={() => setIsCompanySearchOpen(false)}
-            onSelect={(manufacturer) => {
-              setFormData(prev => ({
-                ...prev,
-                manufacturer: manufacturer.name,
-                manufacturerId: manufacturer.id
-              }));
-              setIsCompanySearchOpen(false);
             }}
           />
         )}

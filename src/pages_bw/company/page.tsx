@@ -30,10 +30,12 @@ export default function CompanyPage() {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
   const [editData, setEditData] = useState<CompanyFormData | null>(null);
+  const isSuperUser = localStorage.getItem("is_admin_superuser") === "true";
   
 
   useEffect(() => {
-    storeCustomerList(trans);
+    const customerId = isSuperUser ? undefined : localStorage.getItem("customer_id");
+    storeCustomerList(trans, customerId || undefined);
   }, []);
 
 
@@ -168,7 +170,8 @@ export default function CompanyPage() {
           trans
         );
       }
-      await storeCustomerList(trans);
+      const customerId = isSuperUser ? undefined : localStorage.getItem("customer_id");
+      await storeCustomerList(trans, customerId || undefined);
       setIsRegistrationPopupOpen(false);
       setEditData(null);
     } catch (error) {
@@ -200,7 +203,8 @@ export default function CompanyPage() {
     if (deleteTarget) {
       try {
         await storeCustomerDelete(deleteTarget.id.toString(), trans);
-        await storeCustomerList(trans);  // 리스트 갱신
+        const customerId = isSuperUser ? undefined : localStorage.getItem("customer_id");
+        await storeCustomerList(trans, customerId || undefined);  // 리스트 갱신
       } catch (error) {
         console.error('Error deleting customer:', error);
       }
@@ -217,7 +221,7 @@ export default function CompanyPage() {
       <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
         <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
-            관리 업체 등록
+            회사 등록
           </h1>
         </div>
 
@@ -236,14 +240,16 @@ export default function CompanyPage() {
             </div>
 
             <div>
-              <button 
-                className='h-8 px-4 rounded-lg bg-blue-500 flex gap-2 items-center justify-center'
-                onClick={handleOpenRegistration}
-              >
-                <span className='text-hw-white-1 font-light text-sm leading-[125%] whitespace-nowrap'>
-                  {trans('업체 등록')}
-                </span>
-              </button>
+              {isSuperUser && (
+                <button 
+                  className='h-8 px-4 rounded-lg bg-blue-500 flex gap-2 items-center justify-center'
+                  onClick={handleOpenRegistration}
+                >
+                  <span className='text-hw-white-1 font-light text-sm leading-[125%] whitespace-nowrap'>
+                    {trans('업체 등록')}
+                  </span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -285,7 +291,10 @@ export default function CompanyPage() {
             setEditData(null);
           }}
           onSave={handleSave}
-          onSuccess={() => storeCustomerList(trans)}
+          onSuccess={() => {
+            const customerId = isSuperUser ? undefined : localStorage.getItem("customer_id");
+            storeCustomerList(trans, customerId || undefined);
+          }}
           initialData={editData || undefined}
           mode={editData ? 'edit' : 'create'}
         />

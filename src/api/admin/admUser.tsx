@@ -6,7 +6,7 @@ import { typeAdmUserList } from '@/api/types/admin/typeAdmUser';
 
 interface AdmUser {
     dataListUser: Array<typeAdmUserList> | null;        
-    storeUserList: (trans: (key: string) => string) => void;    
+    storeUserList: (customer_id: string, trans: (key: string) => string) => void;    
 
     rtnMsg_creat: rtnMsg | null;    
     storeUserCreate: (user_id: string, username: string, password: string, customer_id: string, phonenumber: string, email: string, is_staff: boolean, trans: (key: string) => string) => void;    
@@ -36,16 +36,34 @@ const getErrorMessage = (error: number, trans: (key: string) => string) => {
     }
 };
 
+const checkAuthError = (status: number, trans: (key: string) => string) => {
+    if (status === 401) {
+        alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+        localStorage.clear();
+        window.location.href = '/login';
+        return true;
+    }
+    if (status === 403) {
+        alert(trans('관리자 권한이 없습니다.'));
+        return true;
+    }
+    return false;
+};
+
 const useAdmUser = create<AdmUser>((set) => ({
     dataListUser: null,
     
-    storeUserList: async (trans) => {    
+    storeUserList: async (customer_id: string, trans) => {    
         try {
             const token = localStorage.getItem("token_admin");
-            const response = await api.post(backendURL_admin + 'get_users/', {}, {
+            const response = await api.post(backendURL_admin + 'get_users/', {
+                customer_id: customer_id
+            }, {
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     const dataList: Array<typeAdmUserList> = response.data.data;
@@ -63,7 +81,7 @@ const useAdmUser = create<AdmUser>((set) => ({
     },
 
     rtnMsg_creat: null,
-    storeUserCreate: async (user_id: string, username: string, password: string, customer_id: string, phonenumber: string, email: string, is_staff: boolean, trans) => {    
+    storeUserCreate: async (user_id: string, username: string, password: string, customer_id: string, phonenumber: string, email: string, is_staff: boolean = false, trans) => {    
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'create_user/', {                
@@ -73,11 +91,13 @@ const useAdmUser = create<AdmUser>((set) => ({
                 customer_id,
                 phonenumber,
                 email,
-                is_staff
+                is_staff: is_staff || false
             }, {
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_creat: response.data });
@@ -104,6 +124,8 @@ const useAdmUser = create<AdmUser>((set) => ({
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_delete: response.data });
@@ -136,6 +158,8 @@ const useAdmUser = create<AdmUser>((set) => ({
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_edit: response.data });

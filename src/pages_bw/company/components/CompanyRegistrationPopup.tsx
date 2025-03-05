@@ -51,7 +51,7 @@ export default function CompanyRegistrationPopup({
       <div className="bg-hw-dark-2 rounded-lg w-[600px]">
         <div className="flex justify-between items-center p-4 border-b border-gray-600">
           <h2 className="text-lg text-white">
-            {mode === 'create' ? '관리 업체 등록' : '관리 업체 수정'}
+            {mode === 'create' ? '회사 등록' : '회사 수정'}
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

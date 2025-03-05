@@ -20,6 +20,15 @@ export default function AdminHeader() {
   const handleLogout = () => {
     // localStorage.clear();
     localStorage.removeItem('token_admin');
+    localStorage.removeItem('username_admin');
+    localStorage.removeItem('is_admin_superuser');
+    localStorage.removeItem('is_admin_admin');
+    localStorage.removeItem('customer_id');
+    localStorage.removeItem('customer_name');
+    localStorage.removeItem('customer_id_selected');
+    localStorage.removeItem('customer_name_selected');
+    localStorage.removeItem('is_ManufacturerSelected');
+    localStorage.removeItem('selected_manufacturer');
     navigate('/admin/login');
   };
 

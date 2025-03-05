@@ -6,6 +6,7 @@ import ModelGroupAddPopup from './ModelGroupAddPopup';
 import DeleteConfirmPopup from '@/components/popup/DeleteConfirmPopup';
 import useAdmBatteryModel from '@/api/admin/admBetteryModel';
 import { typeAdmBetteryModelGroupList } from '@/api/types/admin/typeAdmBetteryModel';
+import useCustomerId from '@/hooks/useCustomerId';
 
 interface ModelGroupSearchPopupProps {
   isOpen: boolean;
@@ -25,10 +26,11 @@ export default function ModelGroupSearchPopup({ isOpen, onClose, onSelect }: Mod
   const [editData, setEditData] = useState<ModelGroup | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ModelGroup | null>(null);
   const { dataListBetteryModelGroup, storeBetteryModelGroupList, storeBetteryModelGroupDelete } = useAdmBatteryModel();
+  const customerId = useCustomerId();
 
   useEffect(() => {
-    storeBetteryModelGroupList(trans);
-  }, []);
+    storeBetteryModelGroupList(trans, customerId);
+  }, [customerId]);
 
   const columns = [
     {
@@ -103,7 +105,7 @@ export default function ModelGroupSearchPopup({ isOpen, onClose, onSelect }: Mod
   }, [dataListBetteryModelGroup, searchKeyword]);
 
   const handleAddSubmit = (name: string, id?: number) => {
-    storeBetteryModelGroupList(trans);
+    storeBetteryModelGroupList(trans, customerId);
   };
 
   const handleDelete = (row: ModelGroup) => {
@@ -114,7 +116,7 @@ export default function ModelGroupSearchPopup({ isOpen, onClose, onSelect }: Mod
     if (deleteTarget) {
       await storeBetteryModelGroupDelete(deleteTarget.id, trans);
       setDeleteTarget(null);
-      storeBetteryModelGroupList(trans);
+      storeBetteryModelGroupList(trans, customerId);
     }
   };
 

@@ -34,6 +34,13 @@ import AdminUserPage from '@/pages_bw/admin-user/page';
 import BatteryModelPage from '@/pages_bw/battery-model/page';
 import BatteryPackPage from '@/pages_bw/battery-pack/page';
 import BatteryDataConfigPage from '@/pages_bw/battery-data-config/page';
+import BatteryModelGroupPage from '@/pages_bw/battery-model-group/page';
+import ManufacturerDataConfigPage from '@/pages_bw/manufacturer-data-config/page';
+import ManufacturerRealTimeDataPage from '@/pages_bw/manufacturer-data-config/real-time-data/page';
+import ManufacturerDeviceControlPage from '@/pages_bw/manufacturer-data-config/device-control/page';
+import ManufacturerDeviceGroupPage from '@/pages_bw/manufacturer-data-config/device-group/page';
+import ManufacturerAlarmDataPage from '@/pages_bw/manufacturer-data-config/alarm-data/page';
+import ManufacturerSpecDataPage from '@/pages_bw/manufacturer-data-config/spec-data/page';
 
 const router = createBrowserRouter([
   // 고객용 라우터
@@ -95,8 +102,15 @@ const router = createBrowserRouter([
       { path: '', Component: CompanyPage },
       { path: 'company', Component: CompanyPage },
       { path: 'admin-user', Component: AdminUserPage },
+      { path: 'battery-model-group', Component: BatteryModelGroupPage },
       { path: 'battery-model', Component: BatteryModelPage },
       { path: 'battery-data-config', Component: BatteryDataConfigPage },
+      { path: 'manufacturer-data-config', Component: ManufacturerDataConfigPage },
+      { path: 'manufacturer-realtime-data', Component: ManufacturerRealTimeDataPage },
+      { path: 'manufacturer-device-control', Component: ManufacturerDeviceControlPage },
+      { path: 'manufacturer-device-group', Component: ManufacturerDeviceGroupPage },
+      { path: 'manufacturer-alarm-data', Component: ManufacturerAlarmDataPage },
+      { path: 'manufacturer-spec-data', Component: ManufacturerSpecDataPage },
       { path: 'battery-pack', Component: BatteryPackPage },
     ],
   },

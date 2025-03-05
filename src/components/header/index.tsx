@@ -35,7 +35,7 @@ export default function Header() {
   };
 
   const handleLogoutClick = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('token');    
     navigate('/login');
   };
 

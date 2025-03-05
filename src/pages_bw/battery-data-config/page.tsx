@@ -367,7 +367,7 @@ export default function BatteryDataConfigPage() {
             <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
                 <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
                     <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
-                        {trans('배터리 Data Config')}
+                        표준 데이터
                     </h1>
                 </div>
                 <div className='flex flex-col sm:flex-row gap-3 justify-between'>
@@ -384,7 +384,7 @@ export default function BatteryDataConfigPage() {
                         onClick={() => setIsRegistrationPopupOpen(true)}
                         className='h-[38px] px-4 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90 transition-colors'
                     >
-                        {trans('등록')}
+                        {trans('표준 데이터 등록')}
                     </button>
                 </div>
             </div>
@@ -437,8 +437,8 @@ export default function BatteryDataConfigPage() {
 
             {deleteTarget && (
                 <DeleteConfirmPopup
-                    title="배터리 Data Config 삭제"
-                    message={`"${deleteTarget.device_name}" 모델의\nData Config를 삭제하시겠습니까?`}
+                    title="표준 데이터 삭제"
+                    message={`"${deleteTarget.device_name}" 모델의\n표준 데이터를 삭제하시겠습니까?`}
                     onClose={() => setDeleteTarget(null)}
                     onConfirm={handleConfirmDelete}
                 />

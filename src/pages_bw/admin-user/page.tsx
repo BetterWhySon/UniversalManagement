@@ -6,6 +6,7 @@ import AdminRegistrationPopup from './components/AdminRegistrationPopup';
 import DeleteConfirmPopup from '@/pages/setting/standard-info/components/DeleteConfirmPopup';
 import useAdmUser from '@/api/admin/admUser';
 import { typeAdmUserList } from '@/api/types/admin/typeAdmUser';
+import useCustomerId from '@/hooks/useCustomerId';
 
 interface AdminUserData {
   id: number;
@@ -33,23 +34,24 @@ export interface AdminFormData {
 export default function AdminUserPage() {
   const { t: trans } = useTranslation('translation');
   const { dataListUser, storeUserList, storeUserDelete, storeUserEdit, storeUserCreate } = useAdmUser();
+  const customerId = useCustomerId();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
   const [editData, setEditData] = useState<typeAdmUserList | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<typeAdmUserList | null>(null);
 
   useEffect(() => {
-    storeUserList(trans);
-  }, []);
+    storeUserList(customerId, trans);
+  }, [customerId]);
 
   const columns = useMemo(() => [
     {
       name: '업체명',
-      dataIndex: 'customer',
+      dataIndex: 'customer_name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '150px',
       render: (row: typeAdmUserList) => (
-        <span className="text-yellow-400">{row.customer}</span>
+        <span className="text-yellow-400">{row.customer_name}</span>
       )
     },
     {
@@ -145,8 +147,8 @@ export default function AdminUserPage() {
     if (!searchKeyword) return dataListUser;
     
     return dataListUser.filter(item => 
-      item.customer.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      item.username.toLowerCase().includes(searchKeyword.toLowerCase())
+      item.customer_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      item.user_id.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   }, [searchKeyword, dataListUser]);
 
@@ -175,7 +177,7 @@ export default function AdminUserPage() {
           trans
         );
       }
-      await storeUserList(trans);
+      await storeUserList(customerId, trans);
       setIsRegistrationPopupOpen(false);
       setEditData(null);
     } catch (error) {
@@ -184,13 +186,13 @@ export default function AdminUserPage() {
   };
 
   const handleEdit = (row: typeAdmUserList) => {
-    const editFormData: typeAdmUserList = {
+    const editFormData = {
       id: row.id,
       user_id: row.user_id,
       username: row.username,
       password: '',
       customer_id: row.customer_id,
-      customer: row.customer,
+      customer_name: row.customer_name,
       phonenumber: row.phonenumber,
       email: row.email,
       is_staff: row.is_staff
@@ -208,7 +210,7 @@ export default function AdminUserPage() {
     if (deleteTarget) {
       try {
         await storeUserDelete(deleteTarget.id.toString(), trans);
-        await storeUserList(trans);  // 리스트 갱신
+        await storeUserList(customerId, trans);  // 리스트 갱신
       } catch (error) {
         console.error('Error deleting user:', error);
       }
@@ -221,7 +223,7 @@ export default function AdminUserPage() {
       <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
         <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
-            관리자 등록
+            소속 직원
           </h1>
         </div>
 
@@ -288,9 +290,10 @@ export default function AdminUserPage() {
             setIsRegistrationPopupOpen(false);
             setEditData(null);
           }}
-          onSuccess={() => storeUserList(trans)}
+          onSuccess={() => storeUserList(customerId, trans)}
           initialData={editData || undefined}
           mode={editData ? 'edit' : 'create'}
+          customerId={customerId}
         />
       )}
     </div>

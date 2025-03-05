@@ -152,4 +152,11 @@ export const PATH = {
       return `/${this._}`;
     },
   },
+  'battery-model-group': 'battery-model-group',
+  'manufacturer-data-config': 'manufacturer-data-config',
+  'manufacturer-realtime-data': 'manufacturer-realtime-data',
+  'manufacturer-device-control': 'manufacturer-device-control',
+  'manufacturer-device-group': 'manufacturer-device-group',
+  'manufacturer-alarm-data': 'manufacturer-alarm-data',
+  'manufacturer-spec-data': 'manufacturer-spec-data',
 };

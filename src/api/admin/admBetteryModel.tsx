@@ -3,17 +3,16 @@ import axios, { AxiosError } from "axios";
 import { api } from '@/api/api';
 import { backendURL_admin } from '../URLs';
 import { typeAdmBetteryModelGroupList, typeAdmBetteryDeviceList, typeAdmBetteryCellTypeList, typeAdmBatteryModelList } from '@/api/types/admin/typeAdmBetteryModel';
-// import { axiosInstance } from '../axios';
 
 interface AdmBetteryModel {
     dataListBetteryModelGroup: Array<typeAdmBetteryModelGroupList> | null;        
-    storeBetteryModelGroupList: (trans: (key: string) => string) => void;    
+    storeBetteryModelGroupList: (trans: (key: string) => string, customerId: string) => void;    
     rtnMsg_creat: rtnMsg | null;    
-    storeBetteryModelGroupCreate: (group_name: string, trans: (key: string) => string) => void;    
+    storeBetteryModelGroupCreate: (group_name: string, trans: (key: string) => string, customerId: string) => void;    
     rtnMsg_delete: rtnMsg | null;    
     storeBetteryModelGroupDelete: (id: number, trans: (key: string) => string) => void;
     rtnMsg_edit: rtnMsg | null;    
-    storeBetteryModelGroupEdit: (id: number, group_name: string, trans: (key: string) => string) => void;    
+    storeBetteryModelGroupEdit: (id: number, group_name: string, trans: (key: string) => string, pack_manufacturer: string) => void;    
 
     dataListBetteryDevice: Array<typeAdmBetteryDeviceList> | null;
     storeBetteryDeviceList: (trans: (key: string) => string) => void;
@@ -55,17 +54,35 @@ const getErrorMessage = (error: number, trans: (key: string) => string) => {
     }
 };
 
+const checkAuthError = (status: number, trans: (key: string) => string) => {
+    if (status === 401) {
+        alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
+        localStorage.clear();
+        window.location.href = '/login';
+        return true;
+    }
+    if (status === 403) {
+        alert(trans('관리자 권한이 없습니다.'));
+        return true;
+    }
+    return false;
+};
+
 const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
     dataListBetteryModelGroup: null,
     rtnMsg_create: null,
     
-    storeBetteryModelGroupList: async (trans) => {    
+    storeBetteryModelGroupList: async (trans, customerId) => {    
         try {
             const token = localStorage.getItem("token_admin");
-            const response = await api.post(backendURL_admin + 'get_model_groups/', {}, {
+            const response = await api.post(backendURL_admin + 'get_model_groups/', {
+                customer_id: customerId ? Number(customerId) : 0
+            }, {
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     const dataList: Array<typeAdmBetteryModelGroupList> = response.data.data;
@@ -83,15 +100,18 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
     },
 
     rtnMsg_creat: null,
-    storeBetteryModelGroupCreate: async (group_name: string, trans) => {    
+    storeBetteryModelGroupCreate: async (group_name: string, trans, pack_manufacturer) => {    
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'create_model_group/', {                
-                group_name                
+                "group_name": group_name,
+                "pack_manufacturer": pack_manufacturer ? Number(pack_manufacturer) : 0
             }, {
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_creat: response.data });
@@ -118,6 +138,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_delete: response.data });
@@ -135,16 +157,19 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
     },
 
     rtnMsg_edit: null,
-    storeBetteryModelGroupEdit: async (id: number, group_name: string, trans) => {    
+    storeBetteryModelGroupEdit: async (id: number, group_name: string, trans, pack_manufacturer) => {    
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'update_model_group/', {
                 id,
-                group_name
+                group_name,
+                pack_manufacturer: pack_manufacturer ? Number(pack_manufacturer) : 0
             }, {
                 headers: { Authorization: "Bearer " + token },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_edit: response.data });
@@ -170,6 +195,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
             const response = await api.post(backendURL_admin + 'get_model_devices/', {}, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -197,6 +224,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 headers: { Authorization: "Bearer " + token },
             });
 
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     alert(trans('기기종류를 생성했습니다.'));
@@ -220,6 +249,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
             }, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -247,6 +278,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 headers: { Authorization: "Bearer " + token },
             });
 
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     alert(trans('기기종류를 수정했습니다.'));
@@ -271,6 +304,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
             const response = await api.post(backendURL_admin + 'get_model_cells/', {}, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -298,6 +333,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 headers: { Authorization: "Bearer " + token },
             });
 
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     alert(trans('셀 종류를 생성했습니다.'));
@@ -321,6 +358,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
             }, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -348,6 +387,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 headers: { Authorization: "Bearer " + token },
             });
 
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     alert(trans('셀 종류를 수정했습니다.'));
@@ -372,6 +413,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
             const response = await api.post(backendURL_admin + 'get_model_objects/', {}, {
                 headers: { Authorization: "Bearer " + token },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -424,6 +467,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_create: response.data });
@@ -450,6 +495,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                     Authorization: "Bearer " + token,
                 },
             });
+
+            if (checkAuthError(response.status, trans)) return;
 
             if (response.status === 200) {
                 if (response.data.error === 0) {
@@ -503,6 +550,8 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 },            
             });
             
+            if (checkAuthError(response.status, trans)) return;
+
             if (response.status === 200) {
                 if (response.data.error === 0) {
                     set({ rtnMsg_edit: response.data });

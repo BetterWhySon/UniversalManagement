@@ -112,7 +112,9 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-hw-dark-2 rounded-lg w-[800px] max-h-[90vh] overflow-auto">
                 <div className="flex justify-between items-center p-4 border-b border-gray-600">
-                    <h2 className="text-lg text-white">배터리 Data Config {initialData ? '수정' : '등록'}</h2>
+                    <h2 className="text-lg text-white">
+                        {initialData ? '표준 데이터 수정' : '표준 데이터 등록'}
+                    </h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-white">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
