@@ -96,6 +96,8 @@ const DailyOperationPage = () => {
   const [selectedCondition, setSelectedCondition] = useState<'사업장' | '그룹' | '기기'>('기기');
   const [selectedDevices, setSelectedDevices] = useState<DeviceSelection[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const handleFilterApply = (items: string[]) => {
     console.log('Selected in popup:', items);
@@ -223,15 +225,35 @@ const DailyOperationPage = () => {
                       기기 선택
                     </span>
                   </button>
-                  <input 
-                    type="date" 
-                    className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full border-none outline-none min-w-[140px]"
-                  />
+                  <div 
+                    className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full min-w-[140px] flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input');
+                      if (input) input.showPicker();
+                    }}
+                  >
+                    <input 
+                      type="date" 
+                      className="bg-transparent border-none outline-none w-full cursor-pointer text-center"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
                   <span className="text-hw-white-1">~</span>
-                  <input 
-                    type="date" 
-                    className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full border-none outline-none min-w-[140px]"
-                  />
+                  <div 
+                    className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full min-w-[140px] flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input');
+                      if (input) input.showPicker();
+                    }}
+                  >
+                    <input 
+                      type="date" 
+                      className="bg-transparent border-none outline-none w-full cursor-pointer text-center"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
                   <button 
                     className="bg-blue-600 text-white px-3 rounded h-full border border-blue-500 min-w-[90px] hover:bg-blue-700 transition-colors"
                     onClick={() => setIsFilterPopupOpen(true)}

@@ -7,17 +7,19 @@ import useAdmBetteryDataConfig from '@/api/admin/admBetteryDataConfig';
 import { typeAdmBetteryDataConfigList } from '@/api/types/admin/typeAdmBetteryDataConfig';
 import BatteryDataConfigRegistrationPopup from './components/BatteryDataConfigRegistrationPopup';
 import { TableColumn } from '@/types/table.type';
+import useCustomerId from '@/hooks/useCustomerId';
 
 export default function BatteryDataConfigPage() {
     const { t: trans } = useTranslation('translation');
     const { dataListBetteryDataConfig, storeBetteryDataConfigList, storeBetteryDataConfigDelete, storeBetteryDataConfigEdit, storeBetteryDataConfigCreate } = useAdmBetteryDataConfig();
+    const customerId = useCustomerId();
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<typeAdmBetteryDataConfigList | null>(null);
     const [editData, setEditData] = useState<typeAdmBetteryDataConfigList | null>(null);
 
     useEffect(() => {
-        storeBetteryDataConfigList(trans);
+        storeBetteryDataConfigList(trans, Number(customerId));
     }, []);
 
     // 데이터 상태 확인을 위한 useEffect 추가
@@ -37,7 +39,7 @@ export default function BatteryDataConfigPage() {
     const handleConfirmDelete = async () => {
         if (deleteTarget) {
             await storeBetteryDataConfigDelete(deleteTarget.id.toString(), trans);
-            await storeBetteryDataConfigList(trans);  // 리스트 갱신
+            await storeBetteryDataConfigList(trans, Number(customerId));  // 리스트 갱신
             setDeleteTarget(null);
         }
     };
@@ -47,7 +49,7 @@ export default function BatteryDataConfigPage() {
             await storeBetteryDataConfigEdit(
                 data.id.toString(),
                 data.device_name,
-                data.object_type,
+                data.pack_manufacturer,
                 data.cell,
                 data.current,
                 data.batt_temp,
@@ -73,12 +75,13 @@ export default function BatteryDataConfigPage() {
                 data.gps_lat,
                 data.gps_lon,
                 data.rpm,
+                data.can_id,
                 trans
             );
         } else {
             await storeBetteryDataConfigCreate(
                 data.device_name,
-                data.object_type,
+                data.pack_manufacturer,
                 data.cell,
                 data.current,
                 data.batt_temp,
@@ -104,10 +107,11 @@ export default function BatteryDataConfigPage() {
                 data.gps_lat,
                 data.gps_lon,
                 data.rpm,
+                data.can_id,
                 trans
             );
         }
-        await storeBetteryDataConfigList(trans);
+        await storeBetteryDataConfigList(trans, Number(customerId));
         setIsRegistrationPopupOpen(false);
         setEditData(null);
     };
@@ -118,192 +122,84 @@ export default function BatteryDataConfigPage() {
 
     const columns: TableColumn<typeAdmBetteryDataConfigList>[] = [
         {
-            name: 'device_name',
+            name: '번호',
+            dataIndex: 'id',
+            align: TEXT_ALIGN.CENTER,
+            width: '80px'
+        },
+        {
+            name: '표준데이터명',
             dataIndex: 'device_name',
             align: TEXT_ALIGN.CENTER,
             width: '150px',
-            fixed: 'left',
-            style: { 
-                position: 'sticky', 
-                left: 0, 
-                backgroundColor: '#2A2F3A', 
-                zIndex: 2 
-            }
+            render: (row: typeAdmBetteryDataConfigList) => (
+                <button
+                    onClick={() => handleEdit(row)}
+                    className="font-bold underline cursor-pointer"
+                >
+                    {row.device_name}
+                </button>
+            )
         },
         {
-            name: 'cell',
+            name: '셀전압',
             dataIndex: 'cell',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.cell ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => (row.cell ? 'O' : 'X')
         },
         {
-            name: 'current',
+            name: '전류',
             dataIndex: 'current',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.current ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => (row.current ? 'O' : 'X')
         },
         {
-            name: 'batt_temp',
+            name: '배터리온도',
             dataIndex: 'batt_temp',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.batt_temp ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => (row.batt_temp ? 'O' : 'X')
         },
         {
-            name: 'sys_temp',
+            name: '시스템온도',
             dataIndex: 'sys_temp',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.sys_temp ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => (row.sys_temp ? 'O' : 'X')
         },
         {
-            name: 'soc',
+            name: 'SOC',
             dataIndex: 'soc',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.soc ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => (row.soc ? 'O' : 'X')
         },
         {
-            name: 'soh',
-            dataIndex: 'soh',
+            name: 'Can ID',
+            dataIndex: 'can_id',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.soh ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => row.can_id.toString()
         },
         {
-            name: 'pack_v',
-            dataIndex: 'pack_v',
+            name: '연계 모델수',
+            dataIndex: 'map_model_count',
             align: TEXT_ALIGN.CENTER,
             width: '100px',
-            render: (row) => (row.pack_v ? 'O' : 'X')
+            render: (row: typeAdmBetteryDataConfigList) => row.map_model_count || '0'
         },
         {
-            name: 'sac',
-            dataIndex: 'sac',
+            name: '등록일자',
+            dataIndex: 'registration_date',
             align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.sac ? 'O' : 'X')
-        },
-        {
-            name: 'chg_sac',
-            dataIndex: 'chg_sac',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.chg_sac ? 'O' : 'X')
-        },
-        {
-            name: 'dchg_sac',
-            dataIndex: 'dchg_sac',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.dchg_sac ? 'O' : 'X')
-        },
-        {
-            name: 'saac',
-            dataIndex: 'saac',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.saac ? 'O' : 'X')
-        },
-        {
-            name: 'speed',
-            dataIndex: 'speed',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.speed ? 'O' : 'X')
-        },
-        {
-            name: 'mileage',
-            dataIndex: 'mileage',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.mileage ? 'O' : 'X')
-        },
-        {
-            name: 'car_state',
-            dataIndex: 'car_state',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.car_state ? 'O' : 'X')
-        },
-        {
-            name: 'acc_pedal_loc',
-            dataIndex: 'acc_pedal_loc',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.acc_pedal_loc ? 'O' : 'X')
-        },
-        {
-            name: 'sub_batt_volt',
-            dataIndex: 'sub_batt_volt',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.sub_batt_volt ? 'O' : 'X')
-        },
-        {
-            name: 'brake_state',
-            dataIndex: 'brake_state',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.brake_state ? 'O' : 'X')
-        },
-        {
-            name: 'shift_state',
-            dataIndex: 'shift_state',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.shift_state ? 'O' : 'X')
-        },
-        {
-            name: 'outside_temp',
-            dataIndex: 'outside_temp',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.outside_temp ? 'O' : 'X')
-        },
-        {
-            name: 'fuel_state',
-            dataIndex: 'fuel_state',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.fuel_state ? 'O' : 'X')
-        },
-        {
-            name: 'chg_state',
-            dataIndex: 'chg_state',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.chg_state ? 'O' : 'X')
-        },
-        {
-            name: 'disp_soc',
-            dataIndex: 'disp_soc',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.disp_soc ? 'O' : 'X')
-        },
-        {
-            name: 'gps_lat',
-            dataIndex: 'gps_lat',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.gps_lat ? 'O' : 'X')
-        },
-        {
-            name: 'gps_lon',
-            dataIndex: 'gps_lon',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.gps_lon ? 'O' : 'X')
-        },
-        {
-            name: 'rpm',
-            dataIndex: 'rpm',
-            align: TEXT_ALIGN.CENTER,
-            width: '100px',
-            render: (row) => (row.rpm ? 'O' : 'X')
+            width: '120px',
+            render: (row: typeAdmBetteryDataConfigList) => {
+                if (!row.registration_date) return '-';
+                const date = new Date(row.registration_date);
+                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+            }
         },
         {
             name: '수정/삭제',
@@ -411,7 +307,7 @@ export default function BatteryDataConfigPage() {
                         isPagination
                         pagination={{
                             total: filteredData.length,
-                            pageSize: 16,
+                            pageSize: 14,
                         }}
                         paginationMarginTop='32px'
                         emptyMessage={trans('데이터가 없습니다.')}

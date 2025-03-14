@@ -215,23 +215,41 @@ const AlarmHistory: React.FC<AlarmHistoryProps> = ({ pageSize = 8 }) => {
           </div>
 
           <div className="flex gap-1 items-center ml-4">
-            <select className="bg-hw-dark-3 text-hw-white-1 py-0.5 px-2 rounded border-none outline-none min-w-[80px] h-6">
-              <option value="">당월</option>
+            <select className="bg-hw-dark-3 text-hw-white-1 py-0.5 px-2 rounded border-none outline-none min-w-[80px] h-6 text-center">
+              <option value="day">일</option>
+              <option value="week">주</option>
+              <option value="month">월</option>
+              <option value="year">년</option>
             </select>
-            <input 
-              type="text" 
-              className="bg-hw-dark-3 text-hw-white-1 py-0.5 px-2 rounded border-none outline-none w-[80px] h-6"
-              placeholder="From"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-            />
-            <input 
-              type="text" 
-              className="bg-hw-dark-3 text-hw-white-1 py-0.5 px-2 rounded border-none outline-none w-[80px] h-6"
-              placeholder="To"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-            />
+            <div 
+              className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full min-w-[140px] flex items-center cursor-pointer"
+              onClick={(e) => {
+                const input = e.currentTarget.querySelector('input');
+                if (input) input.showPicker();
+              }}
+            >
+              <input 
+                type="date" 
+                className="bg-transparent border-none outline-none w-full cursor-pointer text-center"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+            </div>
+            <span className="text-hw-white-1">~</span>
+            <div 
+              className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full min-w-[140px] flex items-center cursor-pointer"
+              onClick={(e) => {
+                const input = e.currentTarget.querySelector('input');
+                if (input) input.showPicker();
+              }}
+            >
+              <input 
+                type="date" 
+                className="bg-transparent border-none outline-none w-full cursor-pointer text-center"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </div>
           </div>
 
           <button className="px-2 py-0.5 rounded bg-hw-orange-1 text-white h-6">

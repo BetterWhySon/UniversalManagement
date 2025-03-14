@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import { typeAdmBetteryDataConfigList } from '@/api/types/admin/typeAdmBetteryDataConfig';
-import BatteryModelSearchPopup from './BatteryModelSearchPopup';
+import useCustomerId from '@/hooks/useCustomerId';
 
 interface BatteryDataConfigRegistrationPopupProps {
     onClose: () => void;
     onSave: (data: typeAdmBetteryDataConfigList) => void;
     initialData?: typeAdmBetteryDataConfigList;
+    mode?: 'create' | 'edit' | 'view';
 }
 
 const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistrationPopupProps> = ({
     onClose,
     onSave,
-    initialData
+    initialData,
+    mode = 'create'
 }) => {
+    const customerId = useCustomerId();
     const [formData, setFormData] = useState<typeAdmBetteryDataConfigList>({
         id: initialData?.id || 0,
         device_name: initialData?.device_name || '',
-        object_type: initialData?.object_type || 0,
+        pack_manufacturer: Number(customerId) || 0,
         cell: initialData?.cell || false,
         current: initialData?.current || false,
         batt_temp: initialData?.batt_temp || false,
@@ -41,10 +44,9 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
         disp_soc: initialData?.disp_soc || false,
         gps_lat: initialData?.gps_lat || false,
         gps_lon: initialData?.gps_lon || false,
-        rpm: initialData?.rpm || false
+        rpm: initialData?.rpm || false,
+        can_id: initialData?.can_id || 0
     });
-
-    const [isModelSearchOpen, setIsModelSearchOpen] = useState(false);
 
     const handleSelectAll = () => {
         setFormData(prev => ({
@@ -113,7 +115,7 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
             <div className="bg-hw-dark-2 rounded-lg w-[800px] max-h-[90vh] overflow-auto">
                 <div className="flex justify-between items-center p-4 border-b border-gray-600">
                     <h2 className="text-lg text-white">
-                        {initialData ? '표준 데이터 수정' : '표준 데이터 등록'}
+                        {mode === 'view' ? '표준 데이터 상세' : mode === 'edit' ? '표준 데이터 수정' : '표준 데이터 등록'}
                     </h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-white">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,52 +125,46 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
                 </div>
 
                 <div className="p-6">
-                    <div className="mb-4">
-                        <label className="block text-sm text-gray-400 mb-1">배터리 모델명</label>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={formData.device_name}
-                                readOnly
-                                placeholder="배터리 모델을 검색해주세요"
-                                className="flex-1 px-3 py-2 bg-hw-dark-1 text-white rounded border border-gray-600 cursor-not-allowed"
-                            />
-                            <button
-                                className="px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center"
-                                onClick={() => setIsModelSearchOpen(true)}
-                                type="button"
-                            >
-                                <span className='text-sm whitespace-nowrap'>검색</span>
-                            </button>
-                        </div>
+                    <div className="mb-2 flex items-center gap-4">
+                        <label className="text-white text-[16px] font-medium whitespace-nowrap">표준데이터명</label>
+                        <input
+                            type="text"
+                            value={formData.device_name}
+                            onChange={(e) => setFormData(prev => ({ ...prev, device_name: e.target.value }))}
+                            placeholder="표준데이터명을 입력하세요"
+                            className="flex-1 h-[28px] px-3 bg-hw-dark-1 border border-hw-dark-4 rounded text-white text-sm placeholder:text-xs placeholder:text-gray-500 focus:outline-none focus:border-hw-dark-5"
+                            disabled={mode === 'view'}
+                        />
                     </div>
 
                     <div className="bg-hw-dark-1 rounded-lg p-6 mb-6">
                         <div className="flex items-center gap-4 mb-4">
                             <h3 className="text-lg text-white">데이터 구성</h3>
-                            <div className="flex gap-4">
-                                <button
-                                    type="button"
-                                    onClick={handleSelectAll}
-                                    className="text-sm text-blue-500 hover:text-blue-400"
-                                >
-                                    전체 선택
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleUnselectAll}
-                                    className="text-sm text-blue-500 hover:text-blue-400"
-                                >
-                                    전체 해제
-                                </button>
-                            </div>
+                            {mode !== 'view' && (
+                                <div className="flex gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={handleSelectAll}
+                                        className="text-sm text-blue-500 hover:text-blue-400"
+                                    >
+                                        전체 선택
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleUnselectAll}
+                                        className="text-sm text-blue-500 hover:text-blue-400"
+                                    >
+                                        전체 해제
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
                             {Object.entries(formData)
-                                .filter(([key]) => key !== 'id' && key !== 'device_name' && key !== 'object_type')
+                                .filter(([key]) => key !== 'id' && key !== 'device_name' && key !== 'pack_manufacturer' && key !== 'can_id' && key !== 'rpm')
                                 .map(([key, value]) => (
-                                    <label key={key} className="flex items-center gap-2 text-sm text-gray-400">
+                                    <label key={key} className={`flex items-center gap-2 text-sm text-gray-400 ${mode === 'view' ? 'pointer-events-none' : ''}`}>
                                         <input
                                             type="checkbox"
                                             checked={value as boolean}
@@ -178,6 +174,28 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
                                         {key}
                                     </label>
                                 ))}
+                            <label className={`flex items-center gap-2 text-sm text-gray-400 ${mode === 'view' ? 'pointer-events-none' : ''}`}>
+                                <input
+                                    type="checkbox"
+                                    checked={formData.rpm}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, rpm: e.target.checked }))}
+                                    className="w-4 h-4 accent-blue-500"
+                                />
+                                rpm
+                            </label>
+                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                                <span className="min-w-[50px]">Can ID</span>
+                                <input
+                                    type="text"
+                                    value={formData.can_id}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                        setFormData(prev => ({ ...prev, can_id: Number(value) || 0 }));
+                                    }}
+                                    className="w-16 h-[24px] px-2 bg-hw-dark-2 border border-hw-dark-4 rounded text-white text-sm focus:outline-none focus:border-hw-dark-5"
+                                    disabled={mode === 'view'}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -187,32 +205,19 @@ const BatteryDataConfigRegistrationPopup: React.FC<BatteryDataConfigRegistration
                             onClick={onClose}
                             className="px-6 py-2 border border-hw-orange-1 text-hw-orange-1 rounded hover:bg-hw-orange-1/10"
                         >
-                            취소
+                            {mode === 'view' ? '닫기' : '취소'}
                         </button>
-                        <button
-                            onClick={() => onSave(formData)}
-                            className="px-6 py-2 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90"
-                        >
-                            확인
-                        </button>
+                        {mode !== 'view' && (
+                            <button
+                                onClick={() => onSave(formData)}
+                                className="px-6 py-2 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90"
+                            >
+                                확인
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
-
-            {isModelSearchOpen && (
-                <BatteryModelSearchPopup
-                    isOpen={isModelSearchOpen}
-                    onClose={() => setIsModelSearchOpen(false)}
-                    onSelect={(model) => {
-                        setFormData(prev => ({
-                            ...prev,
-                            device_name: model.model_name,
-                            object_type: model.id
-                        }));
-                        setIsModelSearchOpen(false);
-                    }}
-                />
-            )}
         </div>
     );
 };

@@ -18,14 +18,14 @@ export type typeAdmBetteryCellTypeList = {
 export type typeAdmBatteryModelList = {
     id: number;
     model_name: string;
-    device_type: number;  // 선택한 device id
-    device_type_name?: string;    // optional로 변경
-    model_group: number;  // 선택한 그룹 id
-    model_group_name?: string;    // optional로 변경
-    cell_type: number;    // 선택한 cell id
-    cell_type_name?: string;      // optional로 변경
-    pack_manufacturer: number;  // 선택한 업체 id
-    pack_manufacturer_name?: string;  // optional로 변경
+    model_group: number;
+    model_group_name: string;
+    device_type: number;
+    device_type_name: string;
+    cell_type: number;
+    cell_type_name: string;
+    pack_manufacturer: number;
+    pack_manufacturer_name: string;
     series_cell_cnt: number;
     batt_temp_cnt: number;
     sys_temp_cnt: number;
@@ -38,7 +38,6 @@ export type typeAdmBatteryModelList = {
     max_chg_current: number;
     max_dchg_current: number;
     cell_nominal_voltage: number;
-    
     high_sys_temp_limit: number;
     low_sys_temp_limit: number;
     can_id: number;
@@ -47,5 +46,7 @@ export type typeAdmBatteryModelList = {
     cell_avail_cycle: number;
     pack_init_price: number;
     fuel_efficiency: number;
+    registration_date: string;
+    map_model_count: number;
 };
 

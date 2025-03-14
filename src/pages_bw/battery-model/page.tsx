@@ -6,72 +6,56 @@ import BatteryModelRegistrationPopup from './components/BatteryModelRegistration
 import { cn } from '@/helpers/class-name.helper';
 import useAdmBetteryModel from '@/api/admin/admBetteryModel';
 import DeleteConfirmPopup from '@/components/popup/DeleteConfirmPopup';
+import useCustomerId from '@/hooks/useCustomerId';
+
+interface CustomDataDefinition {
+  id: string;
+  name: string;
+  unit: string;
+  dataType: string;
+  section: 1 | 2 | 3 | 4 | 5;
+}
 
 interface BatteryModelData {
   id: number;
-  manufacturer: string;    // 제조업체명
-  modelGroup: string;        // 추가
-  modelName: string;       // 모델명
-  category: string;        // 기기종류
-  cellType: string;        // 셀 종류
-  cellCount: number;       // 직렬 셀개수
-  parallelCount: number;   // 온도 개수
-  systemCount: number;     // 추가
-  capacity: number;        // 팩 공칭용량(Ah)
-  voltage: number;         // 팩 공칭 전압(V)
-  
-  dataTime?: number;        // 데이터 입력주기(s)
-  cellUpperVoltage: number;  // 추가
-  cellLowerVoltage: number;  // 추가
-  batteryUpperTemp: number;  // 추가
-  batteryLowerTemp: number;  // 추가
+  manufacturer: string;    // 제조업체명 (화면 표시용)
+  manufacturerId: number;  // 제조업체 ID (서버 전송용)
+  modelGroup: string;      // 모델그룹 종류
+  modelGroupId: number;    // 모델그룹 ID
+  modelName: string;       // 배터리 모델명
+  category: string;       // 기기 종류
+  categoryId: number;      // 기기 종류 ID
+  cellType: string;       // 셀 종류
+  cellTypeId: number;      // 셀 종류 ID
+  cellCount: number;      // 직렬 셀개수
+  parallelCount: number;  // 배터리 온도 개수
+  systemCount: number;    // 시스템 온도 개수
+  capacity: number;       // 팩 공칭 용량
+  voltage: number;        // 팩 공칭 전압
+  cellUpperVoltage: number;  // 셀 상한 전압
+  cellLowerVoltage: number;  // 셀 하한 전압
+  batteryUpperTemp: number;  // 배터리 상한 온도
+  batteryLowerTemp: number;  // 배터리 하한 온도
   registrationDate: number; // 등록일자
-  maxChargeAmp: number;
-  maxDischargeAmp: number;
-  cellNominalVoltage: number;
-  // 선택 입력 정보 
-  systemUpperTemp: number;
-  systemLowerTemp: number;
-  parallelCellCount: number;
-  packResistance: number;
-  cellCycleCount: number;
-  packPrice: number;
-  firmwareVersion: string;
-  canId: number;
-  // 데이터 유무  
-  dataExists: {
-    cellV: boolean;
-    current: boolean;
-    battTemp: boolean;
-    sysTemp: boolean;
-    soc: boolean;
-    sac: boolean;
-    seperatedSac: boolean;
-    packV: boolean;
-    soh: boolean;
-    saac: boolean;
-    speed: boolean;
-    mileage: boolean;
-    evState: boolean;
-    accPedalLoc: boolean;
-    subBattVolt: boolean;
-    breakState: boolean;
-    shiftState: boolean;
-    outsideTemp: boolean;
-    fuelState: boolean;
-    chgState: boolean;
-    dispSoc: boolean;
-  };
-  // 커스텀 데이터
-  customDataDefinitions: any[];
-  manufacturerId: number;
-  modelGroupId: number;
-  categoryId: number;
-  cellTypeId: number;
+  maxChargeAmp: number;    // 최대 충전전류
+  maxDischargeAmp: number; // 최대 방전전류
+  cellNominalVoltage: number; // 셀 공칭 전압
+  systemUpperTemp: number;  // 시스템 상한 온도
+  systemLowerTemp: number;  // 시스템 하한 온도
+  parallelCellCount: number; // 병렬 셀 개수
+  packResistance: number;   // 팩 공칭 저항
+  cellCycleCount: number;   // 셀 가용 싸이클 수
+  packPrice: number;        // 팩 출고가
+  firmwareVersion: string;  // 공정 연비
+  dataTime: number;       // 데이터 입력주기
+  customDataDefinitions: CustomDataDefinition[];
 }
+
+type BatteryModelFormData = BatteryModelData;  // 동일한 타입으로 정의
 
 export default function BatteryModelPage() {
   const { t: trans } = useTranslation('translation');
+  const customerId = useCustomerId();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [viewMode, setViewMode] = useState<'summary' | 'detail'>('summary');
   const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
@@ -83,12 +67,12 @@ export default function BatteryModelPage() {
 
   // 컴포넌트 마운트 시 리스트 조회
   useEffect(() => {
-    storeBatteryModelList(trans);
-  }, []);
+    storeBatteryModelList(trans, customerId);
+  }, [customerId]);
 
   const handleSave = async (formData: BatteryModelData) => {
     // 저장 후 리스트 갱신
-    await storeBatteryModelList(trans);
+    await storeBatteryModelList(trans, customerId);
     setIsRegistrationPopupOpen(false);
     setEditData(null);
   };
@@ -125,75 +109,15 @@ export default function BatteryModelPage() {
       packResistance: item.pack_nominal_resistance || 0,
       cellCycleCount: item.cell_avail_cycle || 0,
       packPrice: item.pack_init_price || 0,
-      firmwareVersion: String(item.fuel_efficiency || ''),  // 공정 연비 매핑 추가
-      canId: item.can_id || 0,
+      firmwareVersion: item.fuel_efficiency !== null && item.fuel_efficiency !== undefined ? String(item.fuel_efficiency) : '',  // 공정 연비 매핑 수정
       dataTime: 0,
       registrationDate: new Date().getTime(),
-      dataExists: {
-        cellV: false,
-        current: false,
-        battTemp: false,
-        sysTemp: false,
-        soc: false,
-        sac: false,
-        seperatedSac: false,
-        packV: false,
-        soh: false,
-        saac: false,
-        speed: false,
-        mileage: false,
-        evState: false,
-        accPedalLoc: false,
-        subBattVolt: false,
-        breakState: false,
-        shiftState: false,
-        outsideTemp: false,
-        fuelState: false,
-        chgState: false,
-        dispSoc: false
-      },
       customDataDefinitions: []
     })).filter(item => 
       item.modelName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       item.manufacturer.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   }, [dataListBatteryModel, searchKeyword]);
-
-  // 더미 데이터
-//   const dummyData: BatteryModelData[] = [
-//     { id: 1, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-105', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 105, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: new Date('2020-05-04').getTime(), maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 2, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-220', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 220, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: new Date('2022-05-04').getTime(), maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 1, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-105', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 105, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2020.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 2, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-220', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 220, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 3, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-230', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 230, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 4, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-280', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 280, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2020.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 5, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-560', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 560, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2020.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 6, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-1010', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 1010, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2021.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 7, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-1050', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 1050, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2021.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 8, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-1150', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 1150, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2021.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 9, manufacturer: 'FF캠핑카', modelGroup: '', modelName: 'FR-1200', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 1200, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.5.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 10, manufacturer: '신일운수', modelGroup: '', modelName: 'SL-100', category: '전동스쿠터', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 100, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.6.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 11, manufacturer: '신일운수', modelGroup: '', modelName: 'SL-150', category: '전동스쿠터', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 150, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.6.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 12, manufacturer: '신일운수', modelGroup: '', modelName: 'SL-200', category: '전동스쿠터', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 200, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.6.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 13, manufacturer: '캠핑콜', modelGroup: '', modelName: 'CC-300', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 300, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.7.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 14, manufacturer: '캠핑콜', modelGroup: '', modelName: 'CC-400', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 400, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.7.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 15, manufacturer: '캠핑콜', modelGroup: '', modelName: 'CC-500', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 500, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.7.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 16, manufacturer: '케이원캠핑', modelGroup: '', modelName: 'K1-100', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 100, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.8.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 17, manufacturer: '케이원캠핑', modelGroup: '', modelName: 'K1-200', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 200, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.8.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 18, manufacturer: '케이원캠핑', modelGroup: '', modelName: 'K1-300', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 300, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.8.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 19, manufacturer: '유니캠프', modelGroup: '', modelName: 'UC-150', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 150, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.9.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 20, manufacturer: '유니캠프', modelGroup: '', modelName: 'UC-250', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 250, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.9.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 21, manufacturer: '유니캠프', modelGroup: '', modelName: 'UC-350', category: '캠핑카', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 350, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.9.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 22, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-100', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 100, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 23, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-200', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 200, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 24, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-300', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 300, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 25, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-400', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 400, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 26, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-500', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 500, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 27, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-600', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 600, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 28, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-700', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 700, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 29, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-800', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 800, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 },
-//     { id: 30, manufacturer: '배터와이', modelGroup: '', modelName: 'BW-900', category: '드론', cellType: 'LFP', cellCount: 4, parallelCount: 2, systemCount: 2, capacity: 900, voltage: 12.8, dataTime: 0.5, cellUpperVoltage: 13.2, cellLowerVoltage: 12.4, batteryUpperTemp: 40, batteryLowerTemp: 20, registrationDate: '2022.10.4', maxChargeAmp: 0, maxDischargeAmp: 0, cellNominalVoltage: 0, systemUpperTemp: 0, systemLowerTemp: 0, parallelCellCount: 0, packResistance: 0, cellCycleCount: 0, packPrice: 0, firmwareVersion: '', canId: 0, customDataDefinitions: [], dataExists: { cellV: false, current: false, battTemp: false, sysTemp: false, soc: false, sac: false, seperatedSac: false, packV: false, soh: false, saac: false, speed: false, mileage: false, evState: false, accPedalLoc: false, subBattVolt: false, breakState: false, shiftState: false, outsideTemp: false, fuelState: false, chgState: false, dispSoc: false }, manufacturerId: 0, modelGroupId: 0, categoryId: 0, cellTypeId: 0 }
-//   ];
 
   const columns = useMemo(() => {
     // 기본 컬럼 스타일
@@ -220,7 +144,7 @@ export default function BatteryModelPage() {
         )
       },
       {
-        name: '모델명',
+        name: '제원명',
         dataIndex: 'modelName',
         ...columnStyle,
         fixedWidth: '100px',
@@ -279,8 +203,12 @@ export default function BatteryModelPage() {
         name: '등록일자',
         dataIndex: 'registrationDate',
         ...columnStyle,
-        fixedWidth: '100px',
-        render: (row: BatteryModelData) => <span>{row.registrationDate ?? '-'}</span>
+        fixedWidth: '120px',
+        render: (row: BatteryModelData) => {
+          if (!row.registrationDate) return '-';
+          const date = new Date(row.registrationDate);
+          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+        }
       },
       {
         name: '수정',  // 수정/삭제에서 수정으로 변경
@@ -324,7 +252,7 @@ export default function BatteryModelPage() {
     const detailColumns = [
       // 필수 입력 정보
       { name: '제조업체명', dataIndex: 'manufacturer', ...columnStyle, fixedWidth: '120px' },
-      { name: '모델명', dataIndex: 'modelName', ...columnStyle, fixedWidth: '100px' },
+      { name: '제원명', dataIndex: 'modelName', ...columnStyle, fixedWidth: '100px' },
       { name: '기기종류', dataIndex: 'category', ...columnStyle, fixedWidth: '100px' },
       { name: '셀 종류', dataIndex: 'cellType', ...columnStyle, fixedWidth: '100px' },
       { name: '직렬 셀개수', dataIndex: 'cellCount', ...columnStyle, fixedWidth: '100px' },
@@ -348,199 +276,7 @@ export default function BatteryModelPage() {
       { name: '셀 가용 싸이클 수', dataIndex: 'cellCycleCount', ...columnStyle, fixedWidth: '130px' },
       { name: '팩 출고가', dataIndex: 'packPrice', ...columnStyle, fixedWidth: '100px' },
       { name: '공정 연비', dataIndex: 'firmwareVersion', ...columnStyle, fixedWidth: '100px' },
-      { name: 'Can ID', dataIndex: 'canId', ...columnStyle, fixedWidth: '80px' },
-      { name: '등록일자', dataIndex: 'registrationDate', ...columnStyle, fixedWidth: '100px' },
-      
-      // dataExists 컬럼들
-      {
-        name: 'cell_v',
-        dataIndex: 'dataExists.cellV',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.cellV;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'current',
-        dataIndex: 'dataExists.current',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.current;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'batt_temp',
-        dataIndex: 'dataExists.battTemp',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.battTemp;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'sys_temp',
-        dataIndex: 'dataExists.sysTemp',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.sysTemp;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'soc',
-        dataIndex: 'dataExists.soc',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.soc;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'sac',
-        dataIndex: 'dataExists.sac',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.sac;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'seperated_sac',
-        dataIndex: 'dataExists.seperatedSac',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.seperatedSac;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'pack_v',
-        dataIndex: 'dataExists.packV',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.packV;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'soh',
-        dataIndex: 'dataExists.soh',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.soh;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'saac',
-        dataIndex: 'dataExists.saac',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.saac;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'speed',
-        dataIndex: 'dataExists.speed',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.speed;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'mileage',
-        dataIndex: 'dataExists.mileage',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.mileage;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'ev_state',
-        dataIndex: 'dataExists.evState',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.evState;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'acc_pedal_loc',
-        dataIndex: 'dataExists.accPedalLoc',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.accPedalLoc;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'sub_batt_volt',
-        dataIndex: 'dataExists.subBattVolt',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.subBattVolt;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'break_state',
-        dataIndex: 'dataExists.breakState',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.breakState;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'shift_state',
-        dataIndex: 'dataExists.shiftState',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.shiftState;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'outside_temp',
-        dataIndex: 'dataExists.outsideTemp',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.outsideTemp;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'fuel_state',
-        dataIndex: 'dataExists.fuelState',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.fuelState;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'chg_state',
-        dataIndex: 'dataExists.chgState',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.chgState;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
-      {
-        name: 'disp_soc',
-        dataIndex: 'dataExists.dispSoc',
-        ...dataExistsStyle,
-        render: (row: BatteryModelData) => {
-          const value = row.dataExists?.dispSoc;
-          return <span>{value === undefined || value === null ? '-' : value ? 'O' : 'X'}</span>;
-        }
-      },
+      { name: '등록일자', dataIndex: 'registrationDate', ...columnStyle, fixedWidth: '120px' },
       {
         name: '수정',  // 수정/삭제에서 수정으로 변경
         dataIndex: 'actions',
@@ -601,13 +337,7 @@ export default function BatteryModelPage() {
       cellCycleCount: row.cellCycleCount || 0,
       packPrice: row.packPrice || 0,
       firmwareVersion: row.firmwareVersion || '',  // 공정 연비 추가
-      canId: row.canId || 0,
-      customDataDefinitions: row.customDataDefinitions || [],
-      dataExists: row.dataExists || { 
-        cellV: false, 
-        current: false, 
-        // ... 나머지 기본값
-      }
+      customDataDefinitions: row.customDataDefinitions || []
     });
     setIsRegistrationPopupOpen(true);
   };
@@ -622,7 +352,7 @@ export default function BatteryModelPage() {
 
     try {
       await storeBatteryModelDelete(deleteTarget.id, trans);
-      await storeBatteryModelList(trans); // 리스트 갱신
+      await storeBatteryModelList(trans, customerId); // 리스트 갱신
       setIsDeletePopupOpen(false);
       setDeleteTarget(null);
     } catch (error) {
@@ -716,7 +446,7 @@ export default function BatteryModelPage() {
                   isPagination
                   pagination={{
                     total: getFilteredData.length,
-                    pageSize: 16,
+                    pageSize: 14,
                   }}
                   paginationMarginTop='32px'
                   emptyMessage={trans('데이터가 없습니다.')}

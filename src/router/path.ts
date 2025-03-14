@@ -152,7 +152,7 @@ export const PATH = {
       return `/${this._}`;
     },
   },
-  'battery-model-group': 'battery-model-group',
+  'battery-map-model': 'battery-map-model',
   'manufacturer-data-config': 'manufacturer-data-config',
   'manufacturer-realtime-data': 'manufacturer-realtime-data',
   'manufacturer-device-control': 'manufacturer-device-control',

@@ -5,97 +5,105 @@ import BarChart from '@/components/charts/BarChart';
 const UsageManagement: React.FC = () => {
   // 운영시간 % 데이터
   const operationTimeData = [
-    { name: '방전', value: 37, itemStyle: { color: '#60A5FA' } },  // 연한 파란색
-    { name: '충전', value: 39, itemStyle: { color: '#4ADE80' } },  // 연한 초록색
-    { name: '미사용', value: 24, itemStyle: { color: '#94A3B8' } }  // 회색
+    { name: '방전', value: 37, itemStyle: { color: '#8AA8DA' } },
+    { name: '충전', value: 39, itemStyle: { color: '#A9D18E' } },
+    { name: '미사용', value: 24, itemStyle: { color: '#A1A1A1' } }
   ];
 
   // 방전 % 데이터
   const dischargeData = [
-    { name: '고속방전', value: 22, itemStyle: { color: '#60A5FA' } },
-    { name: '저속방전', value: 78, itemStyle: { color: '#4ADE80' } }
+    { name: '고속방전', value: 22, itemStyle: { color: '#8AA8DA' } },
+    { name: '저속방전', value: 78, itemStyle: { color: '#A9D18E' } }
   ];
 
   // 충전 % 데이터
   const chargeData = [
-    { name: '고속충전', value: 17, itemStyle: { color: '#60A5FA' } },
-    { name: '저속충전', value: 83, itemStyle: { color: '#4ADE80' } }
+    { name: '고속충전', value: 17, itemStyle: { color: '#8AA8DA' } },
+    { name: '저속충전', value: 83, itemStyle: { color: '#A9D18E' } }
   ];
 
   // 방전 파워 % 데이터
   const dischargePowerData = [
-    { id: '정격최대', soc: 8.4 },
-    { id: '실제최대', soc: 8.4 },
-    { id: '적정Power', soc: 6.2 },
-    { id: '평균Power', soc: 6.2 }
+    { id: '정격최대', soc: 8.4, style: { color: '#8AA8DA' } },
+    { id: '실제최대', soc: 8.4, style: { color: '#A9D18E' } },
+    { id: '적정Power', soc: 6.2, style: { color: '#8AA8DA' } },
+    { id: '평균Power', soc: 6.2, style: { color: '#A9D18E' } }
   ];
 
   // 충전 파워 % 데이터
   const chargePowerData = [
-    { id: '정격최대', soc: 8.4 },
-    { id: '실제최대', soc: 8.4 },
-    { id: '적정Power', soc: 6.2 },
-    { id: '평균Power', soc: 6.2 }
+    { id: '정격최대', soc: 8.4, style: { color: '#8AA8DA' } },
+    { id: '실제최대', soc: 8.4, style: { color: '#A9D18E' } },
+    { id: '적정Power', soc: 6.2, style: { color: '#8AA8DA' } },
+    { id: '평균Power', soc: 6.2, style: { color: '#A9D18E' } }
   ];
 
   // 최근 방전시간(h) 데이터
   const dischargeTimeData = [
-    { id: 'D1', soc: 780 },
-    { id: 'D2', soc: 20 },
-    { id: 'D3', soc: 14 },
-    { id: 'D4', soc: 18 },
-    { id: 'D5', soc: 350 },
-    { id: 'D6', soc: 840 },
-    { id: 'D7', soc: 2405 },
-    { id: 'D8', soc: 18 },
-    { id: 'D9', soc: 17 },
-    { id: 'D10', soc: 18 },
-    { id: 'D11', soc: 1450 },
-    { id: 'D12', soc: 17 },
-    { id: 'D13', soc: 18 },
-    { id: 'D14', soc: 20 }
+    { id: 'D1', soc: 780, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D2', soc: 20, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D3', soc: 14, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D4', soc: 18, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D5', soc: 350, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D6', soc: 840, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D7', soc: 2405, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D8', soc: 18, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D9', soc: 17, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D10', soc: 18, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D11', soc: 1450, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D12', soc: 17, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D13', soc: 18, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D14', soc: 20, itemStyle: { color: '#8AA8DA' } }
   ];
 
   // 적정 SOC 방전비율 데이터
   const socDischargeData = [
-    { id: '~10%', soc: 0 },
-    { id: '~20%', soc: 0 },
-    { id: '~30%', soc: 0 },
-    { id: '~40%', soc: 0 },
-    { id: '~50%', soc: 20 },
-    { id: '~60%', soc: 35 },
-    { id: '~70%', soc: 55 },
-    { id: '~80%', soc: 75 },
-    { id: '~90%', soc: 45 },
-    { id: '~100%', soc: 15 }
+    { id: '~10%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '~20%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '~30%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '~40%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '~50%', soc: 20, itemStyle: { color: '#8AA8DA' } },
+    { id: '~60%', soc: 35, itemStyle: { color: '#8AA8DA' } },
+    { id: '~70%', soc: 55, itemStyle: { color: '#8AA8DA' } },
+    { id: '~80%', soc: 75, itemStyle: { color: '#8AA8DA' } },
+    { id: '~90%', soc: 45, itemStyle: { color: '#8AA8DA' } },
+    { id: '~100%', soc: 15, itemStyle: { color: '#8AA8DA' } }
   ];
 
   // 최근 충전시간(h) 데이터
   const chargeTimeData = [
-    { id: '0~4시', soc: 32 },
-    { id: '4~8시', soc: 38 },
-    { id: '8~12시', soc: 8 },
-    { id: '12~16시', soc: 4 },
-    { id: '16~20시', soc: 2 },
-    { id: '20~24시', soc: 16 }
+    { id: 'D1', soc: 420, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D2', soc: 1250, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D3', soc: 380, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D4', soc: 25, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D5', soc: 18, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D6', soc: 1680, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D7', soc: 950, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D8', soc: 480, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D9', soc: 1850, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D10', soc: 320, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D11', soc: 28, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D12', soc: 1450, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D13', soc: 680, itemStyle: { color: '#8AA8DA' } },
+    { id: 'D14', soc: 1250, itemStyle: { color: '#8AA8DA' } }
   ];
 
   // 방전시 Power % 데이터
   const dischargePowerTimeData = [
-    { id: '0~20%', soc: 46 },
-    { id: '20~40%', soc: 45 },
-    { id: '40~60%', soc: 9 },
-    { id: '60~80%', soc: 0 },
-    { id: '80~100%', soc: 0 }
+    { id: '0~20%', soc: 46, itemStyle: { color: '#8AA8DA' } },
+    { id: '20~40%', soc: 45, itemStyle: { color: '#8AA8DA' } },
+    { id: '40~60%', soc: 9, itemStyle: { color: '#8AA8DA' } },
+    { id: '60~80%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '80~100%', soc: 0, itemStyle: { color: '#8AA8DA' } }
   ];
 
   // 충전시 Power % 데이터
   const chargePowerTimeData = [
-    { id: '0~20%', soc: 38 },
-    { id: '20~40%', soc: 42 },
-    { id: '40~60%', soc: 20 },
-    { id: '60~80%', soc: 0 },
-    { id: '80~100%', soc: 0 }
+    { id: '0~20%', soc: 38, itemStyle: { color: '#8AA8DA' } },
+    { id: '20~40%', soc: 42, itemStyle: { color: '#8AA8DA' } },
+    { id: '40~60%', soc: 20, itemStyle: { color: '#8AA8DA' } },
+    { id: '60~80%', soc: 0, itemStyle: { color: '#8AA8DA' } },
+    { id: '80~100%', soc: 0, itemStyle: { color: '#8AA8DA' } }
   ];
 
   return (
@@ -148,7 +156,10 @@ const UsageManagement: React.FC = () => {
               <div className="w-[150px] h-[150px]">
                 <DiagPieChart 
                   datas={operationTimeData} 
-                //   backgroundColor="var(--hw-dark-2)" 
+                  radius={['25%', '90%']}
+                  itemGap={4}
+                  labelColor="#404040"
+                  labelSize={19}
                 />
               </div>
             </div>
@@ -220,7 +231,13 @@ const UsageManagement: React.FC = () => {
             </div>
             <div className="flex-1 h-full flex items-center justify-center">
               <div className="w-[150px] h-[150px]">
-                <DiagPieChart datas={dischargeData}/>
+                <DiagPieChart 
+                  datas={dischargeData}
+                  radius={['25%', '90%']}
+                  itemGap={4}
+                  labelColor="#404040"
+                  labelSize={19}
+                />
               </div>
             </div>
           </div>
@@ -229,7 +246,7 @@ const UsageManagement: React.FC = () => {
 
       {/* 적정 SOC 방전비율 */}
       <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
-        <h3 className="text-white text-[19px] mb-2">적정 SOC 방전비율</h3>
+        <h3 className="text-white text-[19px] mb-2">SOC 구간별 방전 비율</h3>
         <div className="flex h-[calc(100%-40px)]">
           {/* 차트 영역 */}
           <div className="flex-1 h-full">
@@ -310,7 +327,13 @@ const UsageManagement: React.FC = () => {
             </div>
             <div className="flex-1 h-full flex items-center justify-center">
               <div className="w-[150px] h-[150px]">
-                <DiagPieChart datas={chargeData}  />
+                <DiagPieChart 
+                  datas={chargeData}
+                  radius={['25%', '90%']}
+                  itemGap={4}
+                  labelColor="#404040"
+                  labelSize={19}
+                />
               </div>
             </div>
           </div>
@@ -372,7 +395,7 @@ const UsageManagement: React.FC = () => {
         <div className="h-[calc(100%-40px)]">
           <BarChart 
             data={dischargePowerData}
-            grid={{ top: 40, right: 20, bottom: 20, left: 60 }}
+            grid={{ top: 30, right: 20, bottom: 20, left: 60 }}
             yAxis={{ max: 10 }}
             backgroundColor="transparent"
             isVertical={true}
@@ -392,7 +415,7 @@ const UsageManagement: React.FC = () => {
           <div className="flex-1 h-full">
             <BarChart 
               data={dischargePowerTimeData}
-              grid={{ top: 30, right: 10, bottom: 20, left: 40 }}
+              grid={{ top: 40, right: 10, bottom: 20, left: 40 }}
               backgroundColor="transparent"
               showGrid={false}
               hideYAxis={true}

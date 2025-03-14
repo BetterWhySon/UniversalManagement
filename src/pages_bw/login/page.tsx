@@ -48,7 +48,7 @@ export default function LoginPageBW() {
       if (response.status === 401) {
         alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
         localStorage.clear();
-        window.location.href = '/login';
+        window.location.href = '/admin/login';
         return;
       }
       if (response.status === 403) {
@@ -83,7 +83,7 @@ export default function LoginPageBW() {
         if (error.response.status === 401) {
           alert(trans('인증이 만료되었습니다. 다시 로그인해주세요.'));
           localStorage.clear();
-          window.location.href = '/login';
+          window.location.href = '/admin/login';
         } else if (error.response.status === 403) {
           alert(trans('관리자 권한이 없습니다.'));
         } else {

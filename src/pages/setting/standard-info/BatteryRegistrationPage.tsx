@@ -7,6 +7,7 @@ import AlertPopup from './components/AlertPopup';
 import GroupSelectPopup from './components/GroupSelectPopup';
 import BatteryEditPopup from './components/BatteryEditPopup';
 import DeleteConfirmPopup from './components/DeleteConfirmPopup';
+import CompanyGroupAssignPopup from './components/CompanyGroupAssignPopup';
 
 interface BatteryData {
   id: number;
@@ -36,6 +37,9 @@ const BatteryRegistrationPage: React.FC = () => {
   const [editData, setEditData] = useState<BatteryData | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [alertMessage, setAlertMessage] = useState('배터리를 선택해주세요.');
+  const [isCompanyGroupAssignOpen, setIsCompanyGroupAssignOpen] = useState(false);
+  const [tempSelectedCompany, setTempSelectedCompany] = useState<string>('');
+  const [tempSelectedGroup, setTempSelectedGroup] = useState<string>('');
 
   // 이벤트 핸들러 수정
   const handleCompanyAssign = () => {
@@ -48,6 +52,12 @@ const BatteryRegistrationPage: React.FC = () => {
 
   const handleGroupAssign = () => {
     if (selectedRows.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+
+    if (!tempSelectedCompany) {
+      setAlertMessage('사업장을 먼저 지정해주세요.');
       setShowAlert(true);
       return;
     }
@@ -277,12 +287,25 @@ const BatteryRegistrationPage: React.FC = () => {
 
   const handleCompanySelect = (companyName: string) => {
     // 선택된 사업장 처리 로직
+    setTempSelectedCompany(companyName);
     setIsCompanySelectOpen(false);
   };
 
-  const handleGroupSelect = (selectedGroups: number[]) => {
+  const handleGroupSelect = (selectedGroups: string) => {
     // 선택된 그룹 처리 로직
+    setTempSelectedGroup(selectedGroups);
     setIsGroupSelectOpen(false);
+  };
+
+  const handleCompanyGroupConfirm = (type: 'company' | 'group', value: string) => {
+    if (type === 'company') {
+      // TODO: 실제 사업장 저장 로직 구현
+      console.log('Assigned company:', value);
+    } else {
+      // TODO: 실제 그룹 저장 로직 구현
+      console.log('Assigned group:', value);
+    }
+    setIsCompanyGroupAssignOpen(false);
   };
 
   // 수정, 해제 핸들러 추가
@@ -308,6 +331,14 @@ const BatteryRegistrationPage: React.FC = () => {
     setDeleteTarget(id);
   };
 
+  const handleCompanyGroupAssign = () => {
+    if (selectedRows.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+    setIsCompanyGroupAssignOpen(true);
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
       <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
@@ -321,16 +352,9 @@ const BatteryRegistrationPage: React.FC = () => {
           <div className='flex flex-row items-center gap-4'>
             <button
               className="h-8 px-4 text-sm bg-[#363B46] text-white rounded hover:bg-opacity-80 transition-colors"
-              onClick={handleCompanyAssign}
+              onClick={handleCompanyGroupAssign}
             >
-              사업장 지정
-            </button>
-
-            <button
-              className="h-8 px-4 text-sm bg-[#363B46] text-white rounded hover:bg-opacity-80 transition-colors"
-              onClick={handleGroupAssign}
-            >
-              그룹 지정
+              사업장/그룹 지정
             </button>
 
             <button
@@ -395,6 +419,7 @@ const BatteryRegistrationPage: React.FC = () => {
         <GroupSelectPopup
           onClose={() => setIsGroupSelectOpen(false)}
           onConfirm={handleGroupSelect}
+          isSingleSelect={isCompanyGroupAssignOpen}
         />
       )}
 
@@ -426,6 +451,17 @@ const BatteryRegistrationPage: React.FC = () => {
           }}
           title="배터리 삭제"
           message="해당 배터리를 삭제하시겠습니까?"
+        />
+      )}
+
+      {isCompanyGroupAssignOpen && (
+        <CompanyGroupAssignPopup
+          onClose={() => setIsCompanyGroupAssignOpen(false)}
+          onCompanyAssign={() => setIsCompanySelectOpen(true)}
+          onGroupAssign={() => setIsGroupSelectOpen(true)}
+          onConfirm={handleCompanyGroupConfirm}
+          selectedCompany={tempSelectedCompany}
+          selectedGroup={tempSelectedGroup}
         />
       )}
     </div>

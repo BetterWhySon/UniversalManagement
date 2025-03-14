@@ -1,7 +1,19 @@
 import { useRef, useEffect } from 'react';
 import * as echarts from 'echarts';
 
-const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; itemStyle: { color: string } }> }) => {
+const DiagPieChart = ({ 
+    datas, 
+    radius = ['40%', '70%'],
+    itemGap = 4,
+    labelColor = '#fff',
+    labelSize = 16
+}: { 
+    datas: Array<{ name: string; value: number; itemStyle: { color: string } }>;
+    radius?: [string, string];
+    itemGap?: number;
+    labelColor?: string;
+    labelSize?: number;
+}) => {
     const chartRef = useRef<HTMLDivElement>(null);
     const chartInstance = useRef<echarts.EChartsType | null>(null);
 
@@ -37,15 +49,20 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
                 series: [
                     {
                         type: 'pie',
-                        radius: '90%',
+                        radius: radius,
                         avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 4,
+                            borderColor: '#2A2F3A',
+                            borderWidth: itemGap
+                        },
                         label: {
                             show: true,
                             position: 'inside',
                             formatter: '{c}',
-                            fontSize: 16,
+                            fontSize: labelSize,
                             fontWeight: 'bold',
-                            color: '#fff'
+                            color: labelColor
                         },
                         labelLine: {
                             show: false
@@ -53,7 +70,7 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
                         emphasis: {
                             label: {
                                 show: true,
-                                fontSize: 20,
+                                fontSize: labelSize + 4,
                                 fontWeight: 'bold'
                             }
                         },
@@ -71,7 +88,7 @@ const DiagPieChart = ({ datas }: { datas: Array<{ name: string; value: number; i
                 chartInstance.current = null;
             }
         };
-    }, [datas]);
+    }, [datas, radius, itemGap, labelColor, labelSize]);
 
     return (
         <div ref={chartRef} className='w-full h-full' />

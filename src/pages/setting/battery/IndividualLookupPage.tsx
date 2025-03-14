@@ -17,7 +17,7 @@ const IndividualLookupPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState('사용관리');
   const [showDeviceSelect, setShowDeviceSelect] = useState(false);
 
-  const tabs = ['사용관리', '배터리 용량', '배터리 효율', '충/방전이력', '알람이력'];
+  const tabs = ['사용관리', '배터리 용량', '배터리 효율', '사용이력', '알람이력'];
 
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
@@ -297,7 +297,7 @@ const IndividualLookupPage: React.FC = () => {
           {selectedTab === '사용관리' && <UsageManagement />}
           {selectedTab === '배터리 용량' && <LifeManagement />}
           {selectedTab === '배터리 효율' && <BatteryInfo />}
-          {selectedTab === '충/방전이력' && <ChargingHistory />}
+          {selectedTab === '사용이력' && <ChargingHistory />}
           {selectedTab === '알람이력' && <AlarmHistory />}
         </div>
       </div>

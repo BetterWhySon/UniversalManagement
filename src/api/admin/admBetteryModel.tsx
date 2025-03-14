@@ -27,7 +27,7 @@ interface AdmBetteryModel {
     storeBetteryCellTypeEdit: (id: number, cell_name: string, description: string, trans: (key: string) => string) => void;
 
     dataListBatteryModel: Array<typeAdmBatteryModelList> | null;
-    storeBatteryModelList: (trans: (key: string) => string) => void;
+    storeBatteryModelList: (trans: (key: string) => string, customerId: string) => void;
     rtnMsg_create: rtnMsg | null;
     storeBatteryModelCreate: (modelData: Omit<typeAdmBatteryModelList, 'id'>, trans: (key: string) => string) => void;
     storeBatteryModelDelete: (id: number, trans: (key: string) => string) => void;
@@ -161,7 +161,7 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'update_model_group/', {
-                id,
+                id, 
                 group_name,
                 pack_manufacturer: pack_manufacturer ? Number(pack_manufacturer) : 0
             }, {
@@ -407,10 +407,12 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
     // Battery Model 관련 함수 추가
     dataListBatteryModel: null,
 
-    storeBatteryModelList: async (trans) => {
+    storeBatteryModelList: async (trans, customerId) => {
         try {
             const token = localStorage.getItem("token_admin");
-            const response = await api.post(backendURL_admin + 'get_model_objects/', {}, {
+            const response = await api.post(backendURL_admin + 'get_model_objects/', {
+                customer_id: customerId ? Number(customerId) : 0
+            }, {
                 headers: { Authorization: "Bearer " + token },
             });
 
@@ -455,7 +457,7 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 cell_nominal_voltage: modelData.cell_nominal_voltage,
                 high_sys_temp_limit: modelData.high_sys_temp_limit,
                 low_sys_temp_limit: modelData.low_sys_temp_limit,
-                can_id: modelData.can_id,
+                // can_id: modelData.can_id,
                 parallel_cell_cnt: modelData.parallel_cell_cnt,
                 pack_nominal_resistance: modelData.pack_nominal_resistance,
                 cell_avail_cycle: modelData.cell_avail_cycle,
@@ -538,7 +540,7 @@ const useAdmBetteryModel = create<AdmBetteryModel>((set) => ({
                 cell_nominal_voltage: modelData.cell_nominal_voltage,
                 high_sys_temp_limit: modelData.high_sys_temp_limit,
                 low_sys_temp_limit: modelData.low_sys_temp_limit,
-                can_id: modelData.can_id,
+                // can_id: modelData.can_id,
                 parallel_cell_cnt: modelData.parallel_cell_cnt,
                 pack_nominal_resistance: modelData.pack_nominal_resistance,
                 cell_avail_cycle: modelData.cell_avail_cycle,

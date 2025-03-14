@@ -14,7 +14,7 @@ export const ADMIN_SIDEBAR_MENU = [
       },
       {
         title: '배터리(모빌리티) 모델',
-        href: BW_PATH.get('battery-model-group')
+        href: BW_PATH.get('battery-map-model')
       },
       {
         title: '배터리(모빌리티) 제원',
@@ -53,10 +53,10 @@ export const ADMIN_SIDEBAR_MENU = [
         href: BW_PATH.get('manufacturer-spec-data'),
         indent: true
       },
-      {
-        title: '모델그룹 설정',
-        href: BW_PATH.get('model-group')
-      },
+    //   {
+    //     title: '모델그룹 설정',
+    //     href: BW_PATH.get('model-group')
+    //   },
       {
         title: '배터리 팩 등록 현황',
         href: BW_PATH.get('battery-pack')

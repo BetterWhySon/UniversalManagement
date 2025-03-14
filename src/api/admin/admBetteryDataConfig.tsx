@@ -5,12 +5,12 @@ import { typeAdmBetteryDataConfigList } from '@/api/types/admin/typeAdmBetteryDa
 
 interface AdmBetteryDataConfig {
     dataListBetteryDataConfig: Array<typeAdmBetteryDataConfigList> | null;
-    storeBetteryDataConfigList: (trans: (key: string) => string) => void;
+    storeBetteryDataConfigList: (trans: (key: string) => string, customer_id: number) => void;
 
     rtnMsg_create: rtnMsg | null;
     storeBetteryDataConfigCreate: (
         device_name: string,
-        object_type: number,
+        pack_manufacturer: number,
         cell: boolean,
         current: boolean,
         batt_temp: boolean,
@@ -36,6 +36,7 @@ interface AdmBetteryDataConfig {
         gps_lat: boolean,
         gps_lon: boolean,
         rpm: boolean,
+        can_id: number,
         trans: (key: string) => string
     ) => void;
 
@@ -46,7 +47,7 @@ interface AdmBetteryDataConfig {
     storeBetteryDataConfigEdit: (
         id: string,
         device_name: string,
-        object_type: number,
+        pack_manufacturer: number,
         cell: boolean,
         current: boolean,
         batt_temp: boolean,
@@ -72,6 +73,7 @@ interface AdmBetteryDataConfig {
         gps_lat: boolean,
         gps_lon: boolean,
         rpm: boolean,
+        can_id: number,
         trans: (key: string) => string
     ) => void;
 }
@@ -114,10 +116,12 @@ const checkAuthError = (status: number, trans: (key: string) => string) => {
 const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
     dataListBetteryDataConfig: null,
 
-    storeBetteryDataConfigList: async (trans) => {
+    storeBetteryDataConfigList: async (trans, customer_id) => {
         try {
             const token = localStorage.getItem("token_admin");
-            const response = await api.post(backendURL_admin + 'get_model_data_configs/', {}, {
+            const response = await api.post(backendURL_admin + 'get_model_data_configs/', {
+                customer_id
+            }, {
                 headers: { Authorization: "Bearer " + token },
             });
 
@@ -141,16 +145,16 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
 
     rtnMsg_create: null,
     storeBetteryDataConfigCreate: async (
-        device_name, object_type, cell, current, batt_temp, sys_temp,
+        device_name, pack_manufacturer, cell, current, batt_temp, sys_temp,
         soc, sac, soh, pack_v, chg_sac, dchg_sac, saac, speed, mileage,
         car_state, acc_pedal_loc, sub_batt_volt, brake_state, shift_state,
-        outside_temp, fuel_state, chg_state, disp_soc, gps_lat, gps_lon, rpm, trans
+        outside_temp, fuel_state, chg_state, disp_soc, gps_lat, gps_lon, rpm, can_id, trans
     ) => {
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'create_model_data_config/', {
                 device_name,
-                object_type,
+                pack_manufacturer,
                 cell,
                 current,
                 batt_temp,
@@ -175,7 +179,8 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
                 disp_soc,
                 gps_lat,
                 gps_lon,
-                rpm
+                rpm,
+                can_id
             }, {
                 headers: { Authorization: "Bearer " + token },
             });
@@ -228,17 +233,17 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
 
     rtnMsg_edit: null,
     storeBetteryDataConfigEdit: async (
-        id, device_name, object_type, cell, current, batt_temp, sys_temp,
+        id, device_name, pack_manufacturer, cell, current, batt_temp, sys_temp,
         soc, sac, soh, pack_v, chg_sac, dchg_sac, saac, speed, mileage,
         car_state, acc_pedal_loc, sub_batt_volt, brake_state, shift_state,
-        outside_temp, fuel_state, chg_state, disp_soc, gps_lat, gps_lon, rpm, trans
+        outside_temp, fuel_state, chg_state, disp_soc, gps_lat, gps_lon, rpm, can_id, trans
     ) => {
         try {
             const token = localStorage.getItem("token_admin");
             const response = await api.post(backendURL_admin + 'update_model_data_config/', {
                 id,
                 device_name,
-                object_type,
+                pack_manufacturer,
                 cell,
                 current,
                 batt_temp,
@@ -263,7 +268,8 @@ const useAdmBetteryDataConfig = create<AdmBetteryDataConfig>((set) => ({
                 disp_soc,
                 gps_lat,
                 gps_lon,
-                rpm
+                rpm,
+                can_id
             }, {
                 headers: { Authorization: "Bearer " + token },
             });

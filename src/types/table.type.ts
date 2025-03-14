@@ -1,6 +1,6 @@
 import { TEXT_ALIGN } from '@/enums/table';
 
-export type TableColumn<T> = {
+export interface TableColumn<T> {
   name: string;
   dataIndex: string;
   align?: TEXT_ALIGN;
@@ -13,4 +13,5 @@ export type TableColumn<T> = {
   render?: (row: T, dataIndex: string) => React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-};
+  children?: TableColumn<T>[];
+}

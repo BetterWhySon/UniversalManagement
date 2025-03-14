@@ -146,7 +146,7 @@ export default function BatteryPackPage() {
             isPagination
             pagination={{
               total: getFilteredData.length,
-              pageSize: 16,
+              pageSize: 13,
             }}
             paginationMarginTop='32px'
             emptyMessage={trans('데이터가 없습니다.')}

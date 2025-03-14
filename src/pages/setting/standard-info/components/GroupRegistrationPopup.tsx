@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CompanySelectPopup from './CompanySelectPopup';
 
 declare global {
   interface Window {
@@ -15,6 +16,7 @@ interface GroupRegistrationPopupProps {
     address: string;
     detailAddress: string;
     description: string;
+    belongCompany: string;
   }) => void;
   initialData?: {
     code: string;
@@ -23,6 +25,7 @@ interface GroupRegistrationPopupProps {
     address: string;
     detailAddress: string;
     description: string;
+    belongCompany: string;
   };
   mode?: 'create' | 'edit';
 }
@@ -33,13 +36,15 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
   initialData,
   mode = 'create' 
 }) => {
+  const [isCompanySelectionOpen, setIsCompanySelectionOpen] = useState(false);
   const [formData, setFormData] = useState({
     code: initialData?.code || '',
     group: initialData?.group || '',
     postcode: initialData?.postcode || '',
     address: initialData?.address || '',
     detailAddress: initialData?.detailAddress || '',
-    description: initialData?.description || ''
+    description: initialData?.description || '',
+    belongCompany: initialData?.belongCompany || ''
   });
 
   const handlePostcode = () => {
@@ -74,6 +79,14 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
         }));
       }
     }).open();
+  };
+
+  const handleCompanySelect = (company: string) => {
+    setFormData(prev => ({
+      ...prev,
+      belongCompany: company
+    }));
+    setIsCompanySelectionOpen(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,6 +129,26 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   onChange={(e) => setFormData({...formData, group: e.target.value})}
                   required
                 />
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-32 text-white">귀속 사업장 :</label>
+                <div className="flex-1 flex gap-2 items-center">
+                  <input
+                    type="text"
+                    className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
+                    value={formData.belongCompany}
+                    readOnly
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsCompanySelectionOpen(true)}
+                    className="h-10 px-4 bg-hw-orange-1 text-white rounded hover:bg-hw-orange-1/90 whitespace-nowrap"
+                  >
+                    선택
+                  </button>
+                </div>
               </div>
 
               <div className="flex">
@@ -185,6 +218,12 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
           </div>
         </form>
       </div>
+      {isCompanySelectionOpen && (
+        <CompanySelectPopup
+          onClose={() => setIsCompanySelectionOpen(false)}
+          onConfirm={handleCompanySelect}
+        />
+      )}
     </div>
   );
 };

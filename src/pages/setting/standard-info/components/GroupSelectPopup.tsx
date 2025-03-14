@@ -5,7 +5,8 @@ import AlertPopup from './AlertPopup';
 
 interface GroupSelectPopupProps {
   onClose: () => void;
-  onConfirm: (selectedGroups: number[]) => void;
+  onConfirm: (selectedGroups: string) => void;
+  isSingleSelect?: boolean;
 }
 
 interface GroupItem {
@@ -16,9 +17,10 @@ interface GroupItem {
   description: string;
 }
 
-const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm }) => {
+const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm, isSingleSelect = false }) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedGroupCodes, setSelectedGroupCodes] = useState<string[]>([]);
+  const [selectedGroupCode, setSelectedGroupCode] = useState<string>('');
   const [showAlert, setShowAlert] = useState(false);
   
   const MAX_SELECTIONS = 12;
@@ -47,6 +49,11 @@ const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm 
   ];
 
   const handleCheckboxChange = (checked: boolean, code: string) => {
+    if (isSingleSelect) {
+      setSelectedGroupCode(checked ? code : '');
+      return;
+    }
+
     if (checked && selectedGroupCodes.length >= MAX_SELECTIONS) {
       setShowAlert(true);
       return;
@@ -66,12 +73,22 @@ const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm 
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '50px',
       render: (row: GroupItem) => (
-        <input
-          type="checkbox"
-          checked={selectedGroupCodes.includes(row.code)}
-          onChange={(e) => handleCheckboxChange(e.target.checked, row.code)}
-          className="w-4 h-4 accent-blue-500"
-        />
+        isSingleSelect ? (
+          <input
+            type="radio"
+            name="groupSelect"
+            checked={selectedGroupCode === row.code}
+            onChange={(e) => handleCheckboxChange(e.target.checked, row.code)}
+            className="w-4 h-4 accent-blue-500"
+          />
+        ) : (
+          <input
+            type="checkbox"
+            checked={selectedGroupCodes.includes(row.code)}
+            onChange={(e) => handleCheckboxChange(e.target.checked, row.code)}
+            className="w-4 h-4 accent-blue-500"
+          />
+        )
       )
     },
     {
@@ -104,7 +121,7 @@ const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm 
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
       <div className="bg-[#2A2F3A] rounded-lg w-[1000px]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between p-5 border-b border-white/10">
@@ -151,12 +168,19 @@ const GroupSelectPopup: React.FC<GroupSelectPopupProps> = ({ onClose, onConfirm 
             </button>
             <button
               onClick={() => {
-                const selectedGroups = groups
-                  .filter(g => selectedGroupCodes.includes(g.code))
-                  .map(g => g.id);
-                onConfirm(selectedGroups);
+                if (isSingleSelect) {
+                  const selectedGroup = groups.find(g => g.code === selectedGroupCode);
+                  onConfirm(selectedGroup ? selectedGroup.name : '');
+                } else {
+                  const selectedGroups = groups
+                    .filter(g => selectedGroupCodes.includes(g.code))
+                    .map(g => g.name)
+                    .join(', ');
+                  onConfirm(selectedGroups);
+                }
               }}
               className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-500/80 transition-colors"
+              disabled={isSingleSelect ? !selectedGroupCode : selectedGroupCodes.length === 0}
             >
               확인
             </button>

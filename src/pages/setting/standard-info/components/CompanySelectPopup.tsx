@@ -74,7 +74,7 @@ const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConf
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
       <div className="bg-[#2A2F3A] rounded-lg w-[1000px]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between p-5 border-b border-white/10">

@@ -81,7 +81,7 @@ export default function TableData<T extends { id: number }>({
     }, [data])
 
     return (
-        <div className={cn('w-full h-full min-h-[650px]', className)}>
+        <div className={cn('w-full h-full', className)}>
             <div
                 style={{ overflowX }}
                 className='relative w-full h-full bg-hw-dark-2 overflow-x-scroll rounded-none xs:rounded-lg'>
