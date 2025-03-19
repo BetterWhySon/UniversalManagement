@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 
 interface Selection {
@@ -13,6 +13,9 @@ interface DeviceSelectPopupProps {
   onSelect: (selections: Selection[], selectedDevices: {[company: string]: string[]}) => void;
   conditionType: '사업장' | '그룹' | '기기';
   title?: string;
+  pageType?: 'item' | 'device';
+  selectedDeviceIds?: string[];
+  allowInfiniteSelection?: boolean;
 }
 
 const mockData = [
@@ -45,12 +48,47 @@ const mockData = [
     packModel: 'MODEL-C3',
     user: '이영희',
     contact: '010-3456-7890'
+  },
+  { 
+    company: '인천지점', 
+    group: '전동킥보드', 
+    device: 'BAT-004',
+    application: '전동킥보드',
+    packId: 'PACK-004',
+    packModel: 'MODEL-D4',
+    user: '박민준',
+    contact: '010-4567-8901'
+  },
+  { 
+    company: '광주지점', 
+    group: '전기스쿠터', 
+    device: 'BAT-005',
+    application: '전기스쿠터',
+    packId: 'PACK-005',
+    packModel: 'MODEL-E5',
+    user: '정수민',
+    contact: '010-5678-9012'
+  },
+  { 
+    company: '대구지점', 
+    group: '전기골프카트', 
+    device: 'BAT-006',
+    application: '골프카트',
+    packId: 'PACK-006',
+    packModel: 'MODEL-F6',
+    user: '최지원',
+    contact: '010-6789-0123'
   }
 ];
 
 const columns = [
   {
-    name: 'CODE',
+    name: '',
+    dataIndex: 'checkbox',
+    align: TEXT_ALIGN.CENTER,
+  },
+  {
+    name: '사업장',
     dataIndex: 'code',
     align: TEXT_ALIGN.CENTER,
   },
@@ -96,12 +134,63 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
   onClose,
   onSelect,
   conditionType,
-  title = '기기 선택'
+  title = '기기 선택',
+  pageType = 'item',
+  selectedDeviceIds = [],
+  allowInfiniteSelection = false
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [searchText, setSearchText] = useState('');
   const [selectedDevices, setSelectedDevices] = useState<{[company: string]: string[]}>({});
   const [selections, setSelections] = useState<Selection[]>([]);
+  const [checkedDevices, setCheckedDevices] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // 이미 동일한 기기가 선택되어 있는지 확인
+      const alreadySelectedDevicesEqual = 
+        checkedDevices.length === selectedDeviceIds.length && 
+        checkedDevices.every(device => selectedDeviceIds.includes(device));
+      
+      // 이미 같은 기기가 선택되어 있으면 상태를 업데이트하지 않음
+      if (!alreadySelectedDevicesEqual && selectedDeviceIds.length > 0) {
+        setCheckedDevices(selectedDeviceIds);
+        
+        // 선택된 기기들의 회사별 매핑 정보 구성
+        const deviceMap = mockData.reduce((acc, item) => {
+          if (selectedDeviceIds.includes(item.device)) {
+            acc[item.company] = acc[item.company] || [];
+            acc[item.company].push(item.device);
+          }
+          return acc;
+        }, {} as {[company: string]: string[]});
+        
+        setSelectedDevices(deviceMap);
+        
+        // selections 상태 업데이트
+        const newSelections = mockData
+          .filter(item => selectedDeviceIds.includes(item.device))
+          .map(item => ({
+            company: item.company,
+            groups: [item.group],
+            device: item.device
+          }));
+        
+        setSelections(newSelections);
+        
+        // item 페이지 타입인 경우 첫 번째 선택된 기기를 current로 설정
+        if (pageType === 'item' && selectedDeviceIds.length > 0) {
+          setSelectedDevice(selectedDeviceIds[0]);
+        }
+      }
+    } else {
+      // 팝업이 닫힐 때 상태 초기화 (기존 로직 유지)
+      setCheckedDevices([]);
+      setSelectedDevice('');
+      setSelectedDevices({});
+      setSelections([]);
+    }
+  }, [isOpen, selectedDeviceIds, pageType]);
 
   if (!isOpen) return null;
 
@@ -116,24 +205,81 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
     setSelectedDevice(itemName === selectedDevice ? '' : itemName);
   };
 
-  const handleApply = () => {
-    const selections = mockData
-      .filter(item => selectedDevice === item.device)
-      .map(item => ({
-        company: item.company,
-        groups: [item.group],
-        device: item.device
-      }));
-
-    const selectedDevices = mockData.reduce((acc, item) => {
-      if (selectedDevice === item.device) {
-        acc[item.company] = acc[item.company] || [];
-        acc[item.company].push(item.device);
+  const handleCheckboxClick = (e: React.MouseEvent, device: string, company: string, group: string) => {
+    if (pageType === 'device') {
+      const isChecked = checkedDevices.includes(device);
+      
+      if (isChecked) {
+        setCheckedDevices(prev => prev.filter(d => d !== device));
+        
+        const newSelectedDevices = { ...selectedDevices };
+        if (newSelectedDevices[company]) {
+          newSelectedDevices[company] = newSelectedDevices[company].filter(d => d !== device);
+          if (newSelectedDevices[company].length === 0) {
+            delete newSelectedDevices[company];
+          }
+        }
+        setSelectedDevices(newSelectedDevices);
+        updateSelections(newSelectedDevices);
+      } else {
+        // 무한선택 허용 여부 확인
+        if (!allowInfiniteSelection && checkedDevices.length >= 3) {
+          return;
+        }
+        
+        setCheckedDevices(prev => [...prev, device]);
+        
+        const newSelectedDevices = { ...selectedDevices };
+        if (!newSelectedDevices[company]) {
+          newSelectedDevices[company] = [];
+        }
+        newSelectedDevices[company] = [...newSelectedDevices[company], device];
+        setSelectedDevices(newSelectedDevices);
+        updateSelections(newSelectedDevices);
       }
-      return acc;
-    }, {} as {[company: string]: string[]});
+    } else {
+      setSelectedDevice(device);
+    }
+  };
 
-    onSelect(selections, selectedDevices);
+  const handleApply = () => {
+    if (pageType === 'device') {
+      const newSelections = mockData
+        .filter(item => checkedDevices.includes(item.device))
+        .map(item => ({
+          company: item.company,
+          groups: [item.group],
+          device: item.device
+        }));
+
+      const newSelectedDevices = mockData.reduce((acc, item) => {
+        if (checkedDevices.includes(item.device)) {
+          acc[item.company] = acc[item.company] || [];
+          acc[item.company].push(item.device);
+        }
+        return acc;
+      }, {} as {[company: string]: string[]});
+
+      onSelect(newSelections, newSelectedDevices);
+    } else {
+      const selections = mockData
+        .filter(item => selectedDevice === item.device)
+        .map(item => ({
+          company: item.company,
+          groups: [item.group],
+          device: item.device
+        }));
+
+      const selectedDevices = mockData.reduce((acc, item) => {
+        if (selectedDevice === item.device) {
+          acc[item.company] = acc[item.company] || [];
+          acc[item.company].push(item.device);
+        }
+        return acc;
+      }, {} as {[company: string]: string[]});
+
+      onSelect(selections, selectedDevices);
+    }
     onClose();
   };
 
@@ -148,28 +294,42 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
   };
 
   const handleDeviceClick = (company: string, group: string, device: string) => {
-    const newSelectedDevices = { ...selectedDevices };
-    const deviceList = newSelectedDevices[company] || [];
-
-    if (deviceList.includes(device)) {
-      newSelectedDevices[company] = deviceList.filter(d => d !== device);
-      if (newSelectedDevices[company].length === 0) {
-        delete newSelectedDevices[company];
-      }
+    if (pageType === 'device') {
+      handleCheckboxClick({} as React.MouseEvent, device, company, group);
     } else {
-      newSelectedDevices[company] = [...deviceList, device];
-    }
+      const newSelectedDevices = { ...selectedDevices };
+      const deviceList = newSelectedDevices[company] || [];
 
-    setSelectedDevices(newSelectedDevices);
-    updateSelections(newSelectedDevices);
+      if (deviceList.includes(device)) {
+        newSelectedDevices[company] = deviceList.filter(d => d !== device);
+        if (newSelectedDevices[company].length === 0) {
+          delete newSelectedDevices[company];
+        }
+      } else {
+        newSelectedDevices[company] = [...deviceList, device];
+      }
+
+      setSelectedDevices(newSelectedDevices);
+      updateSelections(newSelectedDevices);
+    }
   };
 
   const updateSelections = (newSelectedDevices: {[company: string]: string[]}) => {
-    const newSelections = Object.entries(newSelectedDevices).map(([company, devices]) => ({
-      company,
-      groups: [],
-      device: devices[0]
-    }));
+    const newSelections: Selection[] = [];
+    
+    Object.entries(newSelectedDevices).forEach(([company, devices]) => {
+      devices.forEach(device => {
+        const deviceData = mockData.find(item => item.device === device);
+        if (deviceData) {
+          newSelections.push({
+            company,
+            groups: [deviceData.group],
+            device
+          });
+        }
+      });
+    });
+    
     setSelections(newSelections);
   };
 
@@ -202,10 +362,12 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
           <table className="w-full text-white">
             <thead>
               <tr>
-                <th className="border-b border-gray-600 p-2 bg-gray-700">
-                  {/* 전체 선택 체크박스 제거 */}
-                </th>
-                {columns.map((column) => (
+                {pageType === 'device' && (
+                  <th className="border-b border-gray-600 p-2 bg-gray-700 w-10">
+                    
+                  </th>
+                )}
+                {columns.slice(pageType === 'device' ? 1 : 0).map((column) => (
                   <th 
                     key={column.dataIndex} 
                     className="border-b border-gray-600 p-2 whitespace-nowrap bg-gray-700"
@@ -220,21 +382,42 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
                 <tr 
                   key={item.device}
                   className="cursor-pointer hover:bg-slate-700"
-                  onClick={() => {
-                    const selections = [{
-                      company: item.company,
-                      groups: [item.group],
-                      device: item.device
-                    }];
+                  onClick={(e) => {
+                    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+                      return;
+                    }
                     
-                    const selectedDevices = {
-                      [item.company]: [item.device]
-                    };
-                    
-                    onSelect(selections, selectedDevices);
-                    onClose();
+                    if (pageType === 'device') {
+                      handleDeviceClick(item.company, item.group, item.device);
+                    } else {
+                      const selections = [{
+                        company: item.company,
+                        groups: [item.group],
+                        device: item.device
+                      }];
+                      
+                      const selectedDevices = {
+                        [item.company]: [item.device]
+                      };
+                      
+                      onSelect(selections, selectedDevices);
+                      onClose();
+                    }
                   }}
                 >
+                  {pageType === 'device' && (
+                    <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">
+                      <input
+                        type="checkbox"
+                        checked={checkedDevices.includes(item.device)}
+                        onChange={() => {}}
+                        onClick={(e) => {
+                          handleCheckboxClick(e, item.device, item.company, item.group);
+                        }}
+                        className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                      />
+                    </td>
+                  )}
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.company)}</td>
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.group)}</td>
                   <td className="border-b border-gray-600 p-2 whitespace-nowrap text-center">{highlightText(item.device)}</td>
@@ -250,6 +433,15 @@ const DeviceSelectPopup: React.FC<DeviceSelectPopupProps> = ({
         </div>
 
         <div className="flex justify-end gap-2 p-5 border-t border-white/10">
+          {pageType === 'device' && (
+            <button
+              onClick={handleApply}
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              disabled={checkedDevices.length === 0}
+            >
+              확인 {!allowInfiniteSelection ? `(${checkedDevices.length}/3)` : `(${checkedDevices.length})`}
+            </button>
+          )}
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm bg-[#363B46] text-white rounded hover:bg-[#363B46]/80 transition-colors"

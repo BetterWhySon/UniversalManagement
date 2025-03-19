@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import * as echarts from 'echarts';
 import BarChart from '@/components/charts/BarChart';
 import UsageManagement from './components/UsageManagement';
-import LifeManagement from './components/LifeManagement';
 import BatteryInfo from './components/BatteryInfo';
 import ChargingHistory from './components/ChargingHistory';
 import AlarmHistory from './components/AlarmHistory';
 import DeviceSelectPopup from './components/DeviceSelectPopup';
+
 
 const IndividualLookupPage: React.FC = () => {
   const { t: trans } = useTranslation('translation');
@@ -17,7 +17,7 @@ const IndividualLookupPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState('사용관리');
   const [showDeviceSelect, setShowDeviceSelect] = useState(false);
 
-  const tabs = ['사용관리', '배터리 용량', '배터리 효율', '사용이력', '알람이력'];
+  const tabs = ['사용관리', '배터리 정보', '사용이력', '알람이력'];
 
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
@@ -142,7 +142,7 @@ const IndividualLookupPage: React.FC = () => {
         <div className='transition-all flex items-center gap-6 w-full mb-3 h-fit md:h-5'>
           <div className='flex items-center gap-4'>
             <h1 className='text-hw-white-1 text-[22px] font-normal leading-4 lg:text-[23px] lg:leading-none'>
-              개별 조회
+              개별기기 조회
             </h1>
             
             <div className='flex items-center gap-4'>
@@ -294,9 +294,8 @@ const IndividualLookupPage: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto">
         <div className="p-[18px] lg:p-[20px] pt-2">
-          {selectedTab === '사용관리' && <UsageManagement />}
-          {selectedTab === '배터리 용량' && <LifeManagement />}
-          {selectedTab === '배터리 효율' && <BatteryInfo />}
+          {selectedTab === '사용관리' && <UsageManagement />}         
+          {selectedTab === '배터리 정보' && <BatteryInfo />}
           {selectedTab === '사용이력' && <ChargingHistory />}
           {selectedTab === '알람이력' && <AlarmHistory />}
         </div>

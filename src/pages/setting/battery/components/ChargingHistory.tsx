@@ -5,6 +5,7 @@ import TableData from '@/components/table/TableData';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import * as echarts from 'echarts';
+import DeviceSelectPopup from '@/pages/setting/battery/components/DeviceSelectPopup';
 
 interface ChargingHistory {
   id: number;
@@ -26,6 +27,7 @@ interface ChargingHistory {
 
 interface ChargingHistoryProps {
   pageSize?: number;
+  showDeviceSelect?: boolean;
 }
 
 const DetailMap: React.FC = () => {
@@ -119,13 +121,22 @@ const SocChart: React.FC = () => {
   return <div ref={chartRef} className="h-[350px] w-full" />;
 };
 
-const ChargingHistory: React.FC<ChargingHistoryProps> = ({ pageSize = 8 }) => {
+const ChargingHistory: React.FC<ChargingHistoryProps> = ({ pageSize = 8, showDeviceSelect = false }) => {
   const { t: trans } = useTranslation('translation');
   const [selectedType, setSelectedType] = useState<string>('전체');
   const [fromDate, setFromDate] = useState<string>('');
   const [toDate, setToDate] = useState<string>('');
   const [selectedRow, setSelectedRow] = useState<ChargingHistory | null>(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [isDeviceSelectPopupOpen, setIsDeviceSelectPopupOpen] = useState(false);
+  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const [selections, setSelections] = useState<any[]>([]);
+
+  const handleDeviceSelect = (selections: any[], selectedDevices: {[company: string]: string[]}) => {
+    setSelections(selections);
+    setSelectedDevices(Object.values(selectedDevices).flat());
+    setIsDeviceSelectPopupOpen(false);
+  };
 
   const dummyData: ChargingHistory[] = [
     { id: 1, 사업장: 'FF캠핑카', 그룹: 'Bayrun 640', 기기명: 'VABJ023', 어플리케이션: '캠핑카', 운영구분: '사용', 일시: '2023-12-28 18:28', 운영시간: '2.1h', SOC구간: '45%→37%', 주행거리: '85km', 전력량: '0.5 kWh', 파워: '0.3 kW', 스트레스: '낮음', FROM: '충남 아산시', TO: '충남 아산시' },
@@ -368,12 +379,29 @@ const ChargingHistory: React.FC<ChargingHistoryProps> = ({ pageSize = 8 }) => {
             </div>
           </div>
 
-          <div className="flex gap-1 items-center ml-4">
+          {showDeviceSelect && (
+            <>
+              <button 
+                className="bg-blue-600 text-white px-2 py-0.5 rounded h-6 border border-blue-500 min-w-[90px] hover:bg-blue-700 transition-colors flex items-center justify-center mx-2"
+                onClick={() => setIsDeviceSelectPopupOpen(true)}
+              >
+                기기선택
+              </button>
+
+              {selectedDevices.length > 0 && (
+                <span className="text-blue-400 font-medium whitespace-normal leading-tight">
+                  ({selections.map(sel => sel.device).join(', ')})
+                </span>
+              )}
+            </>
+          )}
+
+          <div className="flex gap-1 items-center ml-2">
             <select className="bg-hw-dark-3 text-hw-white-1 py-0.5 px-2 rounded border-none outline-none min-w-[80px] h-6 text-center">
-              <option value="day">일</option>
-              <option value="week">주</option>
-              <option value="month">월</option>
-              <option value="year">년</option>
+              <option value="day">일간</option>
+              <option value="week">주간</option>
+              <option value="month">월간</option>
+              <option value="year">년간</option>
             </select>
             <div 
               className="bg-hw-dark-3 text-hw-white-1 px-2 rounded h-full min-w-[140px] flex items-center cursor-pointer"
@@ -542,8 +570,21 @@ const ChargingHistory: React.FC<ChargingHistoryProps> = ({ pageSize = 8 }) => {
           </div>
         </div>
       )}
+
+      {showDeviceSelect && (
+        <DeviceSelectPopup 
+          isOpen={isDeviceSelectPopupOpen}
+          onClose={() => setIsDeviceSelectPopupOpen(false)}
+          onSelect={handleDeviceSelect}
+          conditionType="기기"
+          title="기기 선택"
+          pageType="device"
+          selectedDeviceIds={selectedDevices}
+          allowInfiniteSelection={true}
+        />
+      )}
     </div>
   );
 };
 
-export default ChargingHistory; 
+export default ChargingHistory;

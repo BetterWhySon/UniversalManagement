@@ -9,7 +9,7 @@ const AlarmHistoryPage: React.FC = () => {
                     알람이력 조회
                 </h1>
             </div>
-            <AlarmHistory pageSize={14} />
+            <AlarmHistory pageSize={14} showDeviceSelect={true} />
         </div>
     );
 };

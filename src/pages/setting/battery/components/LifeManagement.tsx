@@ -170,6 +170,7 @@ const LifeManagement: React.FC = () => {
               isVertical={true}
               chartType="multiLine"
               showTooltip={false}
+              barColor="#8AA8DA"
             />
           </div>
           
@@ -239,6 +240,7 @@ const LifeManagement: React.FC = () => {
               isVertical={true}
               chartType="multiLine"
               showTooltip={false}
+              barColor="#8AA8DA"
             />
           </div>
           

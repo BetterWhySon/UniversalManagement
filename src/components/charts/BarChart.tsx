@@ -28,6 +28,8 @@ interface BarChartProps {
     max?: number;
   };
   showValue?: boolean;
+  labelFontSize?: number;
+  barColor?: string;
   markLine?: Array<{
     name: string;
     value: number;
@@ -52,7 +54,7 @@ const isSingleData = (data: any[]): data is Array<{ id: string; soc?: number; ti
   return 'id' in data[0];
 };
 
-const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = false, hideXAxis = false, hideYAxis = false, backgroundColor = '#1e293b', isVertical = false, showGrid = true, rMargin, tMargin = 3, showTooltip = true, chartType = 'bar', showValue = false, markLine }) => {
+const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = false, hideXAxis = false, hideYAxis = false, backgroundColor = '#1e293b', isVertical = false, showGrid = true, rMargin, tMargin = 3, showTooltip = true, chartType = 'bar', showValue = false, labelFontSize = 12, barColor, markLine }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
 
@@ -105,7 +107,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
             : undefined,
           axisLabel: {
             show: !hideXAxis,
-            color: '#fff',
+            color: '#FFFFFF',
             fontSize: 12,
             interval: 0,
             rotate: 0
@@ -120,7 +122,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
             (isMultiLineData(data) ? data[0].data.map(d => d.id) : data.map(d => d.id)),
           axisLabel: {
             show: !hideYAxis,
-            color: '#fff',
+            color: '#FFFFFF',
             fontSize: 12
           },
           splitLine: {
@@ -147,8 +149,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 show: showValue,
                 position: 'top',
                 formatter: (params: any) => params.value,
-                color: '#fff',
-                fontSize: 12
+                color: '#FFFFFF',
+                fontSize: labelFontSize
               }
             })) :
             [{
@@ -161,21 +163,15 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 color: '#FFFFFF',
                 width: 2
               },
+              itemStyle: {
+                color: '#FFFFFF'
+              },
               label: {
                 show: showValue,
                 position: 'top',
                 formatter: (params: any) => params.value,
-                color: '#fff',
-                fontSize: 12
-              },
-              itemStyle: {
-                color: (params: any) => {
-                  return data[params.dataIndex].style?.color || 
-                    new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
-                      { offset: 0, color: getColor(params.dataIndex, 0) },
-                      { offset: 1, color: getColor(params.dataIndex, 1) }
-                    ]);
-                }
+                color: '#FFFFFF',
+                fontSize: labelFontSize
               }
             }]
           ) :
@@ -187,7 +183,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
               data: data.map((item, index) => ({
                 value: isTimeData ? item.time : item.soc,
                 itemStyle: {
-                  color: data[index].style?.color || 
+                  color: barColor || 
+                    data[index].style?.color || 
                     new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
                       { offset: 0, color: getColor(index, 0) },
                       { offset: 1, color: getColor(index, 1) }
@@ -198,8 +195,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 show: true,
                 position: isVertical ? 'top' : 'right',
                 formatter: isTimeData ? (params: any) => formatTime(params.value) : '{c}',
-                color: '#fff',
-                fontSize: 14,
+                color: '#FFFFFF',
+                fontSize: labelFontSize,
                 distance: 2
               },
               markLine: markLine ? {
@@ -209,7 +206,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                   show: true,
                   position: 'end',
                   formatter: '{b}',
-                  color: '#fff',
+                  color: '#FFFFFF',
                   align: 'center',
                   verticalAlign: 'middle'
                 },
@@ -233,11 +230,11 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 value: isTimeData ? item.time : item.soc
               })),
               lineStyle: {
-                color: '#fff',
+                color: barColor || '#FFFFFF',
                 width: 2
               },
               itemStyle: {
-                color: '#fff'
+                color: barColor || '#FFFFFF'
               },
               z: 2
             }
@@ -253,7 +250,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
               data: data.map((item, index) => ({
                 value: isTimeData ? item.time : item.soc,
                 itemStyle: {
-                  color: data[index].style?.color || 
+                  color: barColor || 
+                    data[index].style?.color || 
                     new echarts.graphic.LinearGradient(isVertical ? 0 : 1, 0, isVertical ? 1 : 0, 0, [
                       { offset: 0, color: getColor(index, 0) },
                       { offset: 1, color: getColor(index, 1) }
@@ -264,8 +262,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 show: true,
                 position: isVertical ? 'top' : 'right',
                 formatter: isTimeData ? (params: any) => formatTime(params.value) : '{c}',
-                color: '#fff',
-                fontSize: 14,
+                color: '#FFFFFF',
+                fontSize: labelFontSize,
                 distance: 5
               },
               markLine: markLine ? {
@@ -275,7 +273,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                   show: true,
                   position: 'end',
                   formatter: '{b}',
-                  color: '#fff',
+                  color: '#FFFFFF',
                   align: 'center',
                   verticalAlign: 'middle'
                 },
@@ -322,7 +320,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
         }
       };
     }
-  }, [data, onBarClick, isTimeData, rightMargin, hideXAxis, hideYAxis, backgroundColor, isVertical, showGrid, showTooltip, chartType, showValue, markLine]);
+  }, [data, onBarClick, isTimeData, rightMargin, hideXAxis, hideYAxis, backgroundColor, isVertical, showGrid, showTooltip, chartType, showValue, labelFontSize, barColor, markLine]);
 
   const getColor = (index: number, offset: number) => {
     const colors = [

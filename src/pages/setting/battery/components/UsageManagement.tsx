@@ -25,17 +25,17 @@ const UsageManagement: React.FC = () => {
   // 방전 파워 % 데이터
   const dischargePowerData = [
     { id: '정격최대', soc: 8.4, style: { color: '#8AA8DA' } },
-    { id: '실제최대', soc: 8.4, style: { color: '#A9D18E' } },
+    { id: '실제최대', soc: 8.4, style: { color: '#8AA8DA' } },
     { id: '적정Power', soc: 6.2, style: { color: '#8AA8DA' } },
-    { id: '평균Power', soc: 6.2, style: { color: '#A9D18E' } }
+    { id: '평균Power', soc: 6.2, style: { color: '#8AA8DA' } }
   ];
 
   // 충전 파워 % 데이터
   const chargePowerData = [
     { id: '정격최대', soc: 8.4, style: { color: '#8AA8DA' } },
-    { id: '실제최대', soc: 8.4, style: { color: '#A9D18E' } },
+    { id: '실제최대', soc: 8.4, style: { color: '#8AA8DA' } },
     { id: '적정Power', soc: 6.2, style: { color: '#8AA8DA' } },
-    { id: '평균Power', soc: 6.2, style: { color: '#A9D18E' } }
+    { id: '평균Power', soc: 6.2, style: { color: '#8AA8DA' } }
   ];
 
   // 최근 방전시간(h) 데이터
@@ -181,6 +181,7 @@ const UsageManagement: React.FC = () => {
             chartType="line"
             showTooltip={false}
             tMargin={15}
+            barColor="#8AA8DA"
           />
         </div>
       </div>
@@ -260,6 +261,7 @@ const UsageManagement: React.FC = () => {
               chartType="both"
               showTooltip={false}
               tMargin={15}
+              barColor="#8AA8DA"
             />
           </div>
           
@@ -354,6 +356,7 @@ const UsageManagement: React.FC = () => {
             chartType="line"
             showTooltip={false}
             tMargin={15}
+            barColor="#8AA8DA"
           />
         </div>
       </div>
@@ -422,6 +425,7 @@ const UsageManagement: React.FC = () => {
               isVertical={true}
               chartType="both"
               showTooltip={false}
+              barColor="#8AA8DA"
             />
           </div>
           
@@ -507,6 +511,7 @@ const UsageManagement: React.FC = () => {
               isVertical={true}
               chartType="both"
               showTooltip={false}
+              barColor="#8AA8DA"
             />
           </div>
           
