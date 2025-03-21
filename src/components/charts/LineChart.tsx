@@ -9,6 +9,7 @@ interface LineChartProps {
   showGrid?: boolean;
   yAxisMin?: number;
   yAxisMax?: number;
+  showMinMax?: boolean;
 }
 
 const LineChart: React.FC<LineChartProps> = ({ 
@@ -16,7 +17,9 @@ const LineChart: React.FC<LineChartProps> = ({
   data, 
   yAxisFormatter = (value) => `${value}`,
   yAxisMin,
-  yAxisMax
+  yAxisMax,
+  showGrid = true,
+  showMinMax = false
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -53,11 +56,13 @@ const LineChart: React.FC<LineChartProps> = ({
           show: false
         },
         splitLine: {
+          show: showGrid,
           lineStyle: {
             color: '#374151'
           }
         },
         axisLabel: {
+          show: showGrid,
           color: '#9CA3AF',
           formatter: yAxisFormatter
         }
@@ -83,7 +88,37 @@ const LineChart: React.FC<LineChartProps> = ({
                 color: 'rgba(245, 158, 11, 0)'
               }
             ])
-          }
+          },
+          markPoint: showMinMax ? {
+            data: [
+              { 
+                type: 'max', 
+                label: { 
+                  show: true,
+                  formatter: (params: any) => yAxisFormatter(Math.round(params.value)),
+                  position: 'top',
+                  distance: 10
+                }
+              },
+              { 
+                type: 'min', 
+                label: { 
+                  show: true,
+                  formatter: (params: any) => yAxisFormatter(Math.round(params.value)),
+                  position: 'top',
+                  distance: 10
+                }
+              }
+            ],
+            symbolSize: 0,
+            label: {
+              color: '#fff',
+              fontSize: 12,
+              backgroundColor: 'transparent',
+              padding: [2, 4],
+              borderRadius: 2
+            }
+          } : undefined
         }
       ],
       tooltip: {
@@ -108,7 +143,7 @@ const LineChart: React.FC<LineChartProps> = ({
       chart.dispose();
       window.removeEventListener('resize', handleResize);
     };
-  }, [labels, data, yAxisFormatter, yAxisMin, yAxisMax]);
+  }, [labels, data, yAxisFormatter, yAxisMin, yAxisMax, showGrid, showMinMax]);
 
   return <div ref={chartRef} style={{ width: '100%', height: '100%' }} />;
 };

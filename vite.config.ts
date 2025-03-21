@@ -19,7 +19,13 @@ export default ({ mode }) => {
           '**/.git/**',
           '**/node_modules/**',
           '**/dist/**'
-        ]
+        ],
+        usePolling: true,
+        interval: 100
+      },
+      hmr: {
+        overlay: true,
+        clientPort: isAdmin ? 5174 : 5173
       }
     },
     preview: {

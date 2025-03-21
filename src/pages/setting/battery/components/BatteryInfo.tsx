@@ -1,5 +1,6 @@
 import React from 'react';
 import BarChart from '@/components/charts/BarChart';
+import BatteryBalanceChart from '@/components/charts/BatteryBalanceChart';
 import * as echarts from 'echarts';
 
 const BatteryInfo: React.FC = () => {
@@ -22,14 +23,23 @@ const BatteryInfo: React.FC = () => {
   ];
 
   // 배터리 밸런스 데이터
-  const batteryBalanceData = [
+  const batteryBalanceTopData = [
     {
-      name: '셀 25번',
+      name: '배터리 밸런스',
       data: [
-        { id: '0', soc: 100 },
-        { id: '0.2', soc: 99.2 },
-        { id: '0.4', soc: 0 },
-        { id: '0.6', soc: 1.5 }
+        { id: '셀 25번', start: 0, end: -100 },
+        { id: '셀 87번', start: 3, end: -97 }
+      ],
+      color: '#60A5FA'
+    }
+  ];
+
+  const batteryBalanceBottomData = [
+    {
+      name: '배터리 밸런스',
+      data: [
+        { id: '셀 89번', start: 0, end: 100 },
+        { id: '셀 22번', start: 0, end: 80 }
       ],
       color: '#60A5FA'
     }
@@ -80,7 +90,8 @@ const BatteryInfo: React.FC = () => {
         { id: '2023', soc: 0.95 },
         { id: '2024', soc: 1.0 }
       ],
-      color: '#FFFFFF'
+      color: '#A1A1A1',
+      hideValue: true
     },
     {
       name: '최소값',
@@ -96,7 +107,7 @@ const BatteryInfo: React.FC = () => {
     }
   ];
 
-  // 셀 용량 변화 추세 데이터 (저항 변화 추세와 같은 형식으로 별도 생성)
+  // 셀 용량 변화 추세 데이터
   const cellCapacityTrendData = [
     {
       name: '최대값',
@@ -120,7 +131,8 @@ const BatteryInfo: React.FC = () => {
         { id: '2023', soc: 0.76 },
         { id: '2024', soc: 0.75 }
       ],
-      color: '#FFFFFF'
+      color: '#A1A1A1',
+      hideValue: true
     },
     {
       name: '최소값',
@@ -159,6 +171,20 @@ const BatteryInfo: React.FC = () => {
         { id: '2024', soc: 96 }
       ],
       color: '#6CFF31'  // ESS018 라인 색상 변경
+    },
+    {
+      name: '평균값',
+      data: [
+        { id: '2019', soc: 95 },
+        { id: '2020', soc: 93 },
+        { id: '2021', soc: 92 },
+        { id: '2022', soc: 89 },
+        { id: '2023', soc: 88 },
+        { id: '2024', soc: 86 }
+      ],
+      color: '#FFFFFF',
+      hideValue: false,
+      labelPosition: 'bottom'
     }
   ];
 
@@ -273,8 +299,25 @@ const BatteryInfo: React.FC = () => {
   // 차트 옵션 설정을 위한 함수
   const getChartOptions = () => {
     return {
-      backgroundColor: 'transparent',
-      grid: { top: 40, right: 10, bottom: 30, left: 40 },
+      backgroundColor: 'transparent',  // 배경색을 투명으로 변경
+      grid: { top: 20, right: 40, bottom: 30, left: 15 },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(28, 28, 30, 0.9)',
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        textStyle: {
+          color: '#fff',
+          fontSize: 12
+        },
+        formatter: (params: any) => {
+          let result = `${params[0].name}<br/>`;
+          params.forEach((param: any) => {
+            const marker = `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${param.color};"></span>`;
+            result += `${marker}${param.seriesName}: ${(param.value * 100).toFixed(1)}%<br/>`;
+          });
+          return result;
+        }
+      },
       xAxis: {
         type: 'category',
         data: batteryLifeData[0].data.map(d => d.id),
@@ -292,12 +335,16 @@ const BatteryInfo: React.FC = () => {
           type: 'line',
           smooth: true,
           symbol: 'circle',
-          symbolSize: 6,
+          symbolSize: 3.5,
+          showSymbol: true,
           data: batteryLifeData[0].data.map(d => d.soc),
           lineStyle: {
             color: '#A1A1A1',
             width: 1,
             type: 'solid'
+          },
+          itemStyle: {
+            color: '#A1A1A1'
           }
         },
         {
@@ -305,12 +352,16 @@ const BatteryInfo: React.FC = () => {
           type: 'line',
           smooth: true,
           symbol: 'circle',
-          symbolSize: 6,
+          symbolSize: 3.5,
+          showSymbol: true,
           data: batteryLifeData[1].data.map(d => d.soc),
           lineStyle: {
             color: '#6CFF31',
             width: 1,
             type: 'dashed'
+          },
+          itemStyle: {
+            color: '#6CFF31'
           }
         },
         {
@@ -318,12 +369,16 @@ const BatteryInfo: React.FC = () => {
           type: 'line',
           smooth: true,
           symbol: 'circle',
-          symbolSize: 6,
+          symbolSize: 3.5,
+          showSymbol: true,
           data: batteryLifeData[2].data.map(d => d.soc),
           lineStyle: {
             color: '#FF6969',
             width: 1,
             type: 'dashed'
+          },
+          itemStyle: {
+            color: '#FF6969'
           }
         }
       ]
@@ -382,6 +437,10 @@ const BatteryInfo: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-4 h-0.5 bg-[#6CFF31] mr-2"></div>
                 <span className="text-[#6CFF31] text-xs">ESS018</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-0.5 bg-[#FFFFFF] mr-2"></div>
+                <span className="text-[#FFFFFF] text-xs">평균값</span>
               </div>
             </div>
             
@@ -500,18 +559,18 @@ const BatteryInfo: React.FC = () => {
                 if (el && !el.getAttribute('data-initialized')) {
                   const chart = echarts.init(el);
                   const options = getChartOptions();
-                  options.backgroundColor = 'transparent';
+                  options.backgroundColor = 'transparent';  // 배경색을 투명으로 변경
                   chart.setOption(options);
                   el.setAttribute('data-initialized', 'true');
                   
                   // resize 이벤트 처리
                   const resizeObserver = new ResizeObserver(() => {
                     chart.resize();
-                    chart.setOption({ backgroundColor: 'transparent' });
+                    chart.setOption({ backgroundColor: 'transparent' });  // resize 시에도 투명 배경 유지
                   });
                   resizeObserver.observe(el);
                 }
-              }} className="w-full h-full absolute top-[-10px]" />
+              }} className="w-[95%] h-full absolute top-[-10px] left-[2%]" style={{ backgroundColor: 'transparent' }} />
             </div>
           </div>
         </div>
@@ -544,18 +603,47 @@ const BatteryInfo: React.FC = () => {
         {/* 배터리 밸런스 */}
         <div className="bg-hw-dark-2 rounded-lg p-3 min-h-[200px]">
           <h3 className="text-white text-[19px] mb-2">배터리 밸런스</h3>
-          <div className="h-[calc(100%-40px)]">
-            <BarChart 
-              data={dischargePowerData}
-              grid={{ top: 30, right: 20, bottom: 20, left: 60 }}
-              yAxis={{ max: 10 }}
-              backgroundColor="transparent"
-              isVertical={true}
-              hideYAxis={true}
-              showGrid={false}
-              rMargin={5}
-              showTooltip={false}
-            />
+          <div className="h-[calc(100%-40px)] grid grid-cols-2 gap-4">
+            <div className="h-full flex flex-col">
+              <div className="flex justify-around">
+                {batteryBalanceTopData[0].data.map((item, index) => (
+                  <div key={item.id} className="text-white text-[13px]">{index === 0 ? '100%' : '99.2%'}</div>
+                ))}
+              </div>
+              <div className="flex-1">
+                <BatteryBalanceChart 
+                  data={batteryBalanceTopData}
+                  min={-100}
+                  max={0}
+                  xAxisPosition="top"
+                />
+              </div>
+              <div className="flex justify-around">
+                {batteryBalanceTopData[0].data.map((item) => (
+                  <div key={item.id} className="text-white text-[13px]">{item.id}</div>
+                ))}
+              </div>
+            </div>
+            <div className="h-full flex flex-col">
+              <div className="flex justify-around">
+                {batteryBalanceBottomData[0].data.map((item, index) => (
+                  <div key={item.id} className="text-white text-[13px]">{index === 0 ? '0%' : '1.2%'}</div>
+                ))}
+              </div>
+              <div className="flex-1">
+                <BatteryBalanceChart 
+                  data={batteryBalanceBottomData}
+                  min={0}
+                  max={100}
+                  xAxisPosition="bottom"
+                />
+              </div>
+              <div className="flex justify-around">
+                {batteryBalanceBottomData[0].data.map((item) => (
+                  <div key={item.id} className="text-white text-[13px]">{item.id}</div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -638,15 +726,15 @@ const BatteryInfo: React.FC = () => {
         <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
           <h3 className="text-white text-[19px] mb-2">셀 용량변화 추세</h3>
           <div className="h-[calc(100%-40px)] flex pl-4">
-            {/* 범례 영역 */}
+            {/* 범례 영역 - 셀 용량변화 추세 */}
             <div className="flex flex-col justify-center gap-2 w-20 pr-0">
               <div className="flex items-center">
                 <div className="w-4 h-0.5 bg-[#60A5FA] mr-2"></div>
                 <span className="text-[#60A5FA] text-xs">최대값</span>
               </div>
               <div className="flex items-center">
-                <div className="w-4 h-0.5 bg-[#FFFFFF] mr-2"></div>
-                <span className="text-[#FFFFFF] text-xs">평균값</span>
+                <div className="w-4 h-0.5 bg-[#A1A1A1] mr-2"></div>
+                <span className="text-[#A1A1A1] text-xs">평균값</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-0.5 bg-[#EF4444] mr-2"></div>
@@ -657,15 +745,27 @@ const BatteryInfo: React.FC = () => {
             {/* 차트 영역 */}
             <div className="flex-1">
               <BarChart 
-                data={cellCapacityTrendData}
-                grid={{ top: 30, right: 10, bottom: 20, left: 40 }}
+                data={cellCapacityTrendData} 
+                chartType="multiLine" 
+                showValue={true}
+                grid={{ top: 20, right: 30, bottom: 25, left: 10 }}
                 backgroundColor="transparent"
                 showGrid={false}
                 hideYAxis={true}
                 isVertical={true}
-                chartType="multiLine"
-                showTooltip={false}
                 tMargin={15}
+                labelFontSize={12}
+                tooltipFormatter={(params: any) => {
+                  const year = params[0].axisValue;
+                  const maxValue = params.find((p: any) => p.seriesName === '최대값')?.value;
+                  const avgValue = params.find((p: any) => p.seriesName === '평균값')?.value;
+                  const minValue = params.find((p: any) => p.seriesName === '최소값')?.value;
+                  
+                  return `${year}년<br/>
+                    최대값: ${maxValue?.toFixed(2)}<br/>
+                    평균값: ${avgValue?.toFixed(2)}<br/>
+                    최소값: ${minValue?.toFixed(2)}`;
+                }}
               />
             </div>
           </div>
@@ -730,15 +830,15 @@ const BatteryInfo: React.FC = () => {
         <div className="bg-hw-dark-2 rounded-lg p-3 h-[200px]">
           <h3 className="text-white text-[19px] mb-2">셀 저항변화 추세</h3>
           <div className="h-[calc(100%-40px)] flex pl-4">
-            {/* 범례 영역 */}
+            {/* 범례 영역 - 셀 저항변화 추세 */}
             <div className="flex flex-col justify-center gap-2 w-20 pr-0">
               <div className="flex items-center">
                 <div className="w-4 h-0.5 bg-[#60A5FA] mr-2"></div>
                 <span className="text-[#60A5FA] text-xs">최대값</span>
               </div>
               <div className="flex items-center">
-                <div className="w-4 h-0.5 bg-[#FFFFFF] mr-2"></div>
-                <span className="text-[#FFFFFF] text-xs">평균값</span>
+                <div className="w-4 h-0.5 bg-[#A1A1A1] mr-2"></div>
+                <span className="text-[#A1A1A1] text-xs">평균값</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-0.5 bg-[#EF4444] mr-2"></div>
@@ -749,15 +849,27 @@ const BatteryInfo: React.FC = () => {
             {/* 차트 영역 */}
             <div className="flex-1">
               <BarChart 
-                data={cellResistanceTrendData}
-                grid={{ top: 30, right: 10, bottom: 20, left: 40 }}
+                data={cellResistanceTrendData} 
+                chartType="multiLine" 
+                showValue={true}
+                grid={{ top: 20, right: 30, bottom: 25, left: 10 }}
                 backgroundColor="transparent"
                 showGrid={false}
                 hideYAxis={true}
                 isVertical={true}
-                chartType="multiLine"
-                showTooltip={false}
                 tMargin={15}
+                labelFontSize={12}
+                tooltipFormatter={(params: any) => {
+                  const year = params[0].axisValue;
+                  const maxValue = params.find((p: any) => p.seriesName === '최대값')?.value;
+                  const avgValue = params.find((p: any) => p.seriesName === '평균값')?.value;
+                  const minValue = params.find((p: any) => p.seriesName === '최소값')?.value;
+                  
+                  return `${year}년<br/>
+                    최대값: ${maxValue?.toFixed(2)}<br/>
+                    평균값: ${avgValue?.toFixed(2)}<br/>
+                    최소값: ${minValue?.toFixed(2)}`;
+                }}
               />
             </div>
           </div>

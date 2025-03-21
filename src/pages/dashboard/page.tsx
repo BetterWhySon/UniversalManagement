@@ -36,24 +36,24 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className='dashboard-content bg-hw-dark-1 p-2 h-[calc(100vh-65px)]'>
-            <div className='flex flex-col h-full space-y-1'>
+        <div className='dashboard-content bg-[#232931] p-2 h-[calc(100vh-65px)]'>
+            <div className='flex flex-col h-full gap-2'>
                 {/* 첫 번째 & 두 번째 행 통합 */}
-                <div className='flex h-2/3 space-x-1'>
+                <div className='flex h-[66%] gap-2'>
                     {/* 왼쪽 지도 영역 (2행 차지) */}
-                    <div className='w-[22.2%] bg-slate-800 rounded-lg border border-white p-0'>
+                    <div className='w-[22.2%] bg-[#2B313B] rounded-lg p-0'>
                         <MapArea />
                     </div>
 
                     {/* 오른쪽 영역 flex-col로 구성 */}
-                    <div className='w-[77.8%] flex flex-col space-y-1'>
+                    <div className='w-[77.8%] flex flex-col gap-2'>
                         {/* 첫 번째 행 */}
-                        <div className='flex h-1/2 space-x-1'>
-                            <div className='w-[46.4%] flex space-x-1'>
-                                <div className='w-1/2'>
+                        <div className='flex h-1/2 gap-2'>
+                            <div className='w-[46.4%] flex gap-2'>
+                                <div className='w-3/4'>
                                     <BatteryAbnormalAlarm />
                                 </div>
-                                <div className='w-1/2'>
+                                <div className='w-1/4'>
                                     <EVPolicyComplianceRate />
                                 </div>
                             </div>
@@ -62,11 +62,11 @@ export default function DashboardPage() {
                             </div>
                         </div>
                         {/* 두 번째 행 */}
-                        <div className='flex h-1/2 space-x-1'>
-                            <div className='w-[46.4%] bg-slate-800 rounded-lg border border-white'>
+                        <div className='flex h-1/2 gap-2'>
+                            <div className='w-[46.4%] bg-[#2B313B] rounded-lg h-full'>
                                 <OperationSummary />
                             </div>
-                            <div className='w-[53.6%] flex space-x-1'>
+                            <div className='w-[53.6%] flex gap-2'>
                                 <div className='w-1/3'>
                                     <MetricChart 
                                         type="stress" 
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* 세 번째 행 */}
-                <div className='flex h-1/3 space-x-1'>
+                <div className='flex h-[32%] gap-2'>
                     <div className='w-[22.2%]'>
                         <UnusedVehicleList />
                     </div>

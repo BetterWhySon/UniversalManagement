@@ -1,51 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '@/router/path';
+import PolicyCompliance from '@/pages/dashboard/pages/PolicyCompliancePage';
 
 const EVPolicyComplianceRate: React.FC = () => {
   const navigate = useNavigate();
-  const [showTooltip, setShowTooltip] = useState<'soc' | 'charge' | false>(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleClick = () => {
-    navigate(`${PATH.DASHBOARD.POLICY_COMPLIANCE}`);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
     setTooltipPosition({ x: event.clientX, y: event.clientY });
   };
 
-  const tooltipText = '집합 건물 단위의 전기차 관리 정책 및 규약에 따라 설정된 항목 값의 실제 준수 여부를 모니터링. ' +
-    '설정 기준을 기반으로 차량이 규약을 얼마나 준수하고 있는지 평가\n' +
-    ' - 집합건물 입차시, Soc 제한\n'+
-    ' - 집합건물 내 충전시, 충전율 제한\n'+
-    ' - 전기차 safety zone 주차 준수\n'+
-    ' - 사용자 설정 가능';
+  const tooltipText = '집합 건물 단위의 전기차 관리 정책 및 규약에 따라 설정된 항목 값의 실제 준수 여부를 모니터링';
 
   return (
-    <div className="bg-gray-800 p-3 rounded-lg border border-white h-full flex flex-col overflow-hidden">
-      <h3 className="text-white text-lg mb-4 text-left">전기차 관리정책 준수율</h3>
-      <div className="flex justify-between flex-grow overflow-auto">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
+      <h3 className="text-white text-lg mb-4 text-left">관리알람</h3>
+      <div className="flex justify-center flex-grow overflow-auto">
         <div 
-          className="w-[48%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors"
+          className="w-full flex flex-col justify-center items-center py-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
           onClick={handleClick}
           onMouseMove={handleMouseMove}
-          onMouseEnter={() => setShowTooltip('soc')}
+          onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
         >
-          <p className="text-white text-xl font-semibold mb-2">주의</p>
-          <p className="text-yellow-500 text-7xl font-bold mb-2">2</p>
-          <p className="text-gray-400 text-base">신규 ± 1 / 해제 0</p>
-        </div>
-        <div 
-          className="w-[48%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors"
-          onClick={handleClick}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setShowTooltip('charge')}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
-          <p className="text-white text-xl font-semibold mb-2">경고</p>
-          <p className="text-orange-500 text-7xl font-bold mb-2">0</p>
+          <p className="text-[#FFE699] text-xl font-semibold mb-3">관리</p>
+          <p className="text-[#FFE699] text-8xl font-bold mb-3">2</p>
           <p className="text-gray-400 text-base">신규 ± 1 / 해제 0</p>
         </div>
       </div>
@@ -61,6 +51,33 @@ const EVPolicyComplianceRate: React.FC = () => {
           }}
         >
           {tooltipText}
+        </div>
+      )}
+
+      {showPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleClosePopup}
+        >
+          <div 
+            className="bg-gray-800 rounded-lg w-[90%] h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h2 className="text-white text-xl font-semibold">관리알람 상세</h2>
+              <button 
+                onClick={handleClosePopup}
+                className="text-gray-400 hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="h-[calc(90vh-4rem)] overflow-auto">
+              <PolicyCompliance alarmType="관리" />
+            </div>
+          </div>
         </div>
       )}
     </div>

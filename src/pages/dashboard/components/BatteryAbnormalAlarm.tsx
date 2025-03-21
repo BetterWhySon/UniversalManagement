@@ -1,52 +1,75 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '@/router/path';
+import BatteryAlarmDetail from './BatteryAlarmDetail';
+import PolicyCompliance from '@/pages/dashboard/pages/PolicyCompliancePage';
 
 const BatteryAbnormalAlarm: React.FC = () => {
   const navigate = useNavigate();
-  const [showTooltip, setShowTooltip] = useState<'normal' | 'alarm' | false>(false);
+  const [showTooltip, setShowTooltip] = useState<'normal' | 'warning' | 'danger' | false>(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupType, setPopupType] = useState<'normal' | 'warning' | 'danger'>('normal');
 
-  const handleAlarmClick = () => {
-    navigate(`/${PATH.DASHBOARD.BATTERY_ALARM}`);
+  const handleAlarmClick = (type: 'normal' | 'warning' | 'danger') => {
+    setPopupType(type);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
     setTooltipPosition({ x: event.clientX, y: event.clientY });
   };
 
-  const getTooltipText = (type: 'normal' | 'alarm') => {
+  const getTooltipText = (type: 'normal' | 'warning' | 'danger') => {
     if (type === 'normal') {
       return '관리 시스템 中 안전상의 문제가 없는 차량 대수';
     }
-    return '관리 시스템 中 배터리 이상이 의심되는 시스템 수. 배터리 진단 알고리즘을 적용해 이상이 감지된 시스템을 식별하여, 잠재적인 고장이나 안전 위험에 대해 선제적으로 관리.';
+    if (type === 'warning') {
+      return '관리 시스템 中 배터리 이상이 의심되는 시스템 수';
+    }
+    return '관리 시스템 中 긴급 점검이 필요한 시스템 수';
   };
 
   return (
-    <div className="bg-gray-800 p-3 rounded-lg border border-white h-full flex flex-col overflow-hidden">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <h3 className="text-white text-lg mb-4 text-left">배터리 이상알람</h3>
       <div className="flex justify-between flex-grow overflow-auto">
         <div 
-          className="w-[48%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
+          className="w-[32%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
+          onClick={() => handleAlarmClick('normal')}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setShowTooltip('normal')}
           onMouseLeave={() => setShowTooltip(false)}
         >
-          <p className="text-white text-xl font-semibold mb-2">정상</p>
-          <p className="text-green-500 text-7xl font-bold mb-2">25</p>
-          {/* <p className="text-gray-400 text-base">전일대비 ↑ 1건</p> */}
+          <p className="text-[#A9D18E] text-xl font-semibold mb-3">정상</p>
+          <p className="text-[#A9D18E] text-8xl font-bold mb-3">25</p>
           <p className="text-gray-400 text-base">&nbsp;</p>
         </div>
         <div 
-          className="w-[48%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
-          onClick={handleAlarmClick}
+          className="w-[32%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
+          onClick={() => handleAlarmClick('warning')}
           onMouseMove={handleMouseMove}
-          onMouseEnter={() => setShowTooltip('alarm')}
+          onMouseEnter={() => setShowTooltip('warning')}
           onMouseLeave={() => setShowTooltip(false)}
         >          
-          <p className="text-white text-xl font-semibold mb-2">이상알람</p>
-          <p className="text-red-500 text-7xl font-bold mb-2">3</p>
+          <p className="text-[#F4B183] text-xl font-semibold mb-3">경고</p>
+          <p className="text-[#F4B183] text-8xl font-bold mb-3">2</p>
           <p className="text-gray-400 text-base">신규 ± 1 / 해제 0</p>
+        </div>
+        <div 
+          className="w-[32%] flex flex-col justify-center items-center p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600"
+          onClick={() => handleAlarmClick('danger')}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setShowTooltip('danger')}
+          onMouseLeave={() => setShowTooltip(false)}
+        >          
+          <p className="text-[#FF6969] text-xl font-semibold mb-3">위험</p>
+          <p className="text-[#FF6969] text-8xl font-bold mb-3">1</p>
+          <p className="text-gray-400 text-base">신규 ± 0 / 해제 0</p>
         </div>
       </div>
       
@@ -61,6 +84,39 @@ const BatteryAbnormalAlarm: React.FC = () => {
           }}
         >
           {getTooltipText(showTooltip)}
+        </div>
+      )}
+
+      {showPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleClosePopup}
+        >
+          <div 
+            className="bg-gray-800 rounded-lg w-[90%] h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h2 className="text-white text-xl font-semibold">
+                {popupType === 'normal' ? '배터리 이상알람 상세' : `${popupType === 'warning' ? '경고' : '위험'} 알람 상세`}
+              </h2>
+              <button 
+                onClick={handleClosePopup}
+                className="text-gray-400 hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="h-[calc(90vh-4rem)] overflow-auto">
+              {popupType === 'normal' ? (
+                <BatteryAlarmDetail onClose={handleClosePopup} />
+              ) : (
+                <PolicyCompliance alarmType={popupType === 'warning' ? '경고' : '위험'} />
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

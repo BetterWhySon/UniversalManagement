@@ -39,7 +39,7 @@ const OperationSummary: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-800 p-3 rounded-lg border border-white/20 h-full">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex justify-between items-center mb-4">
         <h3 
           className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
@@ -48,7 +48,7 @@ const OperationSummary: React.FC = () => {
           운영 현황
         </h3>
         <button 
-          className="bg-blue-700 text-white px-4 py-1 rounded"
+          className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-600"
           onClick={() => setShowGroupView(true)}
         >
           그룹별
@@ -56,36 +56,32 @@ const OperationSummary: React.FC = () => {
       </div>
       
       <div className="flex h-[calc(100%-2rem)]">
-        {/* 왼쪽: 두 개의 파이 차트 */}
-        <div className="flex-[1.2] flex items-center justify-around">
-          <div className="flex flex-col items-center">
-            <div className="w-36 h-36">
-              <DiagRingChart 
-                value={100} 
-                color="#93C5FD"
-                label={totalVehicles.value.toString()}
-                unit={totalVehicles.unit}
-              />
-            </div>
-            <span className="text-white mt-2">{totalVehicles.label}</span>
+        {/* 왼쪽: 링 차트 하나만 표시 */}
+        <div className="flex-[0.8] flex items-center justify-center relative">
+          <div className="text-gray-400 text-sm absolute -top-2 w-full text-center">
+            ※ 선택 : {
+              selectedOption === 1 ? '방전시간' : 
+              selectedOption === 2 ? '방전에너지' : 
+              '실시간 사용대수'
+            }
           </div>
-          
           <div className="flex flex-col items-center">
             <div className="w-36 h-36">
               <DiagRingChart 
                 value={91} 
                 color="#BBF7D0"
-                label={activeVehicles.value.toString()}
-                unit={activeVehicles.unit}
+                label="53%"
+                unit=""
+                subLabel="(106대)"
               />
             </div>
-            <span className="text-white mt-2">{activeVehicles.label}</span>
+            <span className="text-white mt-2">등록대수 200대</span>
           </div>
         </div>
 
         {/* 오른쪽: 라인 그래프 */}
-        <div className="flex-[0.8] relative">
-          <div className="text-gray-400 text-sm ml-8 absolute">
+        <div className="flex-[1.2] relative">
+          <div className="text-gray-400 text-sm ml-8 absolute -top-2">
             ※ 최근 1주일 {
               selectedOption === 1 ? '방전시간' : 
               selectedOption === 2 ? '방전에너지' : 
@@ -102,7 +98,8 @@ const OperationSummary: React.FC = () => {
                 (value: number) => `${value}대`
               }
               height={200}
-              showGrid={true}
+              showGrid={false}
+              showMinMax={true}
               yAxisMin={
                 selectedOption === 2 ? 0 :  // 방전에너지
                 selectedOption === 1 ? 200 : // 방전시간

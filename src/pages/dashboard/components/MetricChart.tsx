@@ -78,7 +78,7 @@ const MetricChart: React.FC<MetricChartProps> = ({
   const displayTitle = selectedTitle || chartConfig[type].title;
 
   return (
-    <div className="bg-slate-800 p-3 rounded-lg border border-white h-full flex flex-col">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex justify-between items-center mb-2">
         <h3 
           className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
@@ -90,7 +90,7 @@ const MetricChart: React.FC<MetricChartProps> = ({
           {displayTitle}
         </h3>
         <button 
-          className="bg-blue-800 text-white px-2 py-0.5 text-sm rounded hover:bg-blue-700"
+          className="bg-blue-700 text-white px-2 py-0.5 text-sm rounded hover:bg-blue-600"
           onClick={() => setIsWorst(!isWorst)}
         >
           {isWorst ? 'worst' : 'best'}
@@ -102,6 +102,7 @@ const MetricChart: React.FC<MetricChartProps> = ({
           isTimeData={true}
           onBarClick={handleBarClick}
           tMargin={type === 'stress' ? 5 : undefined}
+          backgroundColor="#2B313B"
         />
       </div>
 

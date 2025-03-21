@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react';
 import * as echarts from 'echarts';
 
-const DiagRingChart = ({ value, color = '#5470c6', label, unit = '%' }: { 
+const DiagRingChart = ({ value, color = '#5470c6', label, unit = '%', subLabel = '등록대수' }: { 
   value: number; 
   color?: string;
   label: string;
   unit?: string;
+  subLabel?: string;
 }) => {
     var chart: echarts.EChartsType | null | undefined = null;
     const chartRef = useRef<HTMLDivElement>(null);
@@ -15,10 +16,24 @@ const DiagRingChart = ({ value, color = '#5470c6', label, unit = '%' }: {
             value: value,
             detail: {
                 valueAnimation: true,
-                offsetCenter: ['0%', '0%'],
-                fontSize: 24,
+                offsetCenter: ['0%', '-10%'],
+                fontSize: 32,
                 color: '#fff',
-                formatter: () => `${label}${unit}`
+                formatter: () => {
+                    return `{mainText|${label}${unit}}\n{subText|${subLabel}}`;
+                },
+                rich: {
+                    mainText: {
+                        fontSize: 36,
+                        color: '#fff',
+                        padding: [0, 0, 2, 0]
+                    },
+                    subText: {
+                        fontSize: 14,
+                        color: '#fff',
+                        padding: [2, 0, 0, 0]
+                    }
+                }
             }
         }
     ];
@@ -63,7 +78,7 @@ const DiagRingChart = ({ value, color = '#5470c6', label, unit = '%' }: {
                 detail: {
                     width: 50,
                     height: 14,
-                    fontSize: 36,
+                    fontSize: 48,
                     color: '#fff',
                     borderColor: 'transparent',
                     borderRadius: 20,

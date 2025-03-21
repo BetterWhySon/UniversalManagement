@@ -6,6 +6,7 @@ interface BarChartProps {
     name: string;
     data: Array<{ id: string; soc: number }>;
     color: string;
+    hideValue?: boolean;
   }>;
   onBarClick?: (id: string) => void;
   isTimeData?: boolean;
@@ -54,7 +55,7 @@ const isSingleData = (data: any[]): data is Array<{ id: string; soc?: number; ti
   return 'id' in data[0];
 };
 
-const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = false, hideXAxis = false, hideYAxis = false, backgroundColor = '#1e293b', isVertical = false, showGrid = true, rMargin, tMargin = 3, showTooltip = true, chartType = 'bar', showValue = false, labelFontSize = 12, barColor, markLine }) => {
+const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = false, hideXAxis = false, hideYAxis = false, backgroundColor = '#2B313B', isVertical = false, showGrid = true, rMargin, tMargin = 3, showTooltip = true, chartType = 'bar', showValue = false, labelFontSize = 12, barColor, markLine }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
 
@@ -146,8 +147,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
                 color: item.color
               },
               label: {
-                show: showValue,
-                position: 'top',
+                show: showValue && !item.hideValue,
+                position: item.name === '평균값' || item.name === '최소값' ? 'bottom' : 'top',
                 formatter: (params: any) => params.value,
                 color: '#FFFFFF',
                 fontSize: labelFontSize
@@ -333,6 +334,28 @@ const BarChart: React.FC<BarChartProps> = ({ data, onBarClick, isTimeData = fals
     ];
     const colorIndex = index % colors.length;
     return colors[colorIndex][offset];
+  };
+
+  const renderItem = (params: any) => {
+    if (chartType === 'multiLine') {
+      const item = params.data;
+      const showValue = item.soc !== undefined && item.soc !== null;
+      const position = item.labelPosition || 'top';
+      
+      return {
+        type: 'text',
+        position: [params.coordSys.x, params.coordSys.y],
+        style: {
+          text: showValue ? item.soc.toFixed(1) : '',
+          textAlign: 'center',
+          textVerticalAlign: position === 'bottom' ? 'bottom' : 'top',
+          fill: '#fff',
+          fontSize: labelFontSize || 12,
+          fontFamily: 'Pretendard'
+        }
+      };
+    }
+    return null;
   };
 
   return <div ref={chartRef} className="w-full h-full" />;

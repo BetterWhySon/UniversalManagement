@@ -17,11 +17,13 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
     const chart = echarts.init(chartRef.current);
 
     const option = {
+      backgroundColor: 'transparent',
       grid: {
         top: 30,
-        left: 60,
+        left: 40,
         right: 40,
-        bottom: 40
+        bottom: 30,
+        height: '70%'
       },
       xAxis: {
         type: 'category',
@@ -38,17 +40,16 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
       yAxis: {
         type: 'value',
         axisLine: {
-          lineStyle: {
-            color: '#555'
-          }
+          show: false
         },
         axisLabel: {
-          color: '#fff'
+          show: false
         },
         splitLine: {
-          lineStyle: {
-            color: '#333'
-          }
+          show: false
+        },
+        axisTick: {
+          show: false
         }
       },
       series: [
@@ -63,6 +64,26 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
         },
         {
           type: 'bar',
+          data: [1173, 879, 586, 586, 293, 293],  // 첫 번째 series와 동일한 데이터
+          barWidth: 0,  // 막대를 보이지 않게 함
+          itemStyle: {
+            color: 'transparent'
+          },
+          label: {
+            show: true,
+            position: 'top',
+            distance: 10,
+            formatter: (params: any) => {
+              const ratios = ['72%', '63%', '93%', '47%', '94%', '96%'];
+              return ratios[params.dataIndex];
+            },
+            color: '#86EFAC',
+            fontSize: 14,
+            fontWeight: 500
+          }
+        },
+        {
+          type: 'bar',
           data: [840, 554, 546, 278, 277, 280],
           itemStyle: {
             color: '#86EFAC'
@@ -73,29 +94,6 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
     };
 
     chart.setOption(option);
-
-    // 비율 텍스트 추가
-    const ratios = ['72%', '63%', '93%', '47%', '94%', '96%'];
-    const canvas = chartRef.current;
-    const ctx = document.createElement('div');
-    ctx.style.position = 'absolute';
-    ctx.style.top = '30px';
-    ctx.style.left = '0';
-    ctx.style.width = '100%';
-    ctx.style.pointerEvents = 'none';
-    ctx.style.textAlign = 'center';
-    
-    ratios.forEach((ratio, index) => {
-      const ratioText = document.createElement('div');
-      ratioText.style.position = 'absolute';
-      ratioText.style.left = `${(100/7) * (index + 1)}%`;
-      ratioText.style.transform = 'translateX(-50%)';
-      ratioText.style.color = '#86EFAC';
-      ratioText.textContent = ratio;
-      ctx.appendChild(ratioText);
-    });
-    
-    canvas.appendChild(ctx);
 
     const handleResize = () => {
       chart.resize();
@@ -110,16 +108,16 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
   }, []);
 
   return (
-    <div className="h-full bg-slate-800 p-4 rounded-lg border border-white">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex justify-between items-center mb-2">
         <h3 
-          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
           onClick={() => navigate('/realtime/operation-status')}
         >
           그룹별 실시간 방전량
         </h3>
         <button 
-          className="bg-blue-700 text-white px-4 py-1 rounded"
+          className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-600"
           onClick={onSwitchView}
         >
           운영현황
@@ -127,7 +125,7 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
       </div>
       <div 
         ref={chartRef} 
-        className="w-full h-[calc(100%-2.5rem)]"
+        className="flex-grow"
       />
     </div>
   );

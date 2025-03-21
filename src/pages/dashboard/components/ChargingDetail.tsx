@@ -106,7 +106,7 @@ const ChargingDetail: React.FC = () => {
     };
 
     return (
-        <div className="bg-slate-800 p-2 rounded-lg border border-white h-full flex flex-col relative">
+        <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
             <div className="flex items-center gap-2 py-1 px-3 mb-1">
                 <h3 
                     className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"

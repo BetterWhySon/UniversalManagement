@@ -87,7 +87,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">
           <h2 className="text-white text-lg inline-block">
-            {isDischargeType ? '적정 방전량 등록' : '목표시간 설정'}
+            {isDischargeType ? '계획 사용량 등록' : '계획시간 등록'}
           </h2>
         </div>
 
@@ -111,7 +111,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
             className="text-white underline cursor-pointer hover:text-blue-300"
             onClick={() => setIsUsageTimeOpen(true)}
           >
-            사업장/그룹별 {isDischargeType ? '평균방전량' : '방전시간'} 확인하기
+            사업장/그룹별 {isDischargeType ? '평균사용량' : '평균시간'} 확인하기
           </span>
         </div>
 

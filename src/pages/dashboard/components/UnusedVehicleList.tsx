@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import UnusedBatteryPage from '@/pages/dashboard/pages/UnusedBatteryPage';
 
 interface UnusedVehicle {
   operator: string;
@@ -11,6 +12,11 @@ interface UnusedVehicle {
 
 const UnusedVehicleList: React.FC = () => {
   const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
 
   const unusedVehicles: UnusedVehicle[] = [
     {
@@ -37,17 +43,17 @@ const UnusedVehicleList: React.FC = () => {
   ];
 
   return (
-    <div className="bg-slate-800 p-2 rounded-lg border border-white h-full flex flex-col relative">
+    <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex items-center gap-2 py-1 px-3 mb-1">
         <h3 
           className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
-          onClick={() => navigate('/dashboard/unused-battery')}
+          onClick={() => setShowPopup(true)}
         >
-          최근 미운행 전기차 LIST
+          최근 미사용 배터리
         </h3>
       </div>
       <div className="flex-grow overflow-auto">
-        <table className="w-full text-[14px] font-light">
+        <table className="w-full text-[12px] font-light">
           <thead>
             <tr className="bg-gray-700">
               <th className="py-2 px-1.5 text-center text-white">운영사</th>
@@ -73,6 +79,33 @@ const UnusedVehicleList: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {showPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleClosePopup}
+        >
+          <div 
+            className="bg-gray-800 rounded-lg w-[90%] h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h2 className="text-white text-xl font-semibold">최근 미사용 배터리</h2>
+              <button 
+                onClick={handleClosePopup}
+                className="text-gray-400 hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="h-[calc(90vh-4rem)] overflow-auto">
+              <UnusedBatteryPage />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -7,6 +7,8 @@ import BatteryInfo from './components/BatteryInfo';
 import ChargingHistory from './components/ChargingHistory';
 import AlarmHistory from './components/AlarmHistory';
 import DeviceSelectPopup from './components/DeviceSelectPopup';
+import RealTimeData from './components/RealTimeData';
+import RemoteControl from './components/RemoteControl';
 
 
 const IndividualLookupPage: React.FC = () => {
@@ -17,7 +19,14 @@ const IndividualLookupPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState('사용관리');
   const [showDeviceSelect, setShowDeviceSelect] = useState(false);
 
-  const tabs = ['사용관리', '배터리 정보', '사용이력', '알람이력'];
+  const tabs = [
+    { id: '사용관리', label: '사용관리' },
+    { id: '배터리 정보', label: '배터리 정보' },
+    { id: '사용이력', label: '사용이력' },
+    { id: '알람이력', label: '알람이력' },
+    { id: '실시간데이터', label: '실시간데이터' },
+    { id: '원격제어', label: '원격제어' }
+  ];
 
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.EChartsType | null>(null);
@@ -281,11 +290,11 @@ const IndividualLookupPage: React.FC = () => {
           <div className="flex">
             {tabs.map((tab) => (
               <button
-                key={tab}
-                className={`px-4 py-2 text-white text-[19px] ${selectedTab === tab ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setSelectedTab(tab)}
+                key={tab.id}
+                className={`px-4 py-2 text-white text-[19px] ${selectedTab === tab.id ? 'border-b-2 border-blue-500' : ''}`}
+                onClick={() => setSelectedTab(tab.id)}
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -298,6 +307,8 @@ const IndividualLookupPage: React.FC = () => {
           {selectedTab === '배터리 정보' && <BatteryInfo />}
           {selectedTab === '사용이력' && <ChargingHistory />}
           {selectedTab === '알람이력' && <AlarmHistory />}
+          {selectedTab === '실시간데이터' && <RealTimeData />}
+          {selectedTab === '원격제어' && <RemoteControl />}
         </div>
       </div>
 

@@ -99,7 +99,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
-                <td className="border border-gray-600 px-4">관리대수중 실시간 사용중인 대수</td>
+                <td className="border border-gray-600 px-4">실시간 사용중인 배터리</td>
                 <td className="border border-gray-600 px-4">실시간</td>
                 <td className="border border-gray-600 px-4">-</td>
               </tr>
@@ -113,7 +113,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
-                <td className="border border-gray-600 px-4">목표사용 시간대비 실제 사용시간</td>
+                <td className="border border-gray-600 px-4">계획 대비 실제 사용시간</td>
                 <td className="border border-gray-600 px-4">
                   <div className="flex items-center justify-between">
                     <span className="text-blue-400">{periodSettings[1]}</span>
@@ -126,7 +126,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
                   </div>
                 </td>
                 <td className="border border-gray-600 px-4 text-blue-400 cursor-pointer hover:text-blue-300" onClick={() => setIsTimeSettingOpen(true)}>
-                  목표시간 등록
+                  계획시간 등록
                 </td>
               </tr>
               <tr className="hover:bg-gray-600">
@@ -139,7 +139,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
                     className="w-4 h-4 cursor-pointer mx-auto"
                   />
                 </td>
-                <td className="border border-gray-600 px-4">적정 사용에너지 대비 실제 사용에너지</td>
+                <td className="border border-gray-600 px-4">계획 대비 실제 사용량</td>
                 <td className="border border-gray-600 px-4">
                   <div className="flex items-center justify-between">
                     <span className="text-blue-400">{periodSettings[2]}</span>
@@ -152,7 +152,7 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
                   </div>
                 </td>
                 <td className="border border-gray-600 px-4 text-blue-400 cursor-pointer hover:text-blue-300" onClick={() => setIsDischargeSettingOpen(true)}>
-                  적정 사용량 등록
+                  계획사용량 등록
                 </td>
               </tr>
             </tbody>

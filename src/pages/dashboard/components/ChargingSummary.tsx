@@ -23,7 +23,7 @@ const ChargingSummary: React.FC = () => {
     };
 
     return (
-        <div className="bg-slate-800 p-3 rounded-lg border border-white h-full flex flex-col">
+        <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
             <h3 className="text-white text-lg mb-3">충전 현황 요약</h3>
             <div className="flex-grow flex items-center">
                 <div className="w-3/4 flex justify-center space-x-8 mb-2">
