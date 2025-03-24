@@ -10,7 +10,10 @@ const OperationSummary: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<number>(0);
 
   if (showGroupView) {
-    return <GroupDischargeStatus onSwitchView={() => setShowGroupView(false)} />;
+    return <GroupDischargeStatus 
+      onSwitchView={() => setShowGroupView(false)} 
+      selectedOption={selectedOption}
+    />;
   }
 
   const totalVehicles = {
@@ -60,8 +63,8 @@ const OperationSummary: React.FC = () => {
         <div className="flex-[0.8] flex items-center justify-center relative">
           <div className="text-gray-400 text-sm absolute -top-2 w-full text-center">
             ※ 선택 : {
-              selectedOption === 1 ? '방전시간' : 
-              selectedOption === 2 ? '방전에너지' : 
+              selectedOption === 1 ? '실시간 사용시간' : 
+              selectedOption === 2 ? '실시간 사용량' : 
               '실시간 사용대수'
             }
           </div>
@@ -75,7 +78,11 @@ const OperationSummary: React.FC = () => {
                 subLabel="(106대)"
               />
             </div>
-            <span className="text-white mt-2">등록대수 200대</span>
+            <span className="text-white mt-2">
+              {selectedOption === 1 ? '계획시간 1842(시간)' :
+               selectedOption === 2 ? '계획사용량 14.587kw/h' :
+               '등록대수 200대'}
+            </span>
           </div>
         </div>
 
@@ -83,8 +90,8 @@ const OperationSummary: React.FC = () => {
         <div className="flex-[1.2] relative">
           <div className="text-gray-400 text-sm ml-8 absolute -top-2">
             ※ 최근 1주일 {
-              selectedOption === 1 ? '방전시간' : 
-              selectedOption === 2 ? '방전에너지' : 
+              selectedOption === 1 ? '사용시간' : 
+              selectedOption === 2 ? '사용량' : 
               '사용대수'
             }
           </div>

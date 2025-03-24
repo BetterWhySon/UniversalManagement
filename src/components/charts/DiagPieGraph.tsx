@@ -6,13 +6,15 @@ const DiagPieChart = ({
     radius = ['40%', '70%'],
     itemGap = 4,
     labelColor = '#fff',
-    labelSize = 16
+    labelSize = 16,
+    onClick
 }: { 
     datas: Array<{ name: string; value: number; itemStyle: { color: string } }>;
     radius?: [string, string];
     itemGap?: number;
     labelColor?: string;
     labelSize?: number;
+    onClick?: (params: { name: string }) => void;
 }) => {
     const chartRef = useRef<HTMLDivElement>(null);
     const chartInstance = useRef<echarts.EChartsType | null>(null);
@@ -80,6 +82,14 @@ const DiagPieChart = ({
             };
 
             chartInstance.current.setOption(options);
+
+            if (onClick) {
+                chartInstance.current.on('click', (params) => {
+                    if (params.name) {
+                        onClick({ name: params.name });
+                    }
+                });
+            }
         }
 
         return () => {
@@ -88,7 +98,7 @@ const DiagPieChart = ({
                 chartInstance.current = null;
             }
         };
-    }, [datas, radius, itemGap, labelColor, labelSize]);
+    }, [datas, radius, itemGap, labelColor, labelSize, onClick]);
 
     return (
         <div ref={chartRef} className='w-full h-full' />

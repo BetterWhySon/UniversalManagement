@@ -7,7 +7,7 @@ interface FilterPopupProps {
   exactCount?: boolean;
   onApply: (selectedItems: string[]) => void;
   selectedItems: string[];
-  mode?: 'default' | 'chart';
+  mode?: 'chart' | 'default';
 }
 
 const FilterPopup: React.FC<FilterPopupProps> = ({ 
@@ -26,29 +26,21 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
   // 섹션별 아이템 정의
   const sections = {
     '사용관리': [
-      '사용관리 점수', '스트레스 지수', '운용 시간', '사용 시간', '충전 시간', '미사용 시간', 
-      '충전 시간당 사용시간', '사용 횟수', '사용량', '고속 사용량', '고속 사용 횟수', '충전 횟수', 
-      '급속 충전 횟수', '완속 충전 횟수', '사용시 평균 파워', '충전시 평균 파워', '배터리 심방전 횟수', 
-      '배터리 심충전 횟수', '완전 방전 횟수', '완전 충전 횟수', '회생제동', '고속 회생 횟수', '전비', 
-      '주행속도', '주행거리'
-    ],
-    '수명관리': [
-      '수명관리 지수', '잔존수명(예상)', '내용연수', '에너지 효율', '용량효율', '감가상각비', 
-      '에너지당 배터리 상각비', '고속 사용시 상각비', '완속 사용시 상각비', '급속 충전시 상각비', 
-      '완속 충전시 상각비'
+      '사용관리점수', '스트레스지수', '운용시간', '사용시간', '충전시간', '미사용시간',
+      '사용량', '충전량', '사용시 평균파워', '충전시 평균파워', '배터리 심방전 횟수',
+      '배터리 심충전 횟수', '완전 방전횟수', '완전 충전횟수', '회생제동률', '전비',
+      '주행속도', '주행거리', '급감속, 급가속횟수', '적정 SOC 사용률', '데이터 연동율'
     ],
     '배터리정보': [
-      '배터리 관리 지수', '배터리 팩 실제 용량', '배터리 팩 저항', '셀 최대 용량', '셀 평균 용량', 
-      '셀 최소 용량', '셀 최대 저항', '셀 평균 저항', '셀 최소 저항', '용량손실률 - 노화', 
-      '용량손실률 - 잔량편차', '용량손실률 - 용량편차', '용량손실률 - 저항', '셀 밸런스'
+      '배터리 성능지수', '배터리 수명(SOH)', '잔존수명(시간)', '잔존수명(km)',
+      '에너지 효율', '용량 가용율'
     ],
-    '알람이력': [
-      '과전류(방전)', '과전류(충전)', '셀 과방전', '셀 과충전', '셀 저항 편차', '셀 저항 분포', 
-      '셀 용량 편차', '셀 용량 분포', '팩 용량', '셀 용량', '셀 전압', '셀 잔량 편차', '낮은 SOC', 
-      '높은 스트레스', '충전 비상 정지', '충전 원격 정지'
+    '알람정보': [
+      '이상 알람', '관리 알람'
     ],
-    '차트 항목': [
-      '운영 시간 (%)', '충전/방전 파워 (%)', '고속/완속 사용 (%)', '급속/완속 충전 (%)', 'SOC 사용 구간 (%)'
+    '커스텀정보': [
+      '커스텀 1', '커스텀 2', '커스텀 3', '커스텀 4', '커스텀 5', 
+      '커스텀 6', '커스텀 7', '커스텀 8', '커스텀 9', '커스텀 10'
     ]
   };
 
@@ -122,6 +114,7 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
       return;
     }
     onApply(checkedItems);
+    onClose();
   };
 
   const handleClearAll = () => {
@@ -174,21 +167,6 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
     );
   };
 
-  const renderChartMode = () => {
-    return (
-      <div>
-        <div className="flex mb-2">
-          {renderSectionHeader('차트 항목')}
-          <div className="flex-1 grid grid-cols-7 gap-y-2 gap-x-2 ml-4">
-            {sections['차트 항목'].map(item => (
-              <CheckboxItem key={item} name={item} />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderDefaultMode = () => {
     return (
       <>
@@ -197,17 +175,6 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
             {renderSectionHeader('사용관리')}
             <div className="flex-1 grid grid-cols-7 gap-y-2 gap-x-2 ml-4">
               {sections['사용관리'].map(item => (
-                <CheckboxItem key={item} name={item} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex mb-2">
-            {renderSectionHeader('수명관리')}
-            <div className="flex-1 grid grid-cols-7 gap-y-2 gap-x-2 ml-4">
-              {sections['수명관리'].map(item => (
                 <CheckboxItem key={item} name={item} />
               ))}
             </div>
@@ -227,9 +194,20 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
 
         <div>
           <div className="flex mb-2">
-            {renderSectionHeader('알람이력')}
+            {renderSectionHeader('알람정보')}
             <div className="flex-1 grid grid-cols-7 gap-y-2 gap-x-2 ml-4">
-              {sections['알람이력'].map(item => (
+              {sections['알람정보'].map(item => (
+                <CheckboxItem key={item} name={item} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex mb-2">
+            {renderSectionHeader('커스텀정보')}
+            <div className="flex-1 grid grid-cols-7 gap-y-2 gap-x-2 ml-4">
+              {sections['커스텀정보'].map(item => (
                 <CheckboxItem key={item} name={item} />
               ))}
             </div>
@@ -280,15 +258,15 @@ const FilterPopup: React.FC<FilterPopupProps> = ({
 
         {showMaxAlert && (
           <div className="fixed left-1/2 bottom-48 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[1000] transition-opacity duration-300">
-            {exactCount 
-              ? `${maxChecked}개를 선택해야 합니다.`
-              : `최대 ${maxChecked}개까지 선택 가능합니다.`
+            {exactCount && checkedItems.length !== maxChecked ? 
+              `${maxChecked}개를 선택해야 합니다.` : 
+              `최대 ${maxChecked}개까지 선택 가능합니다.`
             }
           </div>
         )}
 
         <div className="space-y-6">
-          {mode === 'chart' ? renderChartMode() : renderDefaultMode()}
+          {renderDefaultMode()}
         </div>
 
         <div className="sticky bottom-0 left-0 right-0 bg-slate-800 pt-4 mt-6 border-t border-gray-600 flex justify-end gap-4">

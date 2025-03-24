@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '@/router/path';
+import useChargingStore from '@/api/chargingStore';
 
 interface ChargingStatus {
     deviceId: string;
@@ -16,6 +17,8 @@ interface ChargingStatus {
 
 const ChargingDetail: React.FC = () => {
     const navigate = useNavigate();
+    const selectedStatus = useChargingStore((state) => state.selectedStatus);
+    const selectedChargingType = useChargingStore((state) => state.selectedChargingType);
 
     const handleTitleClick = () => {
         navigate(PATH.DASHBOARD.CHARGING_DETAIL);
@@ -90,6 +93,21 @@ const ChargingDetail: React.FC = () => {
         }
     ];
 
+    const filteredData = chargingData.filter(item => {
+        const matchesStatus = selectedStatus ? item.status === selectedStatus : true;
+        
+        if (!selectedChargingType) return matchesStatus;
+
+        const current = parseFloat(item.current);
+        if (isNaN(current)) return matchesStatus;
+
+        if (selectedChargingType === '급속충전') {
+            return matchesStatus && current >= 50;
+        } else {
+            return matchesStatus && current < 50;
+        }
+    });
+
     const getConditionColor = (condition: string) => {
         switch (condition) {
             case 'Bad':
@@ -131,7 +149,7 @@ const ChargingDetail: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {chargingData.map((item, index) => (
+                        {filteredData.map((item, index) => (
                             <tr
                                 key={index}
                                 className="border-b border-gray-700 hover:bg-gray-600 text-white"

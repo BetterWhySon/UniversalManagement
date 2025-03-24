@@ -12,6 +12,9 @@ const BatteryAbnormalAlarm: React.FC = () => {
   const [popupType, setPopupType] = useState<'normal' | 'warning' | 'danger'>('normal');
 
   const handleAlarmClick = (type: 'normal' | 'warning' | 'danger') => {
+    if (type === 'normal') {
+      return;
+    }
     setPopupType(type);
     setShowPopup(true);
   };
@@ -93,28 +96,23 @@ const BatteryAbnormalAlarm: React.FC = () => {
           onClick={handleClosePopup}
         >
           <div 
-            className="bg-gray-800 rounded-lg w-[90%] h-[90vh] overflow-hidden"
+            className="bg-gray-800 rounded-lg w-[90%] h-[90vh] overflow-hidden relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center p-4 border-b border-gray-700">
-              <h2 className="text-white text-xl font-semibold">
-                {popupType === 'normal' ? '배터리 이상알람 상세' : `${popupType === 'warning' ? '경고' : '위험'} 알람 상세`}
-              </h2>
-              <button 
-                onClick={handleClosePopup}
-                className="text-gray-400 hover:text-white"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="h-[calc(90vh-4rem)] overflow-auto">
+            <div className="h-[90vh] overflow-auto">
               {popupType === 'normal' ? (
                 <BatteryAlarmDetail onClose={handleClosePopup} />
               ) : (
                 <PolicyCompliance alarmType={popupType === 'warning' ? '경고' : '위험'} />
               )}
+            </div>
+            <div className="absolute bottom-4 right-4">
+              <button 
+                onClick={handleClosePopup}
+                className="bg-gray-700 text-gray-300 px-6 py-2 rounded hover:bg-gray-600 transition-colors"
+              >
+                닫기
+              </button>
             </div>
           </div>
         </div>

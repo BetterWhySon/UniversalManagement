@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface GroupDischargeStatusProps {
   onSwitchView: () => void;
+  selectedOption: number;
 }
 
-const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchView }) => {
+const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchView, selectedOption }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -114,7 +115,9 @@ const GroupDischargeStatus: React.FC<GroupDischargeStatusProps> = ({ onSwitchVie
           className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
           onClick={() => navigate('/realtime/operation-status')}
         >
-          그룹별 실시간 방전량
+          {selectedOption === 1 ? '그룹별 실제 사용시간' :
+           selectedOption === 2 ? '그룹별 실제 사용량' :
+           '그룹별 실시간 사용중인 배터리'}
         </h3>
         <button 
           className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-600"

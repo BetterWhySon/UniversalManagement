@@ -8,13 +8,15 @@ interface MetricChartProps {
   selectedTitle?: string;
   onMetricsSelect: (items: string[]) => void;
   selectedMetrics: string[];
+  showPopupOnClick?: boolean;
 }
 
 const MetricChart: React.FC<MetricChartProps> = ({ 
   type, 
   selectedTitle, 
   onMetricsSelect,
-  selectedMetrics 
+  selectedMetrics,
+  showPopupOnClick = true
 }) => {
   const [selectedVehicle, setSelectedVehicle] = useState<any | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -41,19 +43,42 @@ const MetricChart: React.FC<MetricChartProps> = ({
     setTooltipPosition({ x: event.clientX, y: event.clientY });
   };
 
-  const [data] = useState([
-    { id: '82라1810', time: 88 },
-    { id: '06가1919', time: 81 },
-    { id: '68사1744', time: 62 },
-    { id: '67사1606', time: 55 },
-    { id: '66어1468', time: 48 },
-    { id: '16사9947', time: 40.8 },
-  ]);
+  const [data] = useState(() => {
+    switch (type) {
+      case 'stress':
+        return [
+          { id: '82라1810', soc: 88, style: { color: '#FF6B6B' } },
+          { id: '06가1919', soc: 81, style: { color: '#FF9F43' } },
+          { id: '68사1744', soc: 62, style: { color: '#FFCE56' } },
+          { id: '67사1606', soc: 55, style: { color: '#54BAB9' } },
+          { id: '66어1468', soc: 48, style: { color: '#5E60CE' } },
+          { id: '16사9947', soc: 40.8, style: { color: '#FF6B6B' } },
+        ];
+      case 'soc':
+        return [
+          { id: '82라1810', soc: 95, style: { color: '#FF6B6B' } },
+          { id: '06가1919', soc: 85, style: { color: '#FF9F43' } },
+          { id: '68사1744', soc: 75, style: { color: '#FFCE56' } },
+          { id: '67사1606', soc: 65, style: { color: '#54BAB9' } },
+          { id: '66어1468', soc: 55, style: { color: '#5E60CE' } },
+          { id: '16사9947', soc: 45, style: { color: '#FF6B6B' } },
+        ];
+      case 'efficiency':
+        return [
+          { id: '82라1810', soc: 92, style: { color: '#FF6B6B' } },
+          { id: '06가1919', soc: 87, style: { color: '#FF9F43' } },
+          { id: '68사1744', soc: 82, style: { color: '#FFCE56' } },
+          { id: '67사1606', soc: 77, style: { color: '#54BAB9' } },
+          { id: '66어1468', soc: 72, style: { color: '#5E60CE' } },
+          { id: '16사9947', soc: 67, style: { color: '#FF6B6B' } },
+        ];
+    }
+  });
 
   const sortedData = useMemo(() => {
     return isWorst 
-      ? [...data].sort((a, b) => a.time - b.time)
-      : [...data].sort((a, b) => b.time - a.time);
+      ? [...data].sort((a, b) => a.soc - b.soc)
+      : [...data].sort((a, b) => b.soc - a.soc);
   }, [data, isWorst]);
 
   const handleBarClick = (id: string) => {
@@ -81,11 +106,11 @@ const MetricChart: React.FC<MetricChartProps> = ({
     <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex justify-between items-center mb-2">
         <h3 
-          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          className={`text-white text-sm inline-block ${showPopupOnClick ? 'cursor-pointer hover:text-blue-400' : ''}`}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
-          onClick={() => setIsFilterOpen(true)}
+          onClick={() => showPopupOnClick && setIsFilterOpen(true)}
         >
           {displayTitle}
         </h3>
@@ -96,13 +121,25 @@ const MetricChart: React.FC<MetricChartProps> = ({
           {isWorst ? 'worst' : 'best'}
         </button>
       </div>
-      <div className="flex-grow">
+      <div className="flex-grow h-[200px]">
         <BarChart 
           data={sortedData}
-          isTimeData={true}
+          isTimeData={false}
           onBarClick={handleBarClick}
-          tMargin={type === 'stress' ? 5 : undefined}
           backgroundColor="#2B313B"
+          hideXAxis={true}
+          hideYAxis={false}
+          showGrid={false}
+          showValue={true}
+          labelFontSize={12}
+          chartType="bar"
+          isVertical={false}
+          grid={{
+            top: 20,
+            right: 40,
+            bottom: 0,
+            left: 80
+          }}
         />
       </div>
 

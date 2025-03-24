@@ -11,13 +11,17 @@ import MetricChart from './components/MetricChart';
 import UnusedVehicleList from './components/UnusedVehicleList';
 import ChargingSummary from './components/ChargingSummary';
 import ChargingDetail from './components/ChargingDetail';
+import FilterPopup from './components/subComponents/FilterPopup';
 
 export default function DashboardPage() {
     const navigate = useNavigate();
-    const [selectedMetrics, setSelectedMetrics] = useState<string[]>(() => {
-        const saved = localStorage.getItem('selectedMetrics');
-        return saved ? JSON.parse(saved) : [];
-    });
+    
+    useEffect(() => {
+        localStorage.removeItem('selectedMetrics'); // 초기화
+    }, []);
+
+    const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -30,9 +34,13 @@ export default function DashboardPage() {
     }, []);
 
     const handleMetricsSelect = (items: string[]) => {
+        if (items.length !== 3) {
+            return;
+        }
         console.log('Selected items:', items);
         setSelectedMetrics([...items]);
         localStorage.setItem('selectedMetrics', JSON.stringify(items));
+        setIsFilterOpen(false);
     };
 
     return (
@@ -66,30 +74,43 @@ export default function DashboardPage() {
                             <div className='w-[46.4%] bg-[#2B313B] rounded-lg h-full'>
                                 <OperationSummary />
                             </div>
-                            <div className='w-[53.6%] flex gap-2'>
-                                <div className='w-1/3'>
-                                    <MetricChart 
-                                        type="stress" 
-                                        selectedTitle={selectedMetrics[0]} 
-                                        onMetricsSelect={handleMetricsSelect}
-                                        selectedMetrics={selectedMetrics}
-                                    />
-                                </div>
-                                <div className='w-1/3'>
-                                    <MetricChart 
-                                        type="soc" 
-                                        selectedTitle={selectedMetrics[1]} 
-                                        onMetricsSelect={handleMetricsSelect}
-                                        selectedMetrics={selectedMetrics}
-                                    />
-                                </div>
-                                <div className='w-1/3'>
-                                    <MetricChart 
-                                        type="efficiency" 
-                                        selectedTitle={selectedMetrics[2]} 
-                                        onMetricsSelect={handleMetricsSelect}
-                                        selectedMetrics={selectedMetrics}
-                                    />
+                            <div className='w-[53.6%] bg-[#2B313B] rounded-lg'>
+                                <div className="p-2">
+                                    <h3 
+                                        className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
+                                        onClick={() => setIsFilterOpen(true)}
+                                    >
+                                        관리항목
+                                    </h3>
+                                    <div className='flex gap-2'>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="stress" 
+                                                selectedTitle={selectedMetrics[0]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="soc" 
+                                                selectedTitle={selectedMetrics[1]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="efficiency" 
+                                                selectedTitle={selectedMetrics[2]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -109,6 +130,14 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
+            <FilterPopup 
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                maxChecked={3}
+                exactCount={true}
+                onApply={handleMetricsSelect}
+                selectedItems={selectedMetrics}
+            />
         </div>
     );
 }

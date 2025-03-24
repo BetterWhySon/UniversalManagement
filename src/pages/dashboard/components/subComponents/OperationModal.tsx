@@ -67,11 +67,12 @@ const OperationModal: React.FC<OperationModalProps> = ({ isOpen, onClose, select
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
       onClick={(e) => {
         handleBackdropClick(e);
         handleCloseContextMenu();
       }}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
         <div className="mb-6">

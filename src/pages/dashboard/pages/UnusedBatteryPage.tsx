@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
+import { useNavigate } from 'react-router-dom';
 
 interface UnusedBattery {
   id: number;
@@ -25,23 +26,16 @@ type ColumnType = TableDataProps['columns'][number];
 
 const pagination = {
   total: 0,
-  pageSize: 13,
+  pageSize: 10,
 };
 
 const UnusedBatteryPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string>('전체');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const { t: trans } = useTranslation('translation');
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    show: boolean;
-  }>({
-    x: 0,
-    y: 0,
-    show: false,
-  });
-  
   const [data, setData] = useState<UnusedBattery[]>([]);
 
   useEffect(() => {
@@ -83,22 +77,6 @@ const UnusedBatteryPage: React.FC = () => {
     });
   };
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    if (selectedRows.length > 0) {
-      e.preventDefault();
-      e.stopPropagation();
-      setContextMenu({
-        x: e.clientX,
-        y: e.clientY,
-        show: true,
-      });
-    }
-  };
-
-  const handleCloseContextMenu = () => {
-    setContextMenu({ x: 0, y: 0, show: false });
-  };
-
   const handleStatusChange = (status: '불용기기' | '사용가능') => {
     const today = new Date().toLocaleDateString('ko-KR', {
       year: '2-digit',
@@ -118,8 +96,24 @@ const UnusedBatteryPage: React.FC = () => {
     });
 
     setData(updatedData);
-    handleCloseContextMenu();
   };
+
+  const getFilteredData = useMemo(() => {
+    return data.filter(item => {
+      // 검색어 필터링
+      const searchFilter = !searchKeyword || 
+        Object.values(item).some(value => 
+          String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+
+      // 상태 필터링
+      const statusFilter = selectedFilter === '전체' || 
+        (selectedFilter === '불용기기' && item.배터리상태 === '불용기기') ||
+        (selectedFilter === '사용가능' && item.배터리상태 === '사용가능');
+
+      return searchFilter && statusFilter;
+    });
+  }, [data, searchKeyword, selectedFilter]);
 
   const columns: ColumnType[] = useMemo(() => [
     {
@@ -248,143 +242,133 @@ const UnusedBatteryPage: React.FC = () => {
   ], [selectedRows, data]);
 
   return (
-    <div className="flex flex-col h-full bg-hw-dark-1" onClick={handleCloseContextMenu}>
+    <div className="flex flex-col h-full bg-hw-dark-1">
       <div className="flex-shrink-0 px-[18px] lg:px-[55px] pt-3 lg:pt-5 pb-4">
         <div className='transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-0 w-full mb-3 h-fit md:h-5'>
           <h1 className='w-full text-hw-white-1 text-[16px] font-normal leading-4 lg:text-xl lg:leading-none'>
-            {trans('배터리 불용 등록')}
+            {trans('최근 미사용 기기')}
           </h1>
         </div>
 
-        <div className='w-full bg-hw-dark-2 p-4 rounded-lg text-hw-white-1'>
-          <div className='flex flex-row items-start gap-8'>
-            {/* 등록 구분 */}
-            <div className='relative'>
-              <h3 className='absolute -top-2 left-4 bg-hw-dark-2 px-2 text-sm'>
-                {trans('등록 구분')}
-              </h3>
-              <div className='border border-hw-gray-4 rounded-lg p-4 pt-5'>
-                <div className='flex flex-wrap space-x-4 h-10 items-center'>
-                  <div className='flex items-center space-x-2'>
-                    <input 
-                      type='radio' 
-                      id='all' 
-                      name='filter' 
-                      checked={selectedFilter === '전체'} 
-                      onChange={() => setSelectedFilter('전체')} 
-                    />
-                    <label htmlFor='all'>{trans('전체')}</label>
-                  </div>
-                  <div className='flex items-center space-x-2'>
-                    <input 
-                      type='radio' 
-                      id='unused' 
-                      name='filter' 
-                      checked={selectedFilter === '불용기기'} 
-                      onChange={() => setSelectedFilter('불용기기')} 
-                    />
-                    <label htmlFor='unused'>{trans('불용기기')}</label>
-                  </div>
-                  <div className='flex items-center space-x-2'>
-                    <input 
-                      type='radio' 
-                      id='usable' 
-                      name='filter' 
-                      checked={selectedFilter === '사용가능'} 
-                      onChange={() => setSelectedFilter('사용가능')} 
-                    />
-                    <label htmlFor='usable'>{trans('사용가능')}</label>
-                  </div>
-                </div>
-              </div>
+        <div className='w-full bg-hw-dark-2 py-3 px-4 rounded-lg text-hw-white-1'>
+          <div className='flex flex-row items-center gap-4'>
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id="all"
+                name="filter"
+                checked={selectedFilter === '전체'}
+                onChange={() => setSelectedFilter('전체')}
+                className="accent-hw-orange-1"
+              />
+              <label htmlFor="all" className="text-sm">{trans('전체')}</label>
+              
+              <input
+                type="radio"
+                id="unused"
+                name="filter"
+                checked={selectedFilter === '불용기기'}
+                onChange={() => setSelectedFilter('불용기기')}
+                className="ml-4 accent-hw-orange-1"
+              />
+              <label htmlFor="unused" className="text-sm">{trans('불용기기')}</label>
+              
+              <input
+                type="radio"
+                id="usable"
+                name="filter"
+                checked={selectedFilter === '사용가능'}
+                onChange={() => setSelectedFilter('사용가능')}
+                className="ml-4 accent-hw-orange-1"
+              />
+              <label htmlFor="usable" className="text-sm">{trans('사용가능')}</label>
             </div>
 
-            {/* 기간 설정 */}
-            <div className='relative'>
-              <h3 className='absolute -top-2 left-4 bg-hw-dark-2 px-2 text-sm'>
-                {trans('기간 설정')}
-              </h3>
-              <div className='border border-hw-gray-4 rounded-lg p-4 pt-5'>
-                <div className='flex flex-wrap gap-2 h-10 items-center'>
-                  <select 
-                    className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
-                  >
-                    <option value="">{trans('사업장')}</option>
-                  </select>
-                  <select 
-                    className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
-                  >
-                    <option value="">{trans('그룹명')}</option>
-                  </select>
-                  <select 
-                    className="bg-hw-dark-3 text-hw-white-1 p-2 rounded h-full border-none outline-none min-w-[120px]"
-                  >
-                    <option value="">{trans('기기명')}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <select 
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[120px]"
+            >
+              <option value="">{trans('사업장')}</option>
+            </select>
+            <select 
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[120px]"
+            >
+              <option value="">{trans('그룹명')}</option>
+            </select>
+            <select 
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[120px]"
+            >
+              <option value="">{trans('어플리케이션')}</option>
+            </select>
+            <select 
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[120px]"
+            >
+              <option value="">{trans('배터리제조사')}</option>
+            </select>
+            <select 
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white min-w-[120px]"
+            >
+              <option value="">{trans('팩모델')}</option>
+            </select>
 
-            {/* 조회 버튼 */}
-            <button className='py-[6px] pl-4 pr-6 rounded-lg bg-hw-orange-1 flex gap-2 items-center justify-center h-10 mt-[26px]'>
-              <span className='text-hw-white-1 font-light text-base leading-[125%] whitespace-nowrap'>
-                {trans('조회')}
-              </span>
+            <input 
+              type="text" 
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder={trans('검색')}
+              className="h-8 text-sm px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white w-[120px] placeholder:text-gray-400"
+            />
+
+            <button className="h-8 px-4 text-sm bg-hw-orange-1 text-white rounded hover:bg-opacity-80 transition-colors">
+              {trans('조회')}
             </button>
+
+            <div className="flex items-center gap-2 ml-auto h-8">
+              <button 
+                className="h-full px-4 text-sm bg-blue-600 text-white rounded hover:bg-opacity-80 transition-colors"
+                onClick={() => {
+                  if (selectedRows.length === 0) {
+                    alert('선택된 항목이 없습니다.');
+                    return;
+                  }
+                  handleStatusChange('불용기기');
+                }}
+              >
+                불용기기 등록
+              </button>
+              <button 
+                className="h-full px-4 text-sm bg-blue-600 text-white rounded hover:bg-opacity-80 transition-colors"
+                onClick={() => {
+                  if (selectedRows.length === 0) {
+                    alert('선택된 항목이 없습니다.');
+                    return;
+                  }
+                  handleStatusChange('사용가능');
+                }}
+              >
+                사용기기 등록
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="flex-grow overflow-auto px-[18px] lg:px-[55px]">
-        {/* PC DATA TABLE */}
         <div className='w-full hidden xs:block'>
           <TableData<UnusedBattery>
-            data={data}
+            data={getFilteredData}
             columns={columns}
             isPagination
             pagination={pagination}
             paginationMarginTop='32px'
             emptyMessage={trans('데이터 없습니다.')}
             selectedRows={selectedRows}
-            onCellContextMenu={(e, columnIndex) => {
-              if (columnIndex === 0 && selectedRows.length > 0) {
-                handleContextMenu(e);
-              }
-            }}
           />
         </div>
 
-        {/* MOBILE DATA TABLE */}
         <div className='w-full block xs:hidden'>
           {/* 모바일 테이블 구현 */}
         </div>
       </div>
-
-      {/* 컨텍스트 메뉴 */}
-      {contextMenu.show && (
-        <div 
-          className="fixed bg-hw-dark-2 border border-hw-gray-4 rounded-lg shadow-lg py-1.5 w-[120px]"
-          style={{ 
-            left: `${contextMenu.x + 10}px`,
-            top: contextMenu.y,
-            zIndex: 1000,
-            transform: 'none'
-          }}
-        >
-          <button 
-            className="w-full px-3 py-1.5 text-center hover:bg-hw-dark-3 text-hw-white-1 whitespace-nowrap text-sm"
-            onClick={() => handleStatusChange('불용기기')}
-          >
-            불용기기 등록
-          </button>
-          <button 
-            className="w-full px-3 py-1.5 text-center hover:bg-hw-dark-3 text-hw-white-1 whitespace-nowrap text-sm"
-            onClick={() => handleStatusChange('사용가능')}
-          >
-            사용가능 등록
-          </button>
-        </div>
-      )}
     </div>
   );
 };

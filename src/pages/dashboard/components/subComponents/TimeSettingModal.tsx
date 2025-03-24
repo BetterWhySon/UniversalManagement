@@ -52,28 +52,17 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
     }
   };
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    if (selectedRows.length > 0) {
-      e.preventDefault();
-      setContextMenu({
-        x: e.clientX,
-        y: e.clientY,
-        show: true
-      });
-    }
-  };
-
-  const handleCloseContextMenu = () => {
-    setContextMenu({ x: 0, y: 0, show: false });
-  };
-
   const handleTimeSubmit = () => {
     if (targetTime) {
       setRowTimes(prev => prev.map((time, index) => 
-        selectedRows.includes(index) ? targetTime : time
+        selectedRows.length > 0 ? (selectedRows.includes(index) ? targetTime : time) : targetTime
       ));
-      handleCloseContextMenu();
     }
+  };
+
+  const handleApply = () => {
+    // 여기에 적용 로직 추가
+    onClose();
   };
 
   return (
@@ -81,7 +70,6 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
       onClick={(e) => {
         handleBackdropClick(e);
-        handleCloseContextMenu();
       }}
     >
       <div className="bg-slate-800 p-6 rounded-lg w-[80%] max-w-4xl border border-white">
@@ -106,6 +94,24 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
             <button className="px-4 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600">
               조회
             </button>
+            <div className="flex items-center gap-2 ml-4 border-l border-gray-600 pl-4">
+              <span className="text-white whitespace-nowrap">일괄 등록</span>
+              <input
+                type="number"
+                value={targetTime}
+                onChange={(e) => setTargetTime(Number(e.target.value))}
+                className="bg-hw-dark-3 text-white border border-gray-600 rounded px-2 py-1 w-[80px] text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                placeholder="시간"
+                min="0"
+              />
+              <span className="text-white">{isDischargeType ? 'KW' : '시간'}</span>
+              <button
+                onClick={handleTimeSubmit}
+                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                확인
+              </button>
+            </div>
           </div>
           <span 
             className="text-white underline cursor-pointer hover:text-blue-300"
@@ -115,7 +121,7 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
           </span>
         </div>
 
-        <div className="text-white overflow-auto" onContextMenu={handleContextMenu}>
+        <div className="text-white overflow-auto">
           <table className="w-full text-[15px] font-light">
             <thead>
               <tr className="bg-gray-700">
@@ -187,39 +193,13 @@ const TimeSettingModal: React.FC<TimeSettingModalProps> = ({ isOpen, onClose, ty
           >
             닫기
           </button>
-        </div>
-
-        {/* 컨텍스트 메뉴 */}
-        {contextMenu.show && (
-          <div 
-            className="fixed bg-hw-dark-2 border border-hw-gray-4 rounded-lg shadow-lg p-4"
-            style={{ 
-              left: `${contextMenu.x}px`,
-              top: `${contextMenu.y}px`,
-              zIndex: 1000
-            }}
-            onClick={(e) => e.stopPropagation()}
+          <button
+            onClick={handleApply}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-white whitespace-nowrap">일괄 등록</span>
-              <input
-                type="number"
-                value={targetTime}
-                onChange={(e) => setTargetTime(Number(e.target.value))}
-                className="bg-white text-gray-800 border border-gray-300 rounded px-2 py-1 w-[60px] placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
-                placeholder="시간"
-                min="0"
-              />
-              <span className="text-white">시간</span>
-              <button
-                onClick={handleTimeSubmit}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        )}
+            적용
+          </button>
+        </div>
 
         {/* 사용시간 현황 모달 */}
         <UsageTimeModal 
