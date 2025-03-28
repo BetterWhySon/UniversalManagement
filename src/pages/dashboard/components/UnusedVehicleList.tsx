@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UnusedBatteryPage from '@/pages/dashboard/pages/UnusedBatteryPage';
+import BatteryInfoModal from './subComponents/BatteryInfoModal';
 
 interface UnusedVehicle {
   operator: string;
@@ -13,9 +14,20 @@ interface UnusedVehicle {
 const UnusedVehicleList: React.FC = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [showBatteryInfo, setShowBatteryInfo] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
 
   const handleClosePopup = () => {
     setShowPopup(false);
+  };
+
+  const handleCloseBatteryInfo = () => {
+    setShowBatteryInfo(false);
+  };
+
+  const handleVehicleClick = (vehicleId: string) => {
+    setSelectedVehicle(vehicleId);
+    setShowBatteryInfo(true);
   };
 
   const unusedVehicles: UnusedVehicle[] = [
@@ -46,7 +58,7 @@ const UnusedVehicleList: React.FC = () => {
     <div className="bg-[#2B313B] p-2 rounded-lg h-full flex flex-col relative">
       <div className="flex items-center gap-2 py-1 px-3 mb-1">
         <h3 
-          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white inline-block"
+          className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 border-b-[0.5px] inline-block"
           onClick={() => setShowPopup(true)}
         >
           최근 미사용 기기
@@ -71,7 +83,12 @@ const UnusedVehicleList: React.FC = () => {
               >
                 <td className="py-2 px-1.5 text-center">{vehicle.operator}</td>
                 <td className="py-2 px-1.5 text-center">{vehicle.groupName}</td>
-                <td className="py-2 px-1.5 text-center">{vehicle.vehicleId}</td>
+                <td 
+                  className="py-2 px-1.5 text-center cursor-pointer hover:text-blue-400 underline"
+                  onClick={() => handleVehicleClick(vehicle.vehicleId)}
+                >
+                  {vehicle.vehicleId}
+                </td>
                 <td className="py-2 px-1.5 text-center">{vehicle.lastUsed}</td>
                 <td className="py-2 px-1.5 text-center">{vehicle.duration}</td>
               </tr>
@@ -102,6 +119,13 @@ const UnusedVehicleList: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {showBatteryInfo && (
+        <BatteryInfoModal 
+          deviceId={selectedVehicle}
+          onClose={handleCloseBatteryInfo}
+        />
       )}
     </div>
   );

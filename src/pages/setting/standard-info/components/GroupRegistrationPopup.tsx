@@ -10,22 +10,26 @@ declare global {
 interface GroupRegistrationPopupProps {
   onClose: () => void;
   onSave: (data: {
+    site_id: number;
     code: string;
-    group: string;
-    postcode: string;
-    address: string;
-    detailAddress: string;
+    group_name: string;
+    zipno: string;
+    address_main: string;
+    address_sub: string;
     description: string;
     belongCompany: string;
+    site_name: string;
   }) => void;
   initialData?: {
+    site_id: number;
     code: string;
-    group: string;
-    postcode: string;
-    address: string;
-    detailAddress: string;
+    group_name: string;
+    zipno: string;
+    address_main: string;
+    address_sub: string;
     description: string;
     belongCompany: string;
+    site_name: string;
   };
   mode?: 'create' | 'edit';
 }
@@ -38,13 +42,15 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
 }) => {
   const [isCompanySelectionOpen, setIsCompanySelectionOpen] = useState(false);
   const [formData, setFormData] = useState({
+    site_id: initialData?.site_id || 0,
     code: initialData?.code || '',
-    group: initialData?.group || '',
-    postcode: initialData?.postcode || '',
-    address: initialData?.address || '',
-    detailAddress: initialData?.detailAddress || '',
+    group_name: initialData?.group_name || '',
+    zipno: initialData?.zipno || '',
+    address_main: initialData?.address_main || '',
+    address_sub: initialData?.address_sub || '',
     description: initialData?.description || '',
-    belongCompany: initialData?.belongCompany || ''
+    belongCompany: initialData?.belongCompany || '',
+    site_name: initialData?.site_name || ''
   });
 
   const handlePostcode = () => {
@@ -74,23 +80,35 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
 
         setFormData(prev => ({
           ...prev,
-          postcode: data.zonecode,
-          address: addr
+          zipno: data.zonecode,
+          address_main: addr
         }));
       }
     }).open();
   };
 
-  const handleCompanySelect = (company: string) => {
-    setFormData(prev => ({
-      ...prev,
-      belongCompany: company
-    }));
+  const handleCompanySelect = (company: { name: string; id: number }) => {
+    console.log('Selected company:', company);
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        belongCompany: company.name,
+        site_id: company.id,
+        site_name: company.name
+      };
+      console.log('New form data:', newData);
+      return newData;
+    });
     setIsCompanySelectionOpen(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting form data:', formData);
+    if (!formData.site_id) {
+      alert('귀속 사업장을 선택해주세요.');
+      return;
+    }
     onSave(formData);
   };
 
@@ -109,24 +127,25 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
         <form onSubmit={handleSubmit}>
           <div className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center">
-                <label className="w-32 text-white">코드 :</label>
-                <input
-                  type="text"
-                  className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                  value={formData.code}
-                  onChange={(e) => setFormData({...formData, code: e.target.value})}
-                  required
-                />
-              </div>
+              {mode === 'edit' && (
+                <div className="flex items-center">
+                  <label className="w-32 text-white">코드 :</label>
+                  <input
+                    type="text"
+                    className="flex-1 h-10 text-base px-4 bg-gray-700 rounded-lg outline-none border-none text-white cursor-not-allowed opacity-70"
+                    value={formData.code}
+                    disabled
+                  />
+                </div>
+              )}
 
               <div className="flex items-center">
                 <label className="w-32 text-white">그룹명 :</label>
                 <input
                   type="text"
                   className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                  value={formData.group}
-                  onChange={(e) => setFormData({...formData, group: e.target.value})}
+                  value={formData.group_name}
+                  onChange={(e) => setFormData({...formData, group_name: e.target.value})}
                   required
                 />
               </div>
@@ -137,7 +156,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   <input
                     type="text"
                     className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                    value={formData.belongCompany}
+                    value={formData.site_name}
                     readOnly
                     required
                   />
@@ -159,7 +178,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                       type="text"
                       className="w-32 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500"
                       placeholder="우편번호"
-                      value={formData.postcode}
+                      value={formData.zipno}
                       required
                       readOnly
                     />
@@ -174,7 +193,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   <input
                     type="text"
                     className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white required:border-red-500"
-                    value={formData.address}
+                    value={formData.address_main}
                     required
                     readOnly
                     placeholder="주소"
@@ -182,8 +201,8 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
                   <input
                     type="text"
                     className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                    value={formData.detailAddress}
-                    onChange={(e) => setFormData({...formData, detailAddress: e.target.value})}
+                    value={formData.address_sub}
+                    onChange={(e) => setFormData({...formData, address_sub: e.target.value})}
                     placeholder="상세주소"
                   />
                 </div>
@@ -222,6 +241,7 @@ const GroupRegistrationPopup: React.FC<GroupRegistrationPopupProps> = ({
         <CompanySelectPopup
           onClose={() => setIsCompanySelectionOpen(false)}
           onConfirm={handleCompanySelect}
+          selectedSiteId={formData.site_id}
         />
       )}
     </div>

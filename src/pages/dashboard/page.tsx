@@ -45,9 +45,9 @@ export default function DashboardPage() {
 
     return (
         <div className='dashboard-content bg-[#232931] p-2 h-[calc(100vh-65px)]'>
-            <div className='flex flex-col h-full gap-2'>
+            <div className='flex flex-col h-full gap-0'>
                 {/* 첫 번째 & 두 번째 행 통합 */}
-                <div className='flex h-[66%] gap-2'>
+                <div className='flex h-[66%] gap-2 mb-2'>
                     {/* 왼쪽 지도 영역 (2행 차지) */}
                     <div className='w-[22.2%] bg-[#2B313B] rounded-lg p-0'>
                         <MapArea />

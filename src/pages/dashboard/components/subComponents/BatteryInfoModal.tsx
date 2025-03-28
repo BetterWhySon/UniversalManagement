@@ -1,4 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+interface BatteryInfo {
+  workplace: string;
+  groupName: string;
+  deviceId: string;
+  application: string;
+  packId: string;
+  packModel: string;
+  userName: string;
+  contact: string;
+}
 
 interface BatteryInfoModalProps {
   deviceId: string;
@@ -6,6 +17,31 @@ interface BatteryInfoModalProps {
 }
 
 const BatteryInfoModal: React.FC<BatteryInfoModalProps> = ({ deviceId, onClose }) => {
+  const [batteryInfo, setBatteryInfo] = useState<BatteryInfo>({
+    workplace: '인천 물류센터',
+    groupName: '지게차 1팀',
+    deviceId: deviceId,
+    application: '지게차',
+    packId: `PACK-${deviceId}`,
+    packModel: 'LFP-48V100AH',
+    userName: '김물류',
+    contact: '010-1234-5678'
+  });
+
+  useEffect(() => {
+    // TODO: API 호출로 데이터 가져오기
+    // const fetchBatteryInfo = async () => {
+    //   try {
+    //     const response = await fetch(`/api/battery/${deviceId}`);
+    //     const data = await response.json();
+    //     setBatteryInfo(data);
+    //   } catch (error) {
+    //     console.error('Error fetching battery info:', error);
+    //   }
+    // };
+    // fetchBatteryInfo();
+  }, [deviceId]);
+
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -28,35 +64,35 @@ const BatteryInfoModal: React.FC<BatteryInfoModalProps> = ({ deviceId, onClose }
         <div className="grid grid-cols-2 gap-4 text-white">
           <div className="border border-gray-600 rounded p-3">
             <h3 className="text-gray-400 mb-2">사업장</h3>
-            <p>사이트 1</p>
+            <p>{batteryInfo.workplace}</p>
           </div>
           <div className="border border-gray-600 rounded p-3">
             <h3 className="text-gray-400 mb-2">그룹명</h3>
-            <p>그룹 A</p>
+            <p>{batteryInfo.groupName}</p>
           </div>
           <div className="border border-gray-600 rounded p-3">
             <h3 className="text-gray-400 mb-2">기기명</h3>
-            <p>{deviceId}</p>
+            <p>{batteryInfo.deviceId}</p>
           </div>
           <div className="border border-gray-600 rounded p-3">
-            <h3 className="text-gray-400 mb-2">배터리 팩 ID</h3>
-            <p>BAT001</p>
+            <h3 className="text-gray-400 mb-2">어플리케이션</h3>
+            <p>{batteryInfo.application}</p>
+          </div>
+          <div className="border border-gray-600 rounded p-3">
+            <h3 className="text-gray-400 mb-2">팩 ID</h3>
+            <p>{batteryInfo.packId}</p>
+          </div>
+          <div className="border border-gray-600 rounded p-3">
+            <h3 className="text-gray-400 mb-2">팩 모델정보</h3>
+            <p>{batteryInfo.packModel}</p>
           </div>
           <div className="border border-gray-600 rounded p-3">
             <h3 className="text-gray-400 mb-2">사용자</h3>
-            <p>홍길동</p>
+            <p>{batteryInfo.userName}</p>
           </div>
           <div className="border border-gray-600 rounded p-3">
             <h3 className="text-gray-400 mb-2">연락처</h3>
-            <p>010-1234-5678</p>
-          </div>
-          <div className="border border-gray-600 rounded p-3">
-            <h3 className="text-gray-400 mb-2">등록일자</h3>
-            <p>2024-03-14</p>
-          </div>
-          <div className="border border-gray-600 rounded p-3">
-            <h3 className="text-gray-400 mb-2">상태정보</h3>
-            <p>정상</p>
+            <p>{batteryInfo.contact}</p>
           </div>
         </div>
       </div>

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import TableData from '@/components/table/TableData';
+import useCstCompany from '@/api/customer/cstCompany';
+import { useTranslation } from 'react-i18next';
 
 interface CompanySelectPopupProps {
   onClose: () => void;
-  onConfirm: (selectedCompany: string) => void;
+  onConfirm: (selectedCompany: { name: string; id: number }) => void;
+  selectedSiteId?: number;
 }
 
 interface CompanyItem {
@@ -15,18 +18,25 @@ interface CompanyItem {
   description: string;
 }
 
-const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConfirm }) => {
+const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConfirm, selectedSiteId }) => {
+  const { t: trans } = useTranslation('translation');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCompanyCode, setSelectedCompanyCode] = useState<string>('');
+  
+  const { dataListCompany, storeCompanyList } = useCstCompany();
 
-  const companies: CompanyItem[] = [
-    { id: 1, code: 'Site1', name: 'FF캠핑카', address: '', description: '' },
-    { id: 2, code: 'Site2', name: '캠핑홈', address: '', description: '' },
-    { id: 3, code: 'Site3', name: '광일산업', address: '', description: '' },
-    { id: 4, code: 'Site4', name: '유니캠프', address: '', description: '' },
-    { id: 5, code: 'Site5', name: '스타모빌', address: '', description: '' },
-    { id: 6, code: 'Site6', name: '케이원캠핑', address: '', description: '' },
-  ];
+  useEffect(() => {
+    storeCompanyList(trans);
+  }, [trans]);
+
+  useEffect(() => {
+    if (dataListCompany && selectedSiteId) {
+      const selectedCompany = dataListCompany.find(company => company.site_id === selectedSiteId);
+      if (selectedCompany) {
+        setSelectedCompanyCode(selectedCompany.code);
+      }
+    }
+  }, [dataListCompany, selectedSiteId]);
 
   const columns = [
     {
@@ -68,10 +78,19 @@ const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConf
     }
   ];
 
-  const filteredCompanies = companies.filter(company => 
-    company.code.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    company.name.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
+  const filteredCompanies = useMemo(() => {
+    if (!dataListCompany) return [];
+    return dataListCompany.map(company => ({
+      id: company.site_id,
+      code: company.code,
+      name: company.site_name,
+      address: company.address_main,
+      description: company.description
+    })).filter(company => 
+      company.code.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      company.name.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }, [dataListCompany, searchKeyword]);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
@@ -101,10 +120,12 @@ const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConf
             </div>
 
             <div className="h-[400px] overflow-auto">
-              <TableData
+              <TableData<CompanyItem>
                 data={filteredCompanies}
                 columns={columns}
                 className="min-h-0"
+                emptyMessage={trans('데이터가 없습니다.')}
+                onClick={(row: CompanyItem) => setSelectedCompanyCode(row.code)}
               />
             </div>
           </div>
@@ -118,12 +139,16 @@ const CompanySelectPopup: React.FC<CompanySelectPopupProps> = ({ onClose, onConf
             </button>
             <button
               onClick={() => {
-                const selectedCompany = companies.find(c => c.code === selectedCompanyCode);
+                const selectedCompany = filteredCompanies.find(c => c.code === selectedCompanyCode);
                 if (selectedCompany) {
-                  onConfirm(selectedCompany.name);
+                  onConfirm({ 
+                    name: selectedCompany.name, 
+                    id: selectedCompany.id 
+                  });
                 }
               }}
               className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-500/80 transition-colors"
+              disabled={!selectedCompanyCode}
             >
               확인
             </button>

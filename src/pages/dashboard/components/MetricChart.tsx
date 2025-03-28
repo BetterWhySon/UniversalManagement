@@ -121,7 +121,7 @@ const MetricChart: React.FC<MetricChartProps> = ({
           {isWorst ? 'worst' : 'best'}
         </button>
       </div>
-      <div className="flex-grow h-[200px]">
+      <div className="flex-grow min-h-[170px]">
         <BarChart 
           data={sortedData}
           isTimeData={false}

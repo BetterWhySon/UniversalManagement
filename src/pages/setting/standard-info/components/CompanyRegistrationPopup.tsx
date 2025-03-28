@@ -85,7 +85,7 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
     }).open();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // 필수 필드 검증
@@ -94,14 +94,20 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
       return;
     }
     
-    onSave({
-      code: formData.code,
-      company: formData.company,
-      postcode: formData.postcode,
-      address: `(${formData.postcode}) ${formData.address}`,
-      detailAddress: formData.detailAddress,
-      description: formData.description
-    });
+    try {
+      await onSave({
+        code: formData.code,
+        company: formData.company,
+        postcode: formData.postcode,
+        address: formData.address.replace(`(${formData.postcode}) `, ''),  // 우편번호를 제외한 순수 주소만 전달
+        detailAddress: formData.detailAddress,
+        description: formData.description
+      });
+      onClose(); // 저장 성공 시 팝업 닫기
+    } catch (error) {
+      console.error('저장 중 오류가 발생했습니다:', error);
+      alert('저장 중 오류가 발생했습니다.');
+    }
   };
 
   return (
@@ -119,16 +125,17 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
         <form noValidate onSubmit={handleSubmit}>
           <div className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center">
-                <label className="w-32 text-white">코드 :</label>
-                <input
-                  type="text"
-                  className="flex-1 h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"
-                  value={formData.code}
-                  onChange={(e) => setFormData({...formData, code: e.target.value})}
-                  required
-                />
-              </div>
+              {mode === 'edit' && (
+                <div className="flex items-center">
+                  <label className="w-32 text-white">코드 :</label>
+                  <input
+                    type="text"
+                    className="flex-1 h-10 text-base px-4 bg-gray-700 rounded-lg outline-none border-none text-white cursor-not-allowed opacity-70"
+                    value={formData.code}
+                    disabled
+                  />
+                </div>
+              )}
 
               <div className="flex items-center">
                 <label className="w-32 text-white">사업장 :</label>

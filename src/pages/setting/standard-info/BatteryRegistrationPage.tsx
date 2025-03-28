@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
@@ -8,24 +8,22 @@ import GroupSelectPopup from './components/GroupSelectPopup';
 import BatteryEditPopup from './components/BatteryEditPopup';
 import DeleteConfirmPopup from './components/DeleteConfirmPopup';
 import CompanyGroupAssignPopup from './components/CompanyGroupAssignPopup';
+import useCstBattery from '@/api/customer/cstBattery';
+import useCstCompanyGroupMapping from '@/api/customer/cstCompanyGroupMapping';
+import type { typeCstBattery } from '@/api/types/customer/typeCstBattery';
 
-interface BatteryData {
-  id: number;
+interface BatteryData extends typeCstBattery {
   company: string;
   group: string;
-  deviceName: string;
-  application: string;
-  manufacturer: string;
-  packId: string;
-  packModel: string;
-  user: string;
-  contact: string;
-  address: string;
-  registrationDate: string;
+  id: number; // battery_id를 id로 매핑
+  user_name: string; // phonenumber를 user_name으로 매핑
+  contact: string; // phonenumber를 contact로 매핑
 }
 
 const BatteryRegistrationPage: React.FC = () => {
   const { t: trans } = useTranslation('translation');
+  const { dataListBattery, storeBatteryList, storeBatteryAssign, storeBatteryRelease } = useCstBattery();
+  const { storeCompanyGroupList, dataListCompanyGroup } = useCstCompanyGroupMapping();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedGroup, setSelectedGroup] = useState<string>('');
@@ -34,12 +32,16 @@ const BatteryRegistrationPage: React.FC = () => {
   const [isCompanySelectOpen, setIsCompanySelectOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
-  const [editData, setEditData] = useState<BatteryData | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [alertMessage, setAlertMessage] = useState('배터리를 선택해주세요.');
   const [isCompanyGroupAssignOpen, setIsCompanyGroupAssignOpen] = useState(false);
   const [tempSelectedCompany, setTempSelectedCompany] = useState<string>('');
   const [tempSelectedGroup, setTempSelectedGroup] = useState<string>('');
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number>(0);
+  const [isReleaseConfirmOpen, setIsReleaseConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    storeBatteryList(trans);
+  }, [storeBatteryList, trans]);
 
   // 이벤트 핸들러 수정
   const handleCompanyAssign = () => {
@@ -51,11 +53,6 @@ const BatteryRegistrationPage: React.FC = () => {
   };
 
   const handleGroupAssign = () => {
-    if (selectedRows.length === 0) {
-      setShowAlert(true);
-      return;
-    }
-
     if (!tempSelectedCompany) {
       setAlertMessage('사업장을 먼저 지정해주세요.');
       setShowAlert(true);
@@ -67,8 +64,16 @@ const BatteryRegistrationPage: React.FC = () => {
     const companies = new Set(selectedItems.map(item => item.company));
 
     if (companies.size > 1) {
-      setShowAlert(true);
       setAlertMessage('같은 사업장만 선택 가능합니다.');
+      setShowAlert(true);
+      return;
+    }
+
+    // 선택된 사업장의 groups 데이터를 가져옴
+    const selectedCompanyData = dataListCompanyGroup?.find(company => company.site_id === selectedCompanyId);
+    if (!selectedCompanyData || !selectedCompanyData.groups) {
+      setAlertMessage('선택된 사업장의 그룹 데이터가 없습니다.');
+      setShowAlert(true);
       return;
     }
 
@@ -80,7 +85,25 @@ const BatteryRegistrationPage: React.FC = () => {
       setShowAlert(true);
       return;
     }
-    // TODO: 사업장/그룹 지정해제 로직 구현
+    setIsReleaseConfirmOpen(true);
+  };
+
+  const handleConfirmRelease = async () => {
+    try {
+      // 배터리 지정해제 API 호출
+      await storeBatteryRelease(selectedRows, trans);
+
+      // 성공 시 상태 초기화
+      setSelectedRows([]);
+      setIsReleaseConfirmOpen(false);
+
+      // 배터리 목록 새로고침
+      await storeBatteryList(trans);
+    } catch (error) {
+      console.error('배터리 지정해제 중 오류 발생:', error);
+      setAlertMessage('배터리 지정해제 중 오류가 발생했습니다.');
+      setShowAlert(true);
+    }
   };
 
   // 전체 선택 핸들러 추가
@@ -101,53 +124,47 @@ const BatteryRegistrationPage: React.FC = () => {
     );
   };
 
-  // 더미 데이터 수정
-  const dummyData: BatteryData[] = [
-    { 
-      id: 1, 
-      company: '서울지점', 
-      group: 'FF캠핑카', 
-      deviceName: 'BAT-001',
-      application: '캠핑카',
-      manufacturer: '삼성SDI',
-      packId: 'PACK-001',
-      packModel: 'MODEL-A1',
-      user: '홍길동',
-      contact: '010-1234-5678',
-      address: '서울시 강남구 테헤란로 123', 
-      registrationDate: '2024.03.19'
-    },
-    { 
-      id: 2, 
-      company: '부산지점', 
-      group: '마린스포츠', 
-      deviceName: 'BAT-002',
-      application: '수상레저',
-      manufacturer: 'LG에너지솔루션',
-      packId: 'PACK-002',
-      packModel: 'MODEL-B2',
-      user: '김철수',
-      contact: '010-2345-6789',
-      address: '부산시 해운대구 마린시티로 456', 
-      registrationDate: '2024.03.18'
-    }
-  ];
-
   const getFilteredData = useMemo(() => {
-    return dummyData.filter(item => {
-      const matchesKeyword = !searchKeyword || 
-        item.user.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.contact.includes(searchKeyword);
-      
-      const matchesCompany = !selectedCompany || item.company === selectedCompany;
-      const matchesGroup = !selectedGroup || item.group === selectedGroup;
-      
-      const matchesUnassigned = !showUnassignedOnly || 
-        (item.company === '미지정' && item.group === '미지정');
+    if (!dataListBattery) return [];
+    
+    let filteredData = dataListBattery.map(item => ({
+      ...item,
+      id: item.battery_id,
+      company: item.site_name || '미지정',
+      group: item.group_name || '미지정',
+      user_name: item.user_name,
+      contact: item.phonenumber
+    })) as BatteryData[];
 
-      return matchesKeyword && matchesCompany && matchesGroup && matchesUnassigned;
-    });
-  }, [searchKeyword, selectedCompany, selectedGroup, showUnassignedOnly, dummyData]);
+    // 검색어가 있는 경우 모든 필드에서 검색
+    if (searchKeyword) {
+      const keyword = searchKeyword.toLowerCase();
+      filteredData = filteredData.filter(item => 
+        Object.values(item).some(value => 
+          String(value).toLowerCase().includes(keyword)
+        )
+      );
+    }
+
+    // 사업장 필터링
+    if (selectedCompany) {
+      filteredData = filteredData.filter(item => item.company === selectedCompany);
+    }
+
+    // 그룹 필터링
+    if (selectedGroup) {
+      filteredData = filteredData.filter(item => item.group === selectedGroup);
+    }
+
+    // 미지정 사업장/그룹만 보기
+    if (showUnassignedOnly) {
+      filteredData = filteredData.filter(item => 
+        item.company === '미지정' || item.group === '미지정'
+      );
+    }
+
+    return filteredData;
+  }, [searchKeyword, selectedCompany, selectedGroup, showUnassignedOnly, dataListBattery]);
 
   const columns = useMemo(() => [
     {
@@ -156,7 +173,7 @@ const BatteryRegistrationPage: React.FC = () => {
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '40px',
       render: (row: BatteryData) => (
-        <div className="px-3">
+        <div className="px-3" onClick={(e) => e.stopPropagation()}>
           <input
             type="checkbox"
             checked={selectedRows.includes(row.id)}
@@ -180,13 +197,13 @@ const BatteryRegistrationPage: React.FC = () => {
     },
     {
       name: '기기명',
-      dataIndex: 'deviceName',
+      dataIndex: 'device_name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '80px'
     },
     {
       name: '어플리케이션',
-      dataIndex: 'application',
+      dataIndex: 'category',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '100px'
     },
@@ -198,19 +215,19 @@ const BatteryRegistrationPage: React.FC = () => {
     },
     {
       name: '팩 ID',
-      dataIndex: 'packId',
+      dataIndex: 'pack_id',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '80px'
     },
     {
       name: '팩 모델정보',
-      dataIndex: 'packModel',
+      dataIndex: 'model_name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '100px'
     },
     {
       name: '사용자',
-      dataIndex: 'user',
+      dataIndex: 'user_name',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '80px'
     },
@@ -222,120 +239,113 @@ const BatteryRegistrationPage: React.FC = () => {
     },
     {
       name: '주소',
-      dataIndex: 'address',
+      dataIndex: 'address_main',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '200px'
     },
     {
       name: '등록일자',
-      dataIndex: 'registrationDate',
+      dataIndex: 'registration_date',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '80px'
-    },
-    {
-      name: '관리',
-      dataIndex: 'actions',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '100px',
-      render: (row: BatteryData) => (
-        <div className="flex items-center justify-center gap-2">
-          <button 
-            onClick={() => setEditData(row)}
-            className="opacity-80 hover:opacity-100 transition-opacity"
-          >
-            <svg 
-              className="w-5 h-5 text-white"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" 
-              />
-            </svg>
-          </button>
-          <button 
-            onClick={() => handleDelete(row.id)}
-            className="opacity-80 hover:opacity-100 transition-opacity"
-          >
-            <svg 
-              className="w-5 h-5 text-white"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
-              />
-            </svg>
-          </button>
-        </div>
-      )
     }
   ], [selectedRows, getFilteredData]);
 
   // 사업장 목록 (중복 제거)
-  const companies = [...new Set(dummyData.map(item => item.company))];
+  const companies = [...new Set(getFilteredData.map(item => item.company))];
   // 그룹 목록 (중복 제거)
-  const groups = [...new Set(dummyData.map(item => item.group))];
+  const groups = [...new Set(getFilteredData.map(item => item.group))];
 
-  const handleCompanySelect = (companyName: string) => {
-    // 선택된 사업장 처리 로직
-    setTempSelectedCompany(companyName);
+  const handleCompanySelect = (selectedCompany: { name: string; id: number }) => {
+    setTempSelectedCompany(selectedCompany.name);
+    setSelectedCompanyId(selectedCompany.id);
     setIsCompanySelectOpen(false);
   };
 
-  const handleGroupSelect = (selectedGroups: string) => {
-    // 선택된 그룹 처리 로직
-    setTempSelectedGroup(selectedGroups);
+  const handleGroupSelect = (selectedGroups: number[]) => {
+    if (selectedGroups.length > 0) {
+      const selectedCompanyData = dataListCompanyGroup?.find(company => company.site_id === selectedCompanyId);
+      if (selectedCompanyData) {
+        const selectedGroup = selectedCompanyData.groups.find(group => group.group_id === selectedGroups[0]);
+        if (selectedGroup) {
+          setTempSelectedGroup(selectedGroup.group_name);
+        }
+      }
+    }
     setIsGroupSelectOpen(false);
   };
 
-  const handleCompanyGroupConfirm = (type: 'company' | 'group', value: string) => {
-    if (type === 'company') {
-      // TODO: 실제 사업장 저장 로직 구현
-      console.log('Assigned company:', value);
-    } else {
-      // TODO: 실제 그룹 저장 로직 구현
-      console.log('Assigned group:', value);
-    }
-    setIsCompanyGroupAssignOpen(false);
-  };
-
-  // 수정, 해제 핸들러 추가
-  const handleEdit = (id: number) => {
-    const batteryToEdit = dummyData.find(item => item.id === id);
-    if (batteryToEdit) {
-      setEditData(batteryToEdit);
-    }
-  };
-
-  const handleSaveEdit = (data: BatteryData) => {
-    // TODO: 수정된 데이터 저장 로직 구현
-    console.log('Saved:', data);
-    setEditData(null);
-  };
-
-  const handleReset = (id: number) => {
-    // TODO: 해제 로직 구현
-    console.log('Reset:', id);
-  };
-
-  const handleDelete = (id: number) => {
-    setDeleteTarget(id);
-  };
-
-  const handleCompanyGroupAssign = () => {
+  const handleCompanyGroupConfirm = async (type: 'company' | 'group', value: string) => {
     if (selectedRows.length === 0) {
       setShowAlert(true);
       return;
     }
+
+    if (type === 'company') {
+      // 사업장만 선택된 경우
+      if (!tempSelectedCompany) {
+        setAlertMessage('사업장을 선택해주세요.');
+        setShowAlert(true);
+        return;
+      }
+    }
+
+    try {
+      // 선택된 그룹 ID 찾기 (그룹이 선택된 경우에만)
+      let groupId = null;
+      if (tempSelectedGroup) {
+        const selectedCompanyData = dataListCompanyGroup?.find(company => company.site_id === selectedCompanyId);
+        if (!selectedCompanyData) {
+          setAlertMessage('선택된 사업장의 그룹 데이터가 없습니다.');
+          setShowAlert(true);
+          return;
+        }
+
+        const selectedGroupData = selectedCompanyData.groups.find(group => group.group_name === tempSelectedGroup);
+        if (!selectedGroupData) {
+          setAlertMessage('선택된 그룹 데이터가 없습니다.');
+          setShowAlert(true);
+          return;
+        }
+        groupId = selectedGroupData.group_id;
+      }
+
+      // 배터리 등록 API 호출
+      await storeBatteryAssign(
+        selectedCompanyId,
+        groupId || 0, // 그룹이 선택되지 않은 경우 0으로 전달
+        selectedRows,
+        trans
+      );
+
+      // 성공 시 상태 초기화
+      setTempSelectedCompany('');
+      setTempSelectedGroup('');
+      setSelectedCompanyId(0);
+      setSelectedRows([]);
+      setIsCompanyGroupAssignOpen(false);
+
+      // 배터리 목록 새로고침
+      await storeBatteryList(trans);
+    } catch (error) {
+      console.error('배터리 등록 중 오류 발생:', error);
+      setAlertMessage('배터리 등록 중 오류가 발생했습니다.');
+      setShowAlert(true);
+    }
+  };
+
+  const handleCompanyGroupAssign = async () => {
+    if (selectedRows.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+    // 선택된 사업장과 그룹 초기화
+    setTempSelectedCompany('');
+    setTempSelectedGroup('');
+    setSelectedCompanyId(0);
+    
+    await storeCompanyGroupList(trans);
+    console.log('Company Group Data:', dataListCompanyGroup); // 데이터 확인용
     setIsCompanyGroupAssignOpen(true);
   };
 
@@ -396,10 +406,12 @@ const BatteryRegistrationPage: React.FC = () => {
             isPagination
             pagination={{
               total: getFilteredData.length,
-              pageSize: 14,
+              pageSize: 12,
             }}
             paginationMarginTop='32px'
-            // emptyMessage={trans('데이터가 없습니다.')}
+            emptyMessage={trans('데이터가 없습니다.')}
+            onClick={(row) => handleSelectRow(row.id)}
+            className="cursor-pointer"
           />
         </div>
 
@@ -420,6 +432,8 @@ const BatteryRegistrationPage: React.FC = () => {
           onClose={() => setIsGroupSelectOpen(false)}
           onConfirm={handleGroupSelect}
           isSingleSelect={isCompanyGroupAssignOpen}
+          site_id={selectedCompanyId}
+          groups={dataListCompanyGroup?.find(company => company.site_id === selectedCompanyId)?.groups || []}
         />
       )}
 
@@ -433,35 +447,23 @@ const BatteryRegistrationPage: React.FC = () => {
         />
       )}
 
-      {editData && (
-        <BatteryEditPopup
-          onClose={() => setEditData(null)}
-          onSave={handleSaveEdit}
-          initialData={editData}
-        />
-      )}
-
-      {deleteTarget && (
-        <DeleteConfirmPopup
-          onClose={() => setDeleteTarget(null)}
-          onConfirm={() => {
-            // TODO: 삭제 로직 구현
-            console.log('Deleted:', deleteTarget);
-            setDeleteTarget(null);
-          }}
-          title="배터리 삭제"
-          message="해당 배터리를 삭제하시겠습니까?"
-        />
-      )}
-
       {isCompanyGroupAssignOpen && (
         <CompanyGroupAssignPopup
           onClose={() => setIsCompanyGroupAssignOpen(false)}
           onCompanyAssign={() => setIsCompanySelectOpen(true)}
-          onGroupAssign={() => setIsGroupSelectOpen(true)}
+          onGroupAssign={handleGroupAssign}
           onConfirm={handleCompanyGroupConfirm}
           selectedCompany={tempSelectedCompany}
           selectedGroup={tempSelectedGroup}
+        />
+      )}
+
+      {isReleaseConfirmOpen && (
+        <DeleteConfirmPopup
+          onClose={() => setIsReleaseConfirmOpen(false)}
+          onConfirm={handleConfirmRelease}
+          title="사업장/그룹 지정해제"
+          message="선택한 배터리의 사업장/그룹 지정을 해제하시겠습니까?"
         />
       )}
     </div>

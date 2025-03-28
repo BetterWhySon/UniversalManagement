@@ -7,16 +7,30 @@ const MapArea = () => {
   const [isDetailMap, setIsDetailMap] = useState(false);
   const [isRealtime, setIsRealtime] = useState(false);
   const mapRef = useRef<L.Map | null>(null);  // 맵 인스턴스를 저장할 ref
+  const [selectedLocation, setSelectedLocation] = useState<typeof locationData[0] | null>(null);
 
   // 상수 정의
   const DEFAULT_ZOOM_LEVEL = 6.9;
 
+  // 배터리 상태 타입 정의
+  type BatteryState = 'standby' | 'discharging' | 'charging' | 'offline';
+
+  // 상태별 색상 매핑
+  const stateColors: Record<BatteryState, string> = {
+    standby: '#FFD03B',      // 사용대기
+    discharging: '#6CFF31',  // 방전 중
+    charging: '#5E52FC',     // 충전 중
+    offline: '#A1A1A1'       // 오프라인
+  };
+
   // 그룹의 중심 좌표를 기준으로 배터리 좌표를 생성하는 함수
   const generateBatteryCoordinates = (centerLat: number, centerLng: number, count: number) => {
+    const states: BatteryState[] = ['standby', 'discharging', 'charging', 'offline'];
     return Array(count).fill(null).map((_, index) => {
       const lat = centerLat + (Math.random() - 0.5) * 0.02;  // ±0.01 범위
       const lng = centerLng + (Math.random() - 0.5) * 0.02;  // ±0.01 범위
-      return { lat, lng };
+      const state = states[Math.floor(Math.random() * states.length)];  // 랜덤 상태 할당
+      return { lat, lng, state };
     });
   };
 
@@ -41,7 +55,8 @@ const MapArea = () => {
             id: `ff-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -55,7 +70,8 @@ const MapArea = () => {
             id: `bayrun-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 101).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         }
       ]
@@ -79,7 +95,8 @@ const MapArea = () => {
             id: `camp-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -93,7 +110,8 @@ const MapArea = () => {
             id: `drone-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         }
       ]
@@ -117,7 +135,8 @@ const MapArea = () => {
             id: `outdoor-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -131,7 +150,8 @@ const MapArea = () => {
             id: `bike-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -145,7 +165,8 @@ const MapArea = () => {
             id: `camp1-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -159,7 +180,8 @@ const MapArea = () => {
             id: `camp2-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -173,7 +195,8 @@ const MapArea = () => {
             id: `drone1-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -187,7 +210,8 @@ const MapArea = () => {
             id: `drone2-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -201,7 +225,8 @@ const MapArea = () => {
             id: `leisure1-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -215,7 +240,8 @@ const MapArea = () => {
             id: `leisure2-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -229,7 +255,8 @@ const MapArea = () => {
             id: `sports1-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -243,7 +270,8 @@ const MapArea = () => {
             id: `sports2-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -257,7 +285,8 @@ const MapArea = () => {
             id: `adventure1-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -271,7 +300,8 @@ const MapArea = () => {
             id: `adventure2-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         }
       ]
@@ -295,7 +325,8 @@ const MapArea = () => {
             id: `gwangju-out-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -309,7 +340,8 @@ const MapArea = () => {
             id: `gwangju-bike-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         }
       ]
@@ -333,7 +365,8 @@ const MapArea = () => {
             id: `incheon-mar-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         },
         {
@@ -347,21 +380,33 @@ const MapArea = () => {
             id: `incheon-drone-${String(i + 1).padStart(3, '0')}`,
             name: `BAT-${String(i + 1).padStart(3, '0')}`,
             lat: coord.lat,
-            lng: coord.lng
+            lng: coord.lng,
+            state: coord.state
           }))
         }
       ]
     }
   ];
 
-  // 실시간 마커 데이터 (모든 배터리 데이터 통합)
+  // 실시간 마커 데이터 생성
   const realtimeMarkers = locationData.flatMap(location => 
     location.groups.flatMap(group => 
       group.batteries.map(battery => ({
         lat: battery.lat,
         lng: battery.lng,
         id: battery.id,
-        name: battery.name
+        name: battery.name,
+        state: battery.state as BatteryState,
+        info: {
+          company: location.name,
+          group: group.name,
+          deviceId: battery.name,
+          application: '배터리',
+          packId: battery.id,
+          packModel: '기본 모델',
+          user: '관리자',
+          contact: '010-1234-5678'
+        }
       }))
     )
   );
@@ -387,9 +432,11 @@ const MapArea = () => {
     if (!mapRef.current) return;
 
     setIsDetailMap(true);
+    setSelectedLocation(marker);
 
-    // 지도 뷰 변경
-    mapRef.current.setView([marker.lat, marker.lng], 12, {
+    // 지도 뷰 변경 - 서쪽으로 1km 이동
+    const lngOffset = -0.015;  // 약 1km에 해당하는 경도 차이
+    mapRef.current.setView([marker.lat, marker.lng - lngOffset], 12, {
       animate: true,
       duration: 1
     });
@@ -403,22 +450,22 @@ const MapArea = () => {
       }
     });
 
-    // 그룹 마커 추가
-    const groupMarkerIcon = L.divIcon({
+    // 클릭한 사업장 마커만 다시 표시
+    const markerIcon = L.divIcon({
       className: 'custom-marker',
       html: `
         <div style="
-          width: 20px; 
-          height: 20px; 
-          background-color: #3B82F6; 
+          width: 24px; 
+          height: 24px; 
+          background-color: #F59E0B; 
           border-radius: 50% 50% 50% 0;
           transform: rotate(-45deg);
           position: relative;
           box-shadow: 0 0 0 2px white;
         ">
           <div style="
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             background: white;
             border-radius: 50%;
             position: absolute;
@@ -428,21 +475,18 @@ const MapArea = () => {
           "></div>
         </div>
       `,
-      iconSize: [20, 20],
-      iconAnchor: [10, 20]
+      iconSize: [24, 24],
+      iconAnchor: [12, 24]
     });
 
-    // 선택된 지역의 그룹들을 마커로 표시
-    marker.groups.forEach(group => {
-      L.marker([group.lat, group.lng], { icon: groupMarkerIcon })
-        .bindTooltip(`${group.name} (${group.active}/${group.total})`, {
-          permanent: true,
-          direction: 'top',
-          offset: [0, -20],
-          className: 'custom-tooltip'
-        })
-        .addTo(mapRef.current!);
-    });
+    L.marker([marker.lat, marker.lng], { icon: markerIcon })
+      .bindTooltip(`${marker.name} (${marker.active}/${marker.total})`, {
+        permanent: true,
+        direction: 'top',
+        offset: [0, -20],
+        className: 'custom-tooltip'
+      })
+      .addTo(mapRef.current);
   };
 
   // 기본 화면으로 돌아가는 함수
@@ -451,6 +495,7 @@ const MapArea = () => {
 
     mapRef.current.setView([35.9000, 127.7498], DEFAULT_ZOOM_LEVEL);
     setIsDetailMap(false);
+    setSelectedLocation(null);
 
     // 기존 마커 모두 제거
     mapRef.current.eachLayer((layer) => {
@@ -464,16 +509,29 @@ const MapArea = () => {
       realtimeMarkers.forEach(marker => {
         L.circleMarker([marker.lat, marker.lng], {
           radius: 4,
-          fillColor: '#3B82F6',
+          fillColor: stateColors[marker.state],
           color: '#fff',
           weight: 1,
           opacity: 1,
           fillOpacity: 0.8
         })
-        .bindTooltip(marker.name, {
+        .bindTooltip(`
+          <div class="bg-hw-dark-1 text-white p-4 rounded shadow-lg">
+            <div>• 사업장 : ${marker.info.company}</div>
+            <div>• 그룹 : ${marker.info.group}</div>
+            <div>• 기기명 : ${marker.info.deviceId}</div>
+            <div>• 어플리케이션 : ${marker.info.application}</div>
+            <div>• 팩ID : ${marker.info.packId}</div>
+            <div>• 팩모델 : ${marker.info.packModel}</div>
+            <div>• 사용자 : ${marker.info.user}</div>
+            <div>• 연락처 : ${marker.info.contact}</div>
+          </div>
+        `, {
           permanent: false,
           direction: 'top',
-          offset: [0, -5]
+          offset: [0, -5],
+          className: 'custom-tooltip',
+          interactive: true
         })
         .addTo(mapRef.current!);
       });
@@ -539,68 +597,72 @@ const MapArea = () => {
       realtimeMarkers.forEach(marker => {
         L.circleMarker([marker.lat, marker.lng], {
           radius: 4,
-          fillColor: '#3B82F6',
+          fillColor: stateColors[marker.state],
           color: '#fff',
           weight: 1,
           opacity: 1,
           fillOpacity: 0.8
         })
-        .bindTooltip(marker.name, {
+        .bindTooltip(`
+          <div class="bg-hw-dark-1 text-white p-4 rounded shadow-lg">
+            <div>• 사업장 : ${marker.info.company}</div>
+            <div>• 그룹 : ${marker.info.group}</div>
+            <div>• 기기명 : ${marker.info.deviceId}</div>
+            <div>• 어플리케이션 : ${marker.info.application}</div>
+            <div>• 팩ID : ${marker.info.packId}</div>
+            <div>• 팩모델 : ${marker.info.packModel}</div>
+            <div>• 사용자 : ${marker.info.user}</div>
+            <div>• 연락처 : ${marker.info.contact}</div>
+          </div>
+        `, {
           permanent: false,
           direction: 'top',
-          offset: [0, -5]
+          offset: [0, -5],
+          className: 'custom-tooltip',
+          interactive: true
         })
         .addTo(mapRef.current!);
       });
     } else {  // 실시간 -> Site별 전환
       setIsRealtime(false);
-      if (isDetailMap) {  // 그룹 화면일 경우
-        // 현재 보고 있는 지점의 그룹 마커들 표시
-        const selectedLocation = locationData.find(location => 
-          mapRef.current?.getCenter().lat.toFixed(4) === location.lat.toFixed(4) &&
-          mapRef.current?.getCenter().lng.toFixed(4) === location.lng.toFixed(4)
-        );
-
-        if (selectedLocation) {
-          const groupMarkerIcon = L.divIcon({
-            className: 'custom-marker',
-            html: `
+      if (isDetailMap && selectedLocation) {  // 그룹 화면일 경우
+        // 선택된 지점 마커 표시
+        const markerIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              width: 24px; 
+              height: 24px; 
+              background-color: #F59E0B; 
+              border-radius: 50% 50% 50% 0;
+              transform: rotate(-45deg);
+              position: relative;
+              box-shadow: 0 0 0 2px white;
+            ">
               <div style="
-                width: 20px; 
-                height: 20px; 
-                background-color: #3B82F6; 
-                border-radius: 50% 50% 50% 0;
-                transform: rotate(-45deg);
-                position: relative;
-                box-shadow: 0 0 0 2px white;
-              ">
-                <div style="
-                  width: 6px;
-                  height: 6px;
-                  background: white;
-                  border-radius: 50%;
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%);
-                "></div>
-              </div>
-            `,
-            iconSize: [20, 20],
-            iconAnchor: [10, 20]
-          });
+                width: 8px;
+                height: 8px;
+                background: white;
+                border-radius: 50%;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+              "></div>
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 24]
+        });
 
-          selectedLocation.groups.forEach(group => {
-            L.marker([group.lat, group.lng], { icon: groupMarkerIcon })
-              .bindTooltip(`${group.name} (${group.active}/${group.total})`, {
-                permanent: true,
-                direction: 'top',
-                offset: [0, -20],
-                className: 'custom-tooltip'
-              })
-              .addTo(mapRef.current!);
-          });
-        }
+        L.marker([selectedLocation.lat, selectedLocation.lng], { icon: markerIcon })
+          .bindTooltip(`${selectedLocation.name} (${selectedLocation.active}/${selectedLocation.total})`, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -20],
+            className: 'custom-tooltip'
+          })
+          .addTo(mapRef.current);
       } else {  // 전체 화면일 경우
         // 지점 마커 표시
         const markerIcon = L.divIcon({
@@ -650,9 +712,9 @@ const MapArea = () => {
   // 그룹 리스트 컴포넌트 수정
   const GroupList = ({ groups }: { groups: typeof locationData[0]['groups'] }) => {
     return (
-      <div className="absolute bottom-0 right-1 z-10 bg-transparent pb-0 pt-4 px-4 w-[350px]">
+      <div className="absolute bottom-0 right-1 z-10 bg-transparent w-[130px] h-[400px]">
         <div 
-          className="space-y-2 max-h-[220px] overflow-y-auto"
+          className="space-y-1.5 overflow-y-auto py-1.5 h-full"
           style={{ msOverflowStyle: 'none', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           <style>
@@ -667,20 +729,34 @@ const MapArea = () => {
               key={group.id} 
               className="flex flex-row-reverse items-center justify-start"
             >
-              <div className="flex flex-col items-center justify-center bg-slate-700 rounded-full w-10 h-10 relative z-20">
-                <div className="text-xs">
+              <div className="flex flex-col items-center justify-center bg-slate-700 rounded-full w-8 h-8 relative z-20">
+                <div className="text-[10px] leading-none">
                   <span className="text-green-400">{group.active}</span>
-                  <span className="text-white"> /</span>
+                  <span className="text-white">/</span>
+                  <span className="text-white">{group.total}</span>
                 </div>
-                <div className="text-white text-xs">{group.total}</div>
               </div>
-              <div className="bg-blue-100 text-xs text-slate-600 pl-3 pr-6 py-1 rounded-full mr-[-20px] ml-[120px] h-[32px] flex items-center w-[120px] relative z-10">
-                <div className="break-normal line-clamp-2 text-center w-full">
+              <div className="bg-white/90 text-xs text-slate-600 px-2 py-1 rounded-full mr-[-12px] w-[100px] h-[24px] flex items-center relative z-10">
+                <div className="truncate text-center w-full">
                   {group.name}
                 </div>
               </div>
             </div>
           ))}
+          <div className="flex flex-row-reverse items-center justify-start">
+            <div className="flex flex-col items-center justify-center bg-slate-700 rounded-full w-8 h-8 relative z-20">
+              <div className="text-[10px] leading-none">
+                <span className="text-[#3CB371]">4</span>
+                <span className="text-white">/</span>
+                <span className="text-white">23</span>
+              </div>
+            </div>
+            <div className="bg-white/90 text-xs text-slate-600 px-2 py-1 rounded-full mr-[-12px] w-[100px] h-[24px] flex items-center relative z-10">
+              <div className="truncate text-center w-full">
+                미지정
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -701,16 +777,15 @@ const MapArea = () => {
 
     mapRef.current = baseMap;
 
-    // OpenStreetMap 타일 레이어로 변경
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // CartoDB Voyager 타일 레이어로 변경 (라벨 없는 버전)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
       attribution: '',
       maxZoom: 19,
-      opacity: 0.7
+      opacity: 0.8,
+      subdomains: 'abcd'
     }).addTo(baseMap);
 
-    // 지명 타일 레이어는 제거하고 기본 지도만 사용
-
-    // 초기 마커 추가
+    // 지점 마커 표시
     const markerIcon = L.divIcon({
       className: 'custom-marker',
       html: `
@@ -739,7 +814,6 @@ const MapArea = () => {
       iconAnchor: [12, 24]
     });
 
-    // 지점 마커 표시
     locationData.forEach(location => {
       const markerInstance = L.marker([location.lat, location.lng], { icon: markerIcon })
         .bindTooltip(`${location.name} (${location.active}/${location.total})`, {
@@ -768,6 +842,14 @@ const MapArea = () => {
       .custom-tooltip::before {
         display: none;
       }
+      .leaflet-tooltip {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .leaflet-tooltip-tip {
+        display: none !important;
+      }
     `;
     document.head.appendChild(style);
 
@@ -794,37 +876,36 @@ const MapArea = () => {
       />
       
       <div 
-        className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center px-4 pt-2 pb-2"
+        className="absolute top-0 left-0 right-0 z-10 flex flex-col px-4 pt-2 pb-2"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%)'
+          background: 'transparent'
         }}
       >
-        <h2 className="text-slate-800 text-lg font-medium">종합운영현황</h2>
-        <div className="flex items-center gap-2">
-          {isDetailMap && (
+        <div className="flex justify-between items-center">
+          <h2 className="text-slate-800 text-lg font-medium">종합운영현황</h2>
+          <div className="flex items-center gap-2">
+            {isDetailMap && (
+              <button 
+                onClick={handleResetView}
+                className="bg-slate-100 text-slate-600 px-3 py-1.5 text-sm rounded-md hover:bg-slate-200 transition-colors"
+              >
+                기본화면
+              </button>
+            )}
             <button 
-              onClick={handleResetView}
-              className="bg-slate-100 text-slate-600 px-3 py-1.5 text-sm rounded-md hover:bg-slate-200 transition-colors"
+              onClick={handleViewToggle}
+              className="bg-blue-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-blue-600 transition-colors"
             >
-              기본화면
+              {isRealtime ? 'Site별' : '실시간'}
             </button>
-          )}
-          <button 
-            onClick={handleViewToggle}
-            className="bg-blue-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-blue-600 transition-colors"
-          >
-            {isRealtime ? 'Site별' : '실시간'}
-          </button>
+          </div>
         </div>
       </div>
 
-      {isDetailMap && !isRealtime && (
-        <GroupList 
-          groups={locationData.find(location => 
-            mapRef.current?.getCenter().lat.toFixed(4) === location.lat.toFixed(4) &&
-            mapRef.current?.getCenter().lng.toFixed(4) === location.lng.toFixed(4)
-          )?.groups || []}
-        />
+      <div className="absolute bottom-4 right-4 z-10 text-sm text-slate-500">※ 미지정 배터리 : <span className="text-[#3CB371]">4</span>/23</div>
+
+      {isDetailMap && !isRealtime && selectedLocation && (
+        <GroupList groups={selectedLocation.groups} />
       )}
     </div>
   );

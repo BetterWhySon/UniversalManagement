@@ -64,10 +64,12 @@ const ChargingSummary: React.FC = () => {
 
     const handlePieClick = (status: string) => {
         setSelectedStatusStore(status);
+        setSelectedChargingType(null);
     };
 
     const handleChargingTypeClick = (type: string) => {
         setSelectedChargingType(type);
+        setSelectedStatusStore(null);
     };
 
     const filteredData = mockData.filter(item => item.status === selectedStatus);
@@ -104,7 +106,7 @@ const ChargingSummary: React.FC = () => {
                                 radius={['35%', '85%']} 
                                 labelColor="#404040"
                                 onClick={(params) => {
-                                    handleChargingTypeClick(params.name);
+                                    setSelectedChargingType(params.name);
                                 }}
                             />
                         </div>

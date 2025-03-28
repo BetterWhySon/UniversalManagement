@@ -29,64 +29,59 @@ const OperationStatusPage: React.FC = () => {
 
   const summaryData = {
     total: {
-      전기차운영대수: "70대",
-      배터리운영대수: "70대",
-      배터리설치용량: "7,200kWh"
+      배터리운용대수: "70대",
+      배터리설치용량: "7,200kWh",
+      운영효율: "85%",
+      데이터연동율: "98%"
     },
     companies: [
       {
         name: "서울 사업장",
-        전기차운영대수: "30대",
-        배터리운영대수: "30대",
+        배터리운용대수: "30대",
         배터리설치용량: "3,000kWh",
-        배터리누적방전용량: "2,800kWh",
         운영효율: "86%",
+        데이터연동율: "99%",
         groups: [
           {
             name: "그룹 A",
             devices: ["DEV001", "DEV002", "DEV003"],
-            전기차운영대수: "20대",
+            배터리운용대수: "20대",
             배터리설치용량: "2,000kWh",
-            배터리누적방전용량: "1,800kWh",
-            배터리효율: "92%",
-            운영효율: "86%"
+            운영효율: "88%",
+            데이터연동율: "100%"
           },
           {
             name: "그룹 B",
             devices: ["DEV004", "DEV005"],
-            전기차운영대수: "10대",
+            배터리운용대수: "10대",
             배터리설치용량: "1,000kWh",
-            배터리누적방전용량: "1,000kWh",
-            배터리효율: "90%",
-            운영효율: "85%"
+            운영효율: "84%",
+            데이터연동율: "98%"
           }
         ]
       },
       {
         name: "부산 사업장",
-        전기차운영대수: "40대",
-        배터리운영대수: "40대",
+        배터리운용대수: "40대",
         배터리설치용량: "4,200kWh",
-        배터리누적방전용량: "4,000kWh",
-        운영효율: "74%",
+        운영효율: "84%",
+        데이터연동율: "97%",
         groups: [
           {
             name: "그룹 A",
             devices: ["DEV006", "DEV007", "DEV008"],
-            전기차운영대수: "25대",
+            배터리운용대수: "25대",
             배터리설치용량: "2,500kWh",
-            배터리누적방전용량: "2,300kWh",
-            배터리효율: "95%",
-            운영효율: "78%"
+            운영효율: "86%",
+            데이터연동율: "96%"
           },
           {
             name: "그룹 B",
             devices: ["DEV009", "DEV010"],
-            전기차운영대수: "15대",
+            배터리운용대수: "15대",
             배터리설치용량: "1,700kWh",
-            배터리누적방전용량: "1,700kWh",
-            배터리효율: "91%",
-            운영효율: "70%"
+            운영효율: "82%",
+            데이터연동율: "98%"
           }
         ]
       }
@@ -94,16 +89,16 @@ const OperationStatusPage: React.FC = () => {
   };
 
   const [batteryDetailData] = useState([
-    { id: 1, 사업장: "서울 사업장", 그룹: "그룹 A", 기기no: "DEV001", 배터리번호: "BAT001", 실시간상태정보: "정상", SOC: "85%", 전압: "48.2V", 전류: "12A", 온도: "25°C", 저항: "0.5Ω", SOC변화: "+2%", 전압변화: "+0.1V", 온도변화: "+1°C", 용량변화: "-0.1kWh", 이상알람: "-", 관리알람: "-", 기타: "-" },
-    { id: 2, 사업장: "서울 사업장", 그룹: "그룹 A", 기기no: "DEV002", 배터리번호: "BAT002", 실시간상태정보: "충전중", SOC: "45%", 전압: "47.8V", 전류: "15A", 온도: "28°C", 저항: "0.6Ω", SOC변화: "+5%", 전압변화: "+0.2V", 온도변화: "+2°C", 용량변화: "-0.2kWh", 이상알람: "온도상승", 관리알람: "점검필요", 기타: "-" },
-    { id: 3, 사업장: "서울 사업장", 그룹: "그룹 A", 기기no: "DEV003", 배터리번호: "BAT003", 실시간상태정보: "방전중", SOC: "65%", 전압: "48.0V", 전류: "-10A", 온도: "24°C", 저항: "0.4Ω", SOC변화: "-3%", 전압변화: "-0.1V", 온도변화: "0°C", 용량변화: "-0.3kWh", 이상알람: "-", 관리알람: "-", 기타: "-" },
-    { id: 4, 사업장: "서울 사업장", 그룹: "그룹 B", 기기no: "DEV004", 배터리번호: "BAT004", 실시간상태정보: "대기", SOC: "90%", 전압: "48.5V", 전류: "0A", 온도: "22°C", 저항: "0.5Ω", SOC변화: "0%", 전압변화: "0V", 온도변화: "-1°C", 용량변화: "0kWh", 이상알람: "-", 관리알람: "-", 기타: "-" },
-    { id: 5, 사업장: "서울 사업장", 그룹: "그룹 B", 기기no: "DEV005", 배터리번호: "BAT005", 실시간상태정보: "충전중", SOC: "30%", 전압: "47.5V", 전류: "18A", 온도: "29°C", 저항: "0.7Ω", SOC변화: "+6%", 전압변화: "+0.3V", 온도변화: "+3°C", 용량변화: "-0.2kWh", 이상알람: "과전류", 관리알람: "주의", 기타: "-" },
-    { id: 6, 사업장: "부산 사업장", 그룹: "그룹 A", 기기no: "DEV006", 배터리번호: "BAT006", 실시간상태정보: "방전중", SOC: "70%", 전압: "48.1V", 전류: "-8A", 온도: "26°C", 저항: "0.5Ω", SOC변화: "-2%", 전압변화: "-0.1V", 온도변화: "+1°C", 용량변화: "-0.1kWh", 이상알람: "-", 관리알람: "-", 기타: "-" },
-    { id: 7, 사업장: "부산 사업장", 그룹: "그룹 A", 기기no: "DEV007", 배터리번호: "BAT007", 실시간상태정보: "충전중", SOC: "55%", 전압: "47.9V", 전류: "14A", 온도: "27°C", 저항: "0.6Ω", SOC변화: "+4%", 전압변화: "+0.2V", 온도변화: "+2°C", 용량변화: "-0.2kWh", 이상알람: "-", 관리알람: "점검필요", 기타: "-" },
-    { id: 8, 사업장: "부산 사업장", 그룹: "그룹 A", 기기no: "DEV008", 배터리번호: "BAT008", 실시간상태정보: "대기", SOC: "95%", 전압: "48.6V", 전류: "0A", 온도: "23°C", 저항: "0.4Ω", SOC변화: "0%", 전압변화: "0V", 온도변화: "-1°C", 용량변화: "0kWh", 이상알람: "-", 관리알람: "-", 기타: "-" },
-    { id: 9, 사업장: "부산 사업장", 그룹: "그룹 B", 기기no: "DEV009", 배터리번호: "BAT009", 실시간상태정보: "충전중", SOC: "40%", 전압: "47.7V", 전류: "16A", 온도: "28°C", 저항: "0.6Ω", SOC변화: "+5%", 전압변화: "+0.2V", 온도변화: "+2°C", 용량변화: "-0.2kWh", 이상알람: "온도상승", 관리알람: "주의", 기타: "-" },
-    { id: 10, 사업장: "부산 사업장", 그룹: "그룹 B", 기기no: "DEV010", 배터리번호: "BAT010", 실시간상태정보: "방전중", SOC: "75%", 전압: "48.2V", 전류: "-9A", 온도: "25°C", 저항: "0.5Ω", SOC변화: "-2%", 전압변화: "-0.1V", 온도변화: "+1°C", 용량변화: "-0.1kWh", 이상알람: "-", 관리알람: "-", 기타: "-" }
+    { id: 1, 사업장: "서울 사업장", 그룹: "그룹 A", 기기명: "DEV001", 어플리케이션: "지게차", 실시간상태정보: "정상", SOC: "85%", 팩전압: "48.2V", 전압: "3.7V", 전류: "12A", 배터리온도: "25°C", 시스템온도: "28°C", 운영효율: "92%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" },
+    { id: 2, 사업장: "서울 사업장", 그룹: "그룹 A", 기기명: "DEV002", 어플리케이션: "지게차", 실시간상태정보: "충전중", SOC: "45%", 팩전압: "47.8V", 전압: "3.6V", 전류: "15A", 배터리온도: "28°C", 시스템온도: "30°C", 운영효율: "88%", 데이터연동율: "99%", 이상알람: "온도상승", 관리알람: "점검필요" },
+    { id: 3, 사업장: "서울 사업장", 그룹: "그룹 A", 기기명: "DEV003", 어플리케이션: "AGV", 실시간상태정보: "방전중", SOC: "65%", 팩전압: "48.0V", 전압: "3.7V", 전류: "-10A", 배터리온도: "24°C", 시스템온도: "27°C", 운영효율: "90%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" },
+    { id: 4, 사업장: "서울 사업장", 그룹: "그룹 B", 기기명: "DEV004", 어플리케이션: "AGV", 실시간상태정보: "대기", SOC: "90%", 팩전압: "48.5V", 전압: "3.7V", 전류: "0A", 배터리온도: "22°C", 시스템온도: "25°C", 운영효율: "95%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" },
+    { id: 5, 사업장: "서울 사업장", 그룹: "그룹 B", 기기명: "DEV005", 어플리케이션: "지게차", 실시간상태정보: "충전중", SOC: "30%", 팩전압: "47.5V", 전압: "3.6V", 전류: "18A", 배터리온도: "29°C", 시스템온도: "31°C", 운영효율: "87%", 데이터연동율: "98%", 이상알람: "과전류", 관리알람: "주의" },
+    { id: 6, 사업장: "부산 사업장", 그룹: "그룹 A", 기기명: "DEV006", 어플리케이션: "지게차", 실시간상태정보: "방전중", SOC: "70%", 팩전압: "48.1V", 전압: "3.7V", 전류: "-8A", 배터리온도: "26°C", 시스템온도: "28°C", 운영효율: "91%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" },
+    { id: 7, 사업장: "부산 사업장", 그룹: "그룹 A", 기기명: "DEV007", 어플리케이션: "AGV", 실시간상태정보: "충전중", SOC: "55%", 팩전압: "47.9V", 전압: "3.6V", 전류: "14A", 배터리온도: "27°C", 시스템온도: "29°C", 운영효율: "89%", 데이터연동율: "99%", 이상알람: "-", 관리알람: "점검필요" },
+    { id: 8, 사업장: "부산 사업장", 그룹: "그룹 A", 기기명: "DEV008", 어플리케이션: "지게차", 실시간상태정보: "대기", SOC: "95%", 팩전압: "48.6V", 전압: "3.7V", 전류: "0A", 배터리온도: "23°C", 시스템온도: "26°C", 운영효율: "94%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" },
+    { id: 9, 사업장: "부산 사업장", 그룹: "그룹 B", 기기명: "DEV009", 어플리케이션: "AGV", 실시간상태정보: "충전중", SOC: "40%", 팩전압: "47.7V", 전압: "3.6V", 전류: "16A", 배터리온도: "28°C", 시스템온도: "30°C", 운영효율: "88%", 데이터연동율: "98%", 이상알람: "온도상승", 관리알람: "주의" },
+    { id: 10, 사업장: "부산 사업장", 그룹: "그룹 B", 기기명: "DEV010", 어플리케이션: "지게차", 실시간상태정보: "방전중", SOC: "75%", 팩전압: "48.2V", 전압: "3.7V", 전류: "-9A", 배터리온도: "25°C", 시스템온도: "27°C", 운영효율: "92%", 데이터연동율: "100%", 이상알람: "-", 관리알람: "-" }
   ]);
 
   const columns = [
@@ -112,98 +107,91 @@ const OperationStatusPage: React.FC = () => {
       dataIndex: '사업장',
       paddingInline: '24px',
       align: TEXT_ALIGN.LEFT,
-      fixedWidth: '150px',
+      fixedWidth: '120px',
     },
     {
       name: '그룹',
       dataIndex: '그룹',
       paddingInline: '24px',
       align: TEXT_ALIGN.LEFT,
-      fixedWidth: '130px',
+      fixedWidth: '100px',
     },
     {
-      name: '기기 no.',
-      dataIndex: '기기no',
+      name: '기기명',
+      dataIndex: '기기명',
       paddingInline: '24px',
       align: TEXT_ALIGN.LEFT,
-      fixedWidth: '130px',
+      fixedWidth: '100px',
     },
     {
-      name: '배터리 번호',
-      dataIndex: '배터리번호',
+      name: '어플리케이션',
+      dataIndex: '어플리케이션',
       paddingInline: '24px',
       align: TEXT_ALIGN.LEFT,
-      fixedWidth: '130px',
+      fixedWidth: '120px',
     },
     {
       name: '실시간 상태정보',
-      dataIndex: '실시간태정보',
+      dataIndex: '실시간상태정보',
       paddingInline: '24px',
       align: TEXT_ALIGN.CENTER,
-      fixedWidth: '150px',
+      fixedWidth: '130px',
     },
     {
       name: 'SOC',
       dataIndex: 'SOC',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
+      fixedWidth: '80px',
+    },
+    {
+      name: '팩전압',
+      dataIndex: '팩전압',
+      paddingInline: '24px',
+      align: TEXT_ALIGN.RIGHT,
+      fixedWidth: '90px',
     },
     {
       name: '전압',
       dataIndex: '전압',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
+      fixedWidth: '80px',
     },
     {
       name: '전류',
       dataIndex: '전류',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
+      fixedWidth: '80px',
     },
     {
-      name: '온도',
-      dataIndex: '온도',
+      name: '배터리온도',
+      dataIndex: '배터리온도',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
       fixedWidth: '100px',
     },
     {
-      name: '저항',
-      dataIndex: '저항',
+      name: '시스템온도',
+      dataIndex: '시스템온도',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
       fixedWidth: '100px',
     },
     {
-      name: 'SOC 변화',
-      dataIndex: 'SOC변화',
+      name: '운영효율',
+      dataIndex: '운영효율',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
+      fixedWidth: '90px',
     },
     {
-      name: '전압 변화',
-      dataIndex: '전압변화',
+      name: '데이터 연동율',
+      dataIndex: '데이터연동율',
       paddingInline: '24px',
       align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
-    },
-    {
-      name: '온도 변화',
-      dataIndex: '온도변화',
-      paddingInline: '24px',
-      align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
-    },
-    {
-      name: '용량 변화',
-      dataIndex: '용량변화',
-      paddingInline: '24px',
-      align: TEXT_ALIGN.RIGHT,
-      fixedWidth: '100px',
+      fixedWidth: '110px',
     },
     {
       name: '이상알람',
@@ -215,13 +203,6 @@ const OperationStatusPage: React.FC = () => {
     {
       name: '관리알람',
       dataIndex: '관리알람',
-      paddingInline: '24px',
-      align: TEXT_ALIGN.CENTER,
-      fixedWidth: '100px',
-    },
-    {
-      name: '기타',
-      dataIndex: '기타',
       paddingInline: '24px',
       align: TEXT_ALIGN.CENTER,
       fixedWidth: '100px',
@@ -306,24 +287,20 @@ const OperationStatusPage: React.FC = () => {
           </div>
           <div className="flex-1 space-y-1.5">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-sm">전기차 운영 대수</span>
-              <span className="text-white text-lg">50대</span>
+              <span className="text-gray-400 text-sm">배터리 운용 대수</span>
+              <span className="text-white text-lg">{company.배터리운용대수}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400 text-sm">배터리 설치 용량</span>
-              <span className="text-white text-lg">6,000kWh</span>
+              <span className="text-white text-lg">{company.배터리설치용량}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-sm">배터리 누적방전용량</span>
-              <span className="text-white text-lg">5,000kWh</span>
+              <span className="text-gray-400 text-sm">운영 효율</span>
+              <span className="text-white text-lg">{company.운영효율}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-sm">배터리 효율</span>
-              <span className="text-white text-lg">99%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-sm">운영효율</span>
-              <span className="text-white text-lg">55%</span>
+              <span className="text-gray-400 text-sm">데이터 연동율</span>
+              <span className="text-white text-lg">{company.데이터연동율}</span>
             </div>
           </div>
         </div>
@@ -332,19 +309,23 @@ const OperationStatusPage: React.FC = () => {
 
     return (
       <div className="h-full flex flex-col">
-        <h2 className="text-hw-white-1 text-lg font-medium mb-2">배터리 종합현황</h2>
-        <div className="flex-1 space-y-4">
-          <div className="flex justify-between items-center border-b border-gray-600/50 pb-3">
-            <span className="text-gray-400 text-sm">전기차 운영 대수</span>
-            <span className="text-blue-400 text-2xl font-bold">{summaryData.total.전기차운영대수}</span>
-          </div>
-          <div className="flex justify-between items-center border-b border-gray-600/50 pb-3">
-            <span className="text-gray-400 text-sm">배터리 운영 대수</span>
-            <span className="text-green-400 text-2xl font-bold">{summaryData.total.배터리운영대수}</span>
+        <h2 className="text-hw-white-1 text-xl font-medium mb-2">배터리 종합현황</h2>
+        <div className="flex-1 flex flex-col justify-between">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-400 text-base">배터리 운용 대수</span>
+            <span className="text-blue-400 text-xl font-bold">{summaryData.total.배터리운용대수}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-400 text-sm">배터리 설치 용량</span>
-            <span className="text-yellow-400 text-2xl font-bold">{summaryData.total.배터리설치용량}</span>
+            <span className="text-gray-400 text-base">배터리 설치 용량</span>
+            <span className="text-green-400 text-xl font-bold">{summaryData.total.배터리설치용량}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-400 text-base">운영 효율</span>
+            <span className="text-yellow-400 text-xl font-bold">{summaryData.total.운영효율}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-400 text-base">데이터 연동율</span>
+            <span className="text-purple-400 text-xl font-bold">{summaryData.total.데이터연동율}</span>
           </div>
         </div>
       </div>
@@ -364,7 +345,7 @@ const OperationStatusPage: React.FC = () => {
         <div className="flex gap-4">
           {/* 배터리 종합현황 카드 */}
           <div 
-            className={`w-[300px] h-[230px] flex-shrink-0 bg-hw-dark-2 p-4 rounded-lg cursor-pointer overflow-hidden
+            className={`w-[300px] h-[200px] flex-shrink-0 bg-hw-dark-2 p-4 rounded-lg cursor-pointer overflow-hidden
               ${!selectedCompany ? 'border-[4px] border-blue-500' : 'border-[4px] border-blue-500/50'}`}
             onClick={() => {
               if (showGroupView) {
@@ -405,24 +386,20 @@ const OperationStatusPage: React.FC = () => {
                         <h3 className="text-hw-white-1 text-lg mb-3">{group.name}</h3>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-gray-400">전기차 운영 대수</span>
-                            <span className="text-hw-white-1">{group.전기차운영대수}</span>
+                            <span className="text-gray-400">배터리 운용 대수</span>
+                            <span className="text-hw-white-1">{group.배터리운용대수}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-400">배터리 설치 용량</span>
                             <span className="text-hw-white-1">{group.배터리설치용량}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-400">배터리 누적방전용량</span>
-                            <span className="text-hw-white-1">{group.배터리누적방전용량}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">배터리 효율</span>
-                            <span className="text-hw-white-1">{group.배터리효율}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">운영효율</span>
+                            <span className="text-gray-400">운영 효율</span>
                             <span className="text-hw-white-1">{group.운영효율}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">데이터 연동율</span>
+                            <span className="text-hw-white-1">{group.데이터연동율}</span>
                           </div>
                         </div>
                       </div>
@@ -454,24 +431,20 @@ const OperationStatusPage: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-400">전기차 운영 대수</span>
-                        <span className="text-hw-white-1">{company.전기차운영대수}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">배터리 운영 대수</span>
-                        <span className="text-hw-white-1">{company.배터리운영대수}</span>
+                        <span className="text-gray-400">배터리 운용 대수</span>
+                        <span className="text-hw-white-1">{company.배터리운용대수}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">배터리 설치 용량</span>
                         <span className="text-hw-white-1">{company.배터리설치용량}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">배터리 누적방전용량</span>
-                        <span className="text-hw-white-1">{company.배터리누적방전용량}</span>
+                        <span className="text-gray-400">운영 효율</span>
+                        <span className="text-hw-white-1">{company.운영효율}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">운영효율</span>
-                        <span className="text-hw-white-1">{company.운영효율}</span>
+                        <span className="text-gray-400">데이터 연동율</span>
+                        <span className="text-hw-white-1">{company.데이터연동율}</span>
                       </div>
                     </div>
                   </div>

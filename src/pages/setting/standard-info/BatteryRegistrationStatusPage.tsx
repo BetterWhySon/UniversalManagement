@@ -1,25 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
 import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
+import useCstBattery from '@/api/customer/cstBattery';
+import type { typeCstBattery } from '@/api/types/customer/typeCstBattery';
 
-interface BatteryData {
+interface BatteryData extends typeCstBattery {
   id: number;
-  company: string;
-  group: string;
   deviceName: string;
   application: string;
-  manufacturer: string;
   packId: string;
   packModel: string;
   user: string;
   contact: string;
   address: string;
   registrationDate: string;
+  company: string;
+  group: string;
 }
 
 const BatteryRegistrationStatusPage: React.FC = () => {
   const { t: trans } = useTranslation('translation');
+  const { dataListBattery, storeBatteryList } = useCstBattery();
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedGroup, setSelectedGroup] = useState<string>('');
@@ -29,37 +31,73 @@ const BatteryRegistrationStatusPage: React.FC = () => {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
-  // 더미 데이터
-  const dummyData: BatteryData[] = [
-    { 
-      id: 1, 
-      company: '서울지점', 
-      group: 'FF캠핑카', 
-      deviceName: 'BAT-001',
-      application: '캠핑카',
-      manufacturer: '삼성SDI',
-      packId: 'PACK-001',
-      packModel: 'MODEL-A1',
-      user: '홍길동',
-      contact: '010-1234-5678',
-      address: '서울시 강남구 테헤란로 123', 
-      registrationDate: '2024.03.19'
-    },
-    { 
-      id: 2, 
-      company: '부산지점', 
-      group: '마린스포츠', 
-      deviceName: 'BAT-002',
-      application: '수상레저',
-      manufacturer: 'LG에너지솔루션',
-      packId: 'PACK-002',
-      packModel: 'MODEL-B2',
-      user: '김철수',
-      contact: '010-2345-6789',
-      address: '부산시 해운대구 마린시티로 456', 
-      registrationDate: '2024.03.18'
-    }
-  ];
+  useEffect(() => {
+    storeBatteryList(trans);
+  }, [storeBatteryList, trans]);
+
+  const batteryData = useMemo(() => {
+    if (!dataListBattery) return [];
+    
+    return dataListBattery.map(item => ({
+      ...item,
+      id: item.battery_id,
+      deviceName: item.device_name,
+      application: item.category,
+      packId: item.battery_id.toString(),
+      packModel: item.model_name,
+      user: item.user_name,
+      contact: item.phonenumber,
+      address: item.address_main,
+      registrationDate: item.registration_date,
+      company: item.site_name || '미지정',
+      group: item.group_name || '미지정'
+    })) as BatteryData[];
+  }, [dataListBattery]);
+
+  // 사업장 목록 (중복 제거)
+  const companies = [...new Set(batteryData.map(item => item.company))];
+  // 그룹 목록 (중복 제거)
+  const groups = [...new Set(batteryData.map(item => item.group))];
+  // 어플리케이션 목록 (중복 제거)
+  const applications = [...new Set(batteryData.map(item => item.application))];
+  // 제조사 목록 (중복 제거)
+  const manufacturers = [...new Set(batteryData.map(item => item.manufacturer))];
+  // 팩 모델정보 목록 (중복 제거)
+  const packModels = [...new Set(batteryData.map(item => item.packModel))];
+
+  const getFilteredData = useMemo(() => {
+    return batteryData.filter(item => {
+      const searchTarget = [
+        item.company,
+        item.group,
+        item.deviceName,
+        item.application,
+        item.manufacturer,
+        item.packId,
+        item.packModel,
+        item.user,
+        item.contact,
+        item.address,
+        item.registrationDate
+      ].join(' ').toLowerCase();
+
+      const matchesKeyword = !searchKeyword || searchTarget.includes(searchKeyword.toLowerCase());
+      const matchesCompany = !selectedCompany || item.company === selectedCompany;
+      const matchesGroup = !selectedGroup || item.group === selectedGroup;
+      const matchesApplication = !selectedApplication || item.application === selectedApplication;
+      const matchesManufacturer = !selectedManufacturer || item.manufacturer === selectedManufacturer;
+      const matchesPackModel = !selectedPackModel || item.packModel === selectedPackModel;
+
+      const itemDate = new Date(item.registrationDate.replace(/\./g, '-'));
+      const matchesStartDate = !startDate || itemDate >= new Date(startDate);
+      const matchesEndDate = !endDate || itemDate <= new Date(endDate);
+
+      return matchesKeyword && matchesCompany && matchesGroup && 
+             matchesApplication && matchesManufacturer && matchesPackModel &&
+             matchesStartDate && matchesEndDate;
+    });
+  }, [searchKeyword, selectedCompany, selectedGroup, selectedApplication, 
+      selectedManufacturer, selectedPackModel, startDate, endDate, batteryData]);
 
   const columns = useMemo(() => [
     {
@@ -129,51 +167,6 @@ const BatteryRegistrationStatusPage: React.FC = () => {
       fixedWidth: '80px'
     }
   ], []);
-
-  // 사업장 목록 (중복 제거)
-  const companies = [...new Set(dummyData.map(item => item.company))];
-  // 그룹 목록 (중복 제거)
-  const groups = [...new Set(dummyData.map(item => item.group))];
-  // 어플리케이션 목록 (중복 제거)
-  const applications = [...new Set(dummyData.map(item => item.application))];
-  // 제조사 목록 (중복 제거)
-  const manufacturers = [...new Set(dummyData.map(item => item.manufacturer))];
-  // 팩 모델정보 목록 (중복 제거)
-  const packModels = [...new Set(dummyData.map(item => item.packModel))];
-
-  const getFilteredData = useMemo(() => {
-    return dummyData.filter(item => {
-      const searchTarget = [
-        item.company,
-        item.group,
-        item.deviceName,
-        item.application,
-        item.manufacturer,
-        item.packId,
-        item.packModel,
-        item.user,
-        item.contact,
-        item.address,
-        item.registrationDate
-      ].join(' ').toLowerCase();
-
-      const matchesKeyword = !searchKeyword || searchTarget.includes(searchKeyword.toLowerCase());
-      const matchesCompany = !selectedCompany || item.company === selectedCompany;
-      const matchesGroup = !selectedGroup || item.group === selectedGroup;
-      const matchesApplication = !selectedApplication || item.application === selectedApplication;
-      const matchesManufacturer = !selectedManufacturer || item.manufacturer === selectedManufacturer;
-      const matchesPackModel = !selectedPackModel || item.packModel === selectedPackModel;
-
-      const itemDate = new Date(item.registrationDate.replace(/\./g, '-'));
-      const matchesStartDate = !startDate || itemDate >= new Date(startDate);
-      const matchesEndDate = !endDate || itemDate <= new Date(endDate);
-
-      return matchesKeyword && matchesCompany && matchesGroup && 
-             matchesApplication && matchesManufacturer && matchesPackModel &&
-             matchesStartDate && matchesEndDate;
-    });
-  }, [searchKeyword, selectedCompany, selectedGroup, selectedApplication, 
-      selectedManufacturer, selectedPackModel, startDate, endDate, dummyData]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">

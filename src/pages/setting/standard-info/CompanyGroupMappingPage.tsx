@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { TEXT_ALIGN } from '@/enums/table';
+import { useTranslation } from 'react-i18next';
 import TableData from '@/components/table/TableData';
 import DeleteConfirmPopup from './components/DeleteConfirmPopup';
 import GroupSelectPopup from './components/GroupSelectPopup';
+import useCstCompanyGroupMapping from '@/api/customer/cstCompanyGroupMapping';
+import { typeCstGroup } from '@/api/types/customer/typeCstCompanyGroupMapping';
 
 interface CompanyData {
   id: number;
@@ -19,65 +22,22 @@ interface GroupData {
 }
 
 const CompanyGroupMappingPage: React.FC = () => {
+  const { t: trans } = useTranslation('translation');
   const [selectedCompany, setSelectedCompany] = useState<number | undefined>(undefined);
   const [searchCompany, setSearchCompany] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<GroupData | null>(null);
   const [showGroupSelect, setShowGroupSelect] = useState(false);
 
-  // 더미 데이터
-  const companyData: CompanyData[] = [
-    { id: 1, code: 'seoul', name: '서울지점' },
-    { id: 2, code: 'busan', name: '부산지점' },
-    { id: 3, code: 'daegu', name: '대구지점' },
-    { id: 4, code: 'incheon', name: '인천지점' },
-    { id: 5, code: 'gwangju', name: '광주지점' }
-  ];
+  const { 
+    dataListCompanyGroup, 
+    storeCompanyGroupList, 
+    storeGroupAssign, 
+    storeGroupRelease
+  } = useCstCompanyGroupMapping();
 
-  // 더미 그룹 데이터
-  const groupData: { [key: string]: GroupData[] } = {
-    'seoul': [
-      { id: 1, code: 'seoul-ff', name: 'FF캠핑카' },
-      { id: 2, code: 'seoul-bayrun', name: '베이런전동바이크' },
-      { id: 3, code: 'seoul-camp', name: '서울캠핑존' }
-    ],
-    'busan': [
-      { id: 4, code: 'busan-camping', name: '캠핑존' },
-      { id: 5, code: 'busan-drone', name: '드론파크' },
-      { id: 6, code: 'busan-bike', name: '부산바이크' }
-    ],
-    'daegu': [
-      { id: 7, code: 'daegu-outdoor', name: '아웃도어파크' },
-      { id: 8, code: 'daegu-bike', name: '대구전동바이크' },
-      { id: 9, code: 'daegu-camp1', name: '캠핑존1호점' },
-      { id: 10, code: 'daegu-camp2', name: '캠핑존2호점' },
-      { id: 11, code: 'daegu-drone1', name: '드론파크1호점' },
-      { id: 12, code: 'daegu-drone2', name: '드론파크2호점' },
-      { id: 13, code: 'daegu-leisure', name: '레저스포츠' },
-      { id: 14, code: 'daegu-marine', name: '마린스포츠' },
-      { id: 15, code: 'daegu-extreme', name: '익스트림스포츠' },
-      { id: 16, code: 'daegu-adventure', name: '어드벤처' },
-      { id: 17, code: 'daegu-eco', name: '에코투어' },
-      { id: 18, code: 'daegu-nature', name: '네이처파크' },
-      { id: 19, code: 'daegu-urban', name: '어반레저' },
-      { id: 20, code: 'daegu-family', name: '패밀리파크' },
-      { id: 21, code: 'daegu-sports', name: '스포츠센터' },
-      { id: 22, code: 'daegu-water', name: '워터파크' },
-      { id: 23, code: 'daegu-racing', name: '레이싱파크' },
-      { id: 24, code: 'daegu-climbing', name: '클라이밍센터' },
-      { id: 25, code: 'daegu-flying', name: '플라잉존' },
-      { id: 26, code: 'daegu-riding', name: '라이딩파크' }
-    ],
-    'incheon': [
-      { id: 9, code: 'incheon-marine', name: '마린스포츠' },
-      { id: 10, code: 'incheon-camping', name: '인천캠핑존' },
-      { id: 11, code: 'incheon-leisure', name: '레저파크' }
-    ],
-    'gwangju': [
-      { id: 12, code: 'gwangju-bike', name: '광주바이크' },
-      { id: 13, code: 'gwangju-camp', name: '광주캠핑존' },
-      { id: 14, code: 'gwangju-drone', name: '드론체험장' }
-    ]
-  };
+  useEffect(() => {
+    storeCompanyGroupList(trans);
+  }, [trans]);
 
   const companyColumns = [
     {
@@ -143,6 +103,32 @@ const CompanyGroupMappingPage: React.FC = () => {
     }
   ];
 
+  // API 데이터를 UI에 맞게 변환
+  const companyData = useMemo(() => {
+    if (!dataListCompanyGroup) return [];
+    return dataListCompanyGroup.map(item => ({
+      id: item.site_id,
+      code: item.code,
+      name: item.site_name,
+      description: item.description
+    }));
+  }, [dataListCompanyGroup]);
+
+  const groupData = useMemo(() => {
+    if (!dataListCompanyGroup || !selectedCompany) return {};
+    const selectedCompanyData = dataListCompanyGroup.find(item => item.site_id === selectedCompany);
+    if (!selectedCompanyData) return {};
+    
+    return {
+      [selectedCompanyData.code]: selectedCompanyData.groups.map(group => ({
+        id: group.group_id,
+        code: group.code,
+        name: group.group_name,
+        description: group.description
+      }))
+    };
+  }, [dataListCompanyGroup, selectedCompany]);
+
   const filteredCompanies = companyData.filter(company => 
     company.name.toLowerCase().includes(searchCompany.toLowerCase()) ||
     company.code.toLowerCase().includes(searchCompany.toLowerCase())
@@ -156,18 +142,20 @@ const CompanyGroupMappingPage: React.FC = () => {
     setDeleteTarget(row);
   };
 
-  const handleConfirmDelete = () => {
-    if (deleteTarget) {
-      console.log('Delete confirmed:', deleteTarget);
-      // TODO: 실제 삭제 로직 구현
+  const handleConfirmDelete = async () => {
+    if (deleteTarget && selectedCompany) {
+      await storeGroupRelease(selectedCompany, [Number(deleteTarget.id)], trans);
+      await storeCompanyGroupList(trans);
+      setDeleteTarget(null);
     }
-    setDeleteTarget(null);
   };
 
-  const handleGroupAssign = (selectedGroups: number[]) => {
-    console.log('Selected groups:', selectedGroups);
-    // TODO: 실제 그룹 지정 로직 구현
-    setShowGroupSelect(false);
+  const handleGroupAssign = async (selectedGroups: number[]) => {
+    if (selectedCompany) {
+      await storeGroupAssign(selectedCompany, selectedGroups, trans);
+      await storeCompanyGroupList(trans);
+      setShowGroupSelect(false);
+    }
   };
 
   return (
@@ -231,7 +219,7 @@ const CompanyGroupMappingPage: React.FC = () => {
               <TableData<GroupData>
                 data={selectedCompany ? (groupData[companyData.find(c => c.id === selectedCompany)?.code || ''] || []) : []}
                 columns={groupColumns}
-                emptyMessage="등록된 사업장을 클릭하면, 해당 사업장의 지정된 그룹이 표시됩니다."
+                emptyMessage="사업장을 클릭하면, 해당 사업장에 지정된 그룹이 표시됩니다."
                 className="min-h-0"
               />
             </div>
@@ -243,6 +231,7 @@ const CompanyGroupMappingPage: React.FC = () => {
         <GroupSelectPopup
           onClose={() => setShowGroupSelect(false)}
           onConfirm={handleGroupAssign}
+          site_id={selectedCompany || 0}
         />
       )}
 

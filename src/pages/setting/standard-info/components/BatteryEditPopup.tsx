@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { typeCstBattery } from '@/api/types/customer/typeCstBattery';
 
 interface BatteryEditPopupProps {
   onClose: () => void;
@@ -6,19 +7,12 @@ interface BatteryEditPopupProps {
   initialData: BatteryEditData;
 }
 
-interface BatteryEditData {
-  id: number;
+interface BatteryEditData extends typeCstBattery {
   company: string;
   group: string;
-  deviceName: string;
-  application: string;
-  manufacturer: string;
-  packId: string;
-  packModel: string;
-  user: string;
+  id: number;
+  user_name: string;
   contact: string;
-  address: string;
-  registrationDate: string;
 }
 
 const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, initialData }) => {
@@ -51,107 +45,103 @@ const BatteryEditPopup: React.FC<BatteryEditPopupProps> = ({ onClose, onSave, in
             </button>
           </div>
 
-          <div className="p-6 space-y-4">
+          <div className="p-5 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-white mb-1">사업장</label>
+                <label className="block text-white/70 text-sm mb-2">사업장</label>
                 <input
                   type="text"
                   value={formData.company}
-                  className={readOnlyStyle}
                   readOnly
+                  className={readOnlyStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">그룹</label>
+                <label className="block text-white/70 text-sm mb-2">그룹명</label>
                 <input
                   type="text"
                   value={formData.group}
-                  className={readOnlyStyle}
                   readOnly
+                  className={readOnlyStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">기기명</label>
+                <label className="block text-white/70 text-sm mb-2">기기명</label>
                 <input
                   type="text"
-                  value={formData.deviceName}
-                  onChange={(e) => setFormData({...formData, deviceName: e.target.value})}
+                  value={formData.device_name}
+                  onChange={(e) => setFormData({ ...formData, device_name: e.target.value })}
                   className={editableStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">사용자</label>
+                <label className="block text-white/70 text-sm mb-2">어플리케이션</label>
                 <input
                   type="text"
-                  value={formData.contact}
-                  className={readOnlyStyle}
-                  readOnly
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-white mb-1">주소</label>
-              <input
-                type="text"
-                value={formData.address}
-                className={readOnlyStyle}
-                readOnly
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white mb-1">아이템카테고리</label>
-                <input
-                  type="text"
-                  value={formData.application}
-                  className={readOnlyStyle}
-                  readOnly
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className={editableStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">배터리생산처</label>
+                <label className="block text-white/70 text-sm mb-2">배터리 제조사</label>
                 <input
                   type="text"
                   value={formData.manufacturer}
-                  className={readOnlyStyle}
-                  readOnly
+                  onChange={(e) => setFormData({ ...formData, manufacturer: e.target.value })}
+                  className={editableStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">팩 모델정보</label>
+                <label className="block text-white/70 text-sm mb-2">팩 모델정보</label>
                 <input
                   type="text"
-                  value={formData.packId}
-                  className={readOnlyStyle}
-                  readOnly
+                  value={formData.model_name}
+                  onChange={(e) => setFormData({ ...formData, model_name: e.target.value })}
+                  className={editableStyle}
                 />
               </div>
               <div>
-                <label className="block text-white mb-1">개인정보제공 동의</label>
+                <label className="block text-white/70 text-sm mb-2">사용자</label>
                 <input
                   type="text"
-                  value={formData.packModel}
-                  className={readOnlyStyle}
-                  readOnly
+                  value={formData.user_name}
+                  onChange={(e) => setFormData({ ...formData, user_name: e.target.value })}
+                  className={editableStyle}
+                />
+              </div>
+              <div>
+                <label className="block text-white/70 text-sm mb-2">연락처</label>
+                <input
+                  type="text"
+                  value={formData.contact}
+                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                  className={editableStyle}
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-white/70 text-sm mb-2">주소</label>
+                <input
+                  type="text"
+                  value={formData.address_main}
+                  onChange={(e) => setFormData({ ...formData, address_main: e.target.value })}
+                  className={editableStyle}
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 p-5 border-t border-white/10">
+          <div className="flex justify-end gap-3 p-5 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm bg-[#363B46] text-white rounded hover:bg-[#363B46]/80 transition-colors"
+              className="px-4 py-2 text-sm bg-[#363B46] text-white rounded hover:bg-opacity-80 transition-colors"
             >
               취소
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-500/80 transition-colors"
+              className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-opacity-80 transition-colors"
             >
               저장
             </button>
