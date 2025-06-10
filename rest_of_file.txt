@@ -1,0 +1,307 @@
+
+import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useWebSocketStore from '@/api/socketStore';
+import { websocketURL } from '@/api/URLs';
+import MapArea from './components/MapArea';
+import BatteryAbnormalAlarm from './components/BatteryAbnormalAlarm';
+import EVPolicyComplianceRate from './components/EVPolicyComplianceRate';
+import BatteryAlarmDetail from './components/BatteryAlarmDetail';
+import OperationSummary from './components/OperationSummary';
+import MetricChart from './components/MetricChart';
+import UnusedVehicleList from './components/UnusedVehicleList';
+import ChargingSummary from './components/ChargingSummary';
+import ChargingDetail from './components/ChargingDetail';
+import FilterPopup from './components/subComponents/FilterPopup';
+
+export default function DashboardPage() {
+    const navigate = useNavigate();
+    const { 
+        connect, 
+        disconnect, 
+        setNavigateCB, 
+        response,
+        isConnected
+    } = useWebSocketStore();
+    
+    // 소켓 연결 중 여부 트래킹
+    const [isConnecting, setIsConnecting] = useState(false);
+    const connectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    
+    // 데이터 로깅
+    useEffect(() => {
+        if (response) {
+            console.log('WebSocket Response:', response);
+            if (response.map) {
+                console.log('Map Data Type:', Array.isArray(response.map) ? 'Array' : typeof response.map);
+                console.log('Map Data Length/Keys:', Array.isArray(response.map) 
+                    ? response.map.length 
+                    : Object.keys(response.map));
+                
+                // 맵 데이터의 첫 번째 항목 분석
+                if (Array.isArray(response.map) && response.map.length > 0) {
+                    console.log('First map item:', response.map[0]);
+                } else if (typeof response.map === 'object' && response.map !== null) {
+                    const firstKey = Object.keys(response.map)[0];
+                    if (firstKey) {
+                        console.log('First map item:', { key: firstKey, value: response.map[firstKey] });
+                    }
+                }
+            } else {
+                console.log('No map data in response');
+            }
+            
+            // 응답이 오면 연결 중 상태 해제
+            setIsConnecting(false);
+        }
+    }, [response]);
+    
+    // 웹소켓 연결 파라미터를 위한 상태
+    const [selectedSite, setSelectedSite] = useState<number | null>(null);
+    const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+    const [category, setCategory] = useState<'sites' | 'realtime'>('sites');
+    
+    useEffect(() => {
+        localStorage.removeItem('selectedMetrics'); // 초기화
+    }, []);
+
+    const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // 소켓 연결 함수 - 중복 연결 방지
+    const connectWithDebounce = (url: string) => {
+        if (isConnecting) {
+            console.log('[connectWithDebounce] 이미 연결 중입니다. 이전 연결 요청 취소');
+            
+            // 이전 타임아웃 취소
+            if (connectTimeoutRef.current) {
+                clearTimeout(connectTimeoutRef.current);
+                connectTimeoutRef.current = null;
+            }
+        }
+        
+        setIsConnecting(true);
+        
+        // 새 연결 타임아웃 설정
+        connectTimeoutRef.current = setTimeout(() => {
+            console.log('[connectWithDebounce] 소켓 연결 실행:', url);
+            connect(url);
+            connectTimeoutRef.current = null;
+        }, 300);
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token === null) {
+            setTimeout(() => {
+                navigate('/login');
+            }, 1);
+            return;
+        }
+
+        // 웹소켓 연결 설정
+        setNavigateCB(() => navigate('/login'));
+        
+        const queryData = {
+            token,
+            category,
+            ...(selectedSite && selectedSite !== 0 && { site: selectedSite }),
+            ...(selectedGroup && { group: selectedGroup })
+        };
+
+        const queryString = encodeURIComponent(JSON.stringify(queryData));
+        const url = `${websocketURL}dashboard/?query_string=${queryString}`;
+        
+        // 초기 연결
+        connectWithDebounce(url);
+
+        return () => {
+            if (connectTimeoutRef.current) {
+                clearTimeout(connectTimeoutRef.current);
+            }
+            disconnect(false);
+        };
+    }, []);
+    
+    const handleMetricsSelect = (items: string[]) => {
+        if (items.length !== 3) {
+            return;
+        }
+        console.log('Selected items:', items);
+        setSelectedMetrics([...items]);
+        localStorage.setItem('selectedMetrics', JSON.stringify(items));
+        setIsFilterOpen(false);
+    };
+
+    const handleSiteSelect = (siteId: number | null) => {
+        console.log('[handleSiteSelect] 시작 - 사이트 ID:', siteId, '현재카테고리:', category);
+        setSelectedSite(siteId);
+        
+        // 기존 소켓 연결 해제
+        disconnect(false);
+        
+        // 새로운 소켓 연결
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const queryData = {
+            token,
+            category,  // 현재 category 유지
+            ...(siteId && siteId !== 0 && { site: siteId }), // siteId가 null이나 0이 아닐 때만 추가
+            ...(selectedGroup && { group: selectedGroup })
+        };
+
+        console.log('[handleSiteSelect] 연결 쿼리:', queryData);
+        const queryString = encodeURIComponent(JSON.stringify(queryData));
+        const url = `${websocketURL}dashboard/?query_string=${queryString}`;
+        
+        // 소켓 연결
+        connectWithDebounce(url);
+    };
+
+    const handleCategoryChange = (newCategory: 'sites' | 'realtime') => {
+        // 로그 추가 - 전환 전 상태
+        console.log('[handleCategoryChange] 시작 - 현재상태:', { 
+            현재카테고리: category, 
+            신규카테고리: newCategory, 
+            사이트ID: selectedSite, 
+            그룹ID: selectedGroup,
+            현재응답: Boolean(response)
+        });
+        
+        setCategory(newCategory);
+        
+        // 기존 소켓 연결 해제
+        disconnect(false);
+        
+        // 새로운 소켓 연결
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        // 실시간 모드로 전환 시 쿼리 파라미터 확인
+        if (newCategory === 'realtime' && selectedSite === null && selectedGroup !== null) {
+            console.log('[handleCategoryChange] 실시간+그룹 모드 - 사이트 없음 경고');
+        }
+
+        const queryData = {
+            token,
+            category: newCategory,
+            ...(selectedSite && selectedSite !== 0 && { site: selectedSite }),
+            ...(selectedGroup && selectedGroup !== 0 && { group: selectedGroup })
+        };
+
+        // 로그 추가
+        console.log('[handleCategoryChange] 쿼리데이터:', queryData);
+
+        const queryString = encodeURIComponent(JSON.stringify(queryData));
+        const url = `${websocketURL}dashboard/?query_string=${queryString}`;
+        
+        console.log('[handleCategoryChange] 연결URL:', url);
+        
+        // 연결
+        connectWithDebounce(url);
+    };
+
+    return (
+        <div className='dashboard-content bg-[#232931] p-2 h-[calc(100vh-65px)]'>
+            <div className='flex flex-col h-full gap-0'>
+                {/* 첫 번째 & 두 번째 행 통합 */}
+                <div className='flex h-[66%] gap-2 mb-2'>
+                    {/* 왼쪽 지도 영역 (2행 차지) */}
+                    <div className='w-[22.2%] bg-[#2B313B] rounded-lg p-0'>
+                        <MapArea 
+                            mapData={response?.map} 
+                            onSiteSelect={handleSiteSelect}
+                            onGroupSelect={setSelectedGroup}
+                            onCategoryChange={handleCategoryChange}
+                        />
+                    </div>
+
+                    {/* 오른쪽 영역 flex-col로 구성 */}
+                    <div className='w-[77.8%] flex flex-col gap-2'>
+                        {/* 첫 번째 행 */}
+                        <div className='flex h-1/2 gap-2'>
+                            <div className='w-[46.4%] flex gap-2'>
+                                <div className='w-3/4'>
+                                    <BatteryAbnormalAlarm />
+                                </div>
+                                <div className='w-1/4'>
+                                    <EVPolicyComplianceRate />
+                                </div>
+                            </div>
+                            <div className='w-[53.6%]'>
+                                <BatteryAlarmDetail />
+                            </div>
+                        </div>
+                        {/* 두 번째 행 */}
+                        <div className='flex h-1/2 gap-2'>
+                            <div className='w-[46.4%] bg-[#2B313B] rounded-lg h-full'>
+                                <OperationSummary />
+                            </div>
+                            <div className='w-[53.6%] bg-[#2B313B] rounded-lg'>
+                                <div className="p-2">
+                                    <h3 
+                                        className="text-white text-lg cursor-pointer hover:text-blue-400 border-b border-white/20 inline-block"
+                                        onClick={() => setIsFilterOpen(true)}
+                                    >
+                                        관리항목
+                                    </h3>
+                                    <div className='flex gap-2'>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="stress" 
+                                                selectedTitle={selectedMetrics[0]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="soc" 
+                                                selectedTitle={selectedMetrics[1]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                        <div className='w-1/3'>
+                                            <MetricChart 
+                                                type="efficiency" 
+                                                selectedTitle={selectedMetrics[2]} 
+                                                onMetricsSelect={handleMetricsSelect}
+                                                selectedMetrics={selectedMetrics}
+                                                showPopupOnClick={false}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 세 번째 행 */}
+                <div className='flex h-[32%] gap-2'>
+                    <div className='w-[22.2%]'>
+                        <UnusedVehicleList />
+                    </div>
+                    <div className='w-[36.1%]'>
+                        <ChargingSummary />
+                    </div>
+                    <div className='w-[41.7%]'>
+                        <ChargingDetail />
+                    </div>
+                </div>
+            </div>
+            <FilterPopup 
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                maxChecked={3}
+                exactCount={true}
+                onApply={handleMetricsSelect}
+                selectedItems={selectedMetrics}
+            />
+        </div>
+    );
+}

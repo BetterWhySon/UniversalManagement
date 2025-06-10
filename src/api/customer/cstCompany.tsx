@@ -12,6 +12,7 @@ interface CstCompany {
         site_name: string,
         zipno: string,
         address_main: string,
+        address_road: string,
         address_sub: string,
         description: string,
         trans: (key: string) => string
@@ -23,6 +24,7 @@ interface CstCompany {
         site_name: string,
         zipno: string,
         address_main: string,
+        address_road: string,
         address_sub: string,
         description: string,
         trans: (key: string) => string
@@ -103,6 +105,7 @@ const useCstCompany = create<CstCompany>((set) => ({
         site_name,
         zipno,
         address_main,
+        address_road,
         address_sub,
         description,
         trans
@@ -114,6 +117,7 @@ const useCstCompany = create<CstCompany>((set) => ({
                 site_name,
                 zipno,
                 address_main,
+                address_road,
                 address_sub,
                 description
             }, {
@@ -144,6 +148,7 @@ const useCstCompany = create<CstCompany>((set) => ({
         site_name,
         zipno,
         address_main,
+        address_road,
         address_sub,
         description,
         trans
@@ -156,6 +161,7 @@ const useCstCompany = create<CstCompany>((set) => ({
                 site_name,
                 zipno,
                 address_main,
+                address_road,
                 address_sub,
                 description
             }, {

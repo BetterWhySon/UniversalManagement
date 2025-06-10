@@ -161,6 +161,7 @@ const CompanyRegistrationPage: React.FC = () => {
     company: string;
     postcode: string;
     address: string;
+    roadAddress: string;
     detailAddress: string;
     description: string;
   }) => {
@@ -171,7 +172,8 @@ const CompanyRegistrationPage: React.FC = () => {
           editData.id,
           data.company,
           data.postcode,
-          data.address,  // 우편번호를 제외한 순수 주소
+          data.address,  // 지번 주소
+          data.roadAddress, // 도로명 주소
           data.detailAddress,
           data.description,
           trans
@@ -181,7 +183,8 @@ const CompanyRegistrationPage: React.FC = () => {
         await storeCompanyCreate(
           data.company,
           data.postcode,
-          data.address,  // 우편번호를 제외한 순수 주소
+          data.address,  // 지번 주소
+          data.roadAddress, // 도로명 주소
           data.detailAddress,
           data.description,
           trans

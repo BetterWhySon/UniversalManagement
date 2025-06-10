@@ -13,6 +13,7 @@ interface CompanyRegistrationPopupProps {
     company: string;
     postcode: string;
     address: string;
+    roadAddress: string;
     detailAddress: string;
     description: string;
   }) => void;
@@ -21,6 +22,7 @@ interface CompanyRegistrationPopupProps {
     company: string;
     postcode: string;
     address: string;
+    roadAddress?: string;
     detailAddress: string;
     description: string;
   };
@@ -38,6 +40,7 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
     company: initialData?.company || '',
     postcode: initialData?.postcode || '',
     address: initialData?.address || '',
+    roadAddress: initialData?.roadAddress || '',
     detailAddress: initialData?.detailAddress || '',
     description: initialData?.description || ''
   });
@@ -79,7 +82,8 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
         setFormData(prev => ({
           ...prev,
           postcode: data.zonecode,
-          address: addr
+          address: addr,
+          roadAddress: data.roadAddress
         }));
       }
     }).open();
@@ -100,6 +104,7 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
         company: formData.company,
         postcode: formData.postcode,
         address: formData.address.replace(`(${formData.postcode}) `, ''),  // 우편번호를 제외한 순수 주소만 전달
+        roadAddress: formData.roadAddress,
         detailAddress: formData.detailAddress,
         description: formData.description
       });
@@ -178,6 +183,11 @@ const CompanyRegistrationPopup: React.FC<CompanyRegistrationPopupProps> = ({
                     onClick={handlePostcode}
                     placeholder="주소"
                   />
+                  {formData.roadAddress && (
+                    <div className="flex gap-2 w-full text-xs text-gray-400 px-2">
+                      <span>도로명: {formData.roadAddress}</span>
+                    </div>
+                  )}
                   <input
                     type="text"
                     className="w-full h-10 text-base px-4 bg-hw-dark-1 rounded-lg outline-none border-none text-white"

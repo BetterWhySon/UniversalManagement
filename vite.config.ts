@@ -13,7 +13,7 @@ export default ({ mode }) => {
       alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
     },
     server: {
-      port: isAdmin ? 5174 : 5173,
+      port: 8888,
       watch: {
         ignored: [
           '**/.git/**',
@@ -25,7 +25,7 @@ export default ({ mode }) => {
       },
       hmr: {
         overlay: true,
-        clientPort: isAdmin ? 5174 : 5173
+        clientPort: 8888
       }
     },
     preview: {

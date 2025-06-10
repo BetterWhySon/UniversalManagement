@@ -10,7 +10,11 @@ interface Column {
   align: TEXT_ALIGN;
 }
 
-const BatteryAlarmDetail: React.FC = () => {
+interface BatteryAlarmDetailProps {
+  onClose?: () => void;
+}
+
+const BatteryAlarmDetail: React.FC<BatteryAlarmDetailProps> = ({ onClose }) => {
   const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState<{ key: string; order: 'asc' | 'desc' }>();
   const [showBatteryInfo, setShowBatteryInfo] = useState(false);
