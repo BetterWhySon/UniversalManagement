@@ -14,7 +14,7 @@ import ChargingDetail from './components/ChargingDetail';
 import FilterPopup from './components/subComponents/FilterPopup';
 
 export default function DashboardPage() {
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
     
     useEffect(() => {
         localStorage.removeItem('selectedMetrics'); // 초기화
